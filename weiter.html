@@ -353,14 +353,19 @@ async function starten(){
     nachlauf(false, "Weiterleitung ohne Bestaetigung");
   }, ZEITLIMIT_MS);
 
-  // Fehlerfall abbruch: der Browser gibt den Request nach 250 ms auf
+  // Fehlerfall abbruch: der Browser gibt den Request nach 250 ms auf.
+  // Angezeigt wird die gemessene Zeit, nicht die Sollzeit: ein Timer feuert
+  // nie frueher als bestellt, aber spaeter, wenn der Browser beschaeftigt ist
+  // oder den Reiter im Hintergrund drosselt. In der Abnahme vom 10.09.2026
+  // stand hier 250 ms, gemessen waren 733 ms.
   if (P.fall === "abbruch"){
     timerSpaeter(function(){
       if (ergebnisGesendet) return;
       ergebnisGesendet = true;
       clearInterval(balken);
-      senden("redirect.write", { ergebnis:"abbruch", dauer_ms: Math.round(performance.now() - start), status:"" });
-      abbrechen("nach " + ABBRUCH_NACH_MS + " ms, Fall abbruch");
+      const gemessen = Math.round(performance.now() - start);
+      senden("redirect.write", { ergebnis:"abbruch", dauer_ms: gemessen, status:"" });
+      abbrechen("nach " + gemessen + " ms (Soll " + ABBRUCH_NACH_MS + " ms), Fall abbruch");
     }, ABBRUCH_NACH_MS);
   }
 
@@ -446,7 +451,16 @@ async function starten(){
     return;
   }
   senden("page.view", { ansicht:"weiterleitung" });
-  starten();
+  // Erst nach dem ersten Bild starten. Lief starten() noch im Aufbau der
+  // Seite, stand der Abbruch-Timer hinter Layout und erstem Zeichnen an und
+  // feuerte bei 733 statt 250 ms. Zwei Bildwechsel abwarten heisst: die Seite
+  // ist gezeichnet, der Nutzer sieht den Status, dann laeuft die Uhr. Im
+  // Hintergrundreiter gibt es keine Bildwechsel; dort startet ein Timeout.
+  if (document.visibilityState === "visible" && window.requestAnimationFrame){
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ starten(); }); });
+  } else {
+    setTimeout(starten, 0);
+  }
 })();
 </script>
 </body>

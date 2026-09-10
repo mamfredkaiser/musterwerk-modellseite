@@ -547,7 +547,7 @@ input[type=range]{width:260px}
 <!-- ---------- Auswertung ---------- -->
 <section class="ansicht" id="v-auswertung">
   <h2>Auswertung</h2>
-  <p class="leise">Die Slot- und Join-Tabellen zeigen die Ereignisse dieser Sitzung. Der Arbeitgeber-Report rechnet zusätzlich mit einem synthetischen Bestand von rund 300 fiktiven Konten über beide Mandanten, mit festem Startwert des Zufallsgenerators, damit die Zahlen bei jedem Aufruf gleich sind.</p>
+  <p class="leise">Die Slot- und Join-Tabellen zeigen die Ereignisse dieser Sitzung. Der Arbeitgeber-Report rechnet mit ausgeschaltetem Live-Schalter auf einem erfundenen Bestand von rund 300 fiktiven Konten über beide Mandanten, mit festem Startwert des Zufallsgenerators, damit die Zahlen bei jedem Aufruf gleich sind. Mit eingeschaltetem Live-Schalter kommt er aus der Datenbank, und die Mindestfallzahl setzt dann die Datenbank durch, nicht diese Seite.</p>
 
   <h3>Slots: Auslieferung, Sichtbarkeit, Klick</h3>
   <div class="tabellenrahmen"><table class="d" id="tab-slots"></table></div>
@@ -591,9 +591,11 @@ input[type=range]{width:260px}
                data-mw-event="report.threshold.change" data-mw-label="Mindestfallzahl geändert">
       </div>
     </div>
+    <div id="report-live-steuerung"></div>
     <p class="leise" id="stufen-hinweis" style="margin-bottom:0"></p>
   </div>
   <div id="report-inhalt"></div>
+  <p class="leise" id="report-quelle"></p>
 </section>
 
 <!-- ---------- Messplan ---------- -->
@@ -1546,7 +1548,7 @@ function liveVerbindungPruefen(){
 const WT_TRACK_ID = "100000000000001";                              // erfunden, 15 Stellen wie im Original
 const WT_TRACKDOMAIN = "https://text.musterwerk-vorteile.example";    // erfunden, wird nie angesprochen
 const WTPIXEL_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/wtpixel";
-const MESSPLAN_VERSION = "2026-09-10.4";
+const MESSPLAN_VERSION = "2026-09-10.5";
 
 /* Jede Zeile: wt = Parameter oder Position in p; mw = Quelle im Tracker
    (Schluessel aus mwTrack, "browser" fuer Geraetewerte, "fest" fuer Konstanten);
@@ -2395,13 +2397,14 @@ function postbacksUebernehmen(){
 
 function trichterTabelle(zeilen){
   let h = '<tr><th>Partner</th><th class="zahl">Browser sah Klick</th><th class="zahl">Zeile in klickouts</th><th class="zahl">beim Partner angekommen</th>' +
-          '<th class="zahl">Bestellungen</th><th class="zahl">Bestellwert</th><th class="zahl">verwaiste Meldungen</th><th class="zahl">Lücke Tabelle</th><th class="zahl">Lücke Ankunft</th></tr>';
-  if (!zeilen.length) h += '<tr><td colspan="9" class="leise">Keine Zeile im gewählten Fenster.</td></tr>';
+          '<th class="zahl">Bestellungen</th><th class="zahl">Bestellwert</th><th class="zahl">verwaiste Meldungen</th><th class="zahl">Lücke Tabelle</th><th class="zahl">Lücke Ankunft</th><th class="zahl">nur Partner</th></tr>';
+  if (!zeilen.length) h += '<tr><td colspan="10" class="leise">Keine Zeile im gewählten Fenster.</td></tr>';
   zeilen.forEach(function(z){
     h += '<tr><td>' + esc(z.partner) + '</td><td class="zahl">' + z.browser_klicks + '</td><td class="zahl">' + z.tabelle + '</td>' +
          '<td class="zahl">' + z.angekommen + '</td><td class="zahl">' + z.bestellungen + '</td>' +
          '<td class="zahl">' + String(Number(z.bestellwert).toFixed(2)).replace(".", ",") + ' Euro</td>' +
-         '<td class="zahl">' + z.verwaist + '</td><td class="zahl">' + z.luecke_tabelle + '</td><td class="zahl">' + z.luecke_ankunft + '</td></tr>';
+         '<td class="zahl">' + z.verwaist + '</td><td class="zahl">' + z.luecke_tabelle + '</td><td class="zahl">' + z.luecke_ankunft + '</td>' +
+         '<td class="zahl">' + (z.nur_partner === undefined ? "-" : z.nur_partner) + '</td></tr>';
   });
   return '<div class="tabellenrahmen"><table class="d">' + h + '</table></div>';
 }
@@ -2989,7 +2992,22 @@ function gruppieren(nutzung, schluessel){
   return g;
 }
 
+/* Der Report hat zwei Quellen. Ohne Live-Schalter rechnet diese Seite auf
+   ihrem erfundenen Bestand, wie bisher. Mit Live-Schalter fragt sie die
+   Route /klickout/report, die modell.arbeitgeber_report in der Datenbank
+   ruft; die Mindestfallzahl setzt dann die Datenbank durch, und eine Zelle
+   darunter kommt ohne Zahlen hier an. Unter dem Report steht jedes Mal,
+   woher die Zahlen sind. */
 function reportZeichnen(){
+  if (S.live.an && S.live.moeglich){ reportLiveLaden(); return; }
+  reportSteuerungZeichnen();
+  reportZeichnenBestand();
+  document.getElementById("report-quelle").innerHTML =
+    '<b>Quelle: erfundener Bestand dieser Seite</b> (rund 300 fiktive Konten mit festem Startwert, dazu die Klick-outs dieser Sitzung). ' +
+    'Keine Zahl davon kommt aus einer Datenbank. Mit eingeschaltetem Live-Schalter rechnet die Datenbank auf den echten Tabellen.';
+}
+
+function reportZeichnenBestand(){
   const m = MANDANTEN[S.mandant];
   const d = reportGrunddaten();
   const schwelle = S.schwelle;
@@ -3089,6 +3107,185 @@ function tabelleMitSchwelle(gruppen, schwelle, spaltenname, formatierer){
        " unterdrückt. Eine unterdrückte Zelle wird gekennzeichnet und nicht weggelassen, " +
        "damit im Report zu sehen ist, dass an dieser Stelle etwas steht.</p>";
   return h;
+}
+
+/* ---------------------------------------------------------------------
+   16b. Der Report aus der Datenbank
+   Route /klickout/report der Edge Function klickout, dahinter die Funktion
+   modell.arbeitgeber_report. Die Datenbank liefert jede Zelle unter der
+   Mindestfallzahl ohne Zahlen; der Regler kann die Schwelle hier nur
+   anheben, nie senken.
+   ------------------------------------------------------------------ */
+const S_REPORT = { quelle:"live", monat:"", daten:null, fehler:"", laeuft:false, schluessel:"", dauer:0 };
+
+function reportMonate(){
+  const heute = new Date();
+  const liste = [];
+  for (let i = 0; i < 2; i++){
+    const d = new Date(heute.getFullYear(), heute.getMonth() - i, 1);
+    liste.push(d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"));
+  }
+  return liste;
+}
+
+function reportSteuerungZeichnen(){
+  const el = document.getElementById("report-live-steuerung");
+  if (!el) return;
+  if (!(S.live.an && S.live.moeglich)){ el.innerHTML = ""; return; }
+  const monate = reportMonate();
+  if (monate.indexOf(S_REPORT.monat) === -1) S_REPORT.monat = monate[0];
+  el.innerHTML = '<div class="regler-zeile" style="margin-top:12px">' +
+    '<div><label for="sel-report-quelle" style="font-size:13px;color:var(--text-leise);display:block">Datenbasis in der Datenbank</label>' +
+    '<select id="sel-report-quelle"><option value="live">echte Zeilen (quelle = live)</option>' +
+    '<option value="synthetisch">synthetischer Grundbestand (quelle = synthetisch)</option></select></div>' +
+    '<div><label for="sel-report-monat" style="font-size:13px;color:var(--text-leise);display:block">Monat</label>' +
+    '<select id="sel-report-monat">' + monate.map(function(m){ return '<option value="' + m + '">' + m + '</option>'; }).join("") +
+    '</select></div></div>';
+  const sq = document.getElementById("sel-report-quelle");
+  const sm = document.getElementById("sel-report-monat");
+  sq.value = S_REPORT.quelle;
+  sm.value = S_REPORT.monat;
+  sq.addEventListener("change", function(){ S_REPORT.quelle = this.value; reportZeichnen(); });
+  sm.addEventListener("change", function(){ S_REPORT.monat = this.value; reportZeichnen(); });
+}
+
+async function reportLiveLaden(){
+  reportSteuerungZeichnen();
+  const schluessel = S.mandant + "|" + S_REPORT.monat + "|" + S_REPORT.quelle;
+  if (S_REPORT.daten && S_REPORT.schluessel === schluessel){ reportLiveZeichnen(); return; }
+  if (S_REPORT.laeuft === schluessel) return;
+  S_REPORT.laeuft = schluessel;
+  document.getElementById("report-inhalt").innerHTML = '<p class="leise">lade den Report aus der Datenbank ...</p>';
+  document.getElementById("report-quelle").textContent = "";
+  const t0 = Date.now();
+  try {
+    const r = await fetch(KLICKOUT_URL + "/report?mandant=" + encodeURIComponent(S.mandant) +
+                          "&monat=" + encodeURIComponent(S_REPORT.monat) + "&quelle=" + encodeURIComponent(S_REPORT.quelle),
+                          { cache:"no-store", mode:"cors" });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.fehler || ("Status " + r.status));
+    S_REPORT.daten = j;
+    S_REPORT.fehler = "";
+  } catch (e) {
+    S_REPORT.daten = null;
+    S_REPORT.fehler = e.message || e.name;
+  }
+  S_REPORT.schluessel = schluessel;
+  S_REPORT.dauer = Date.now() - t0;
+  S_REPORT.laeuft = false;
+  // Hat sich die Auswahl waehrend des Ladens geaendert, gleich die neue holen.
+  if (schluessel !== S.mandant + "|" + S_REPORT.monat + "|" + S_REPORT.quelle){ reportLiveLaden(); return; }
+  reportLiveZeichnen();
+}
+
+function alterText(iso){
+  if (!iso) return "keine Zeile";
+  const min = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (min < 1) return "gerade eben";
+  if (min < 120) return "vor " + min + " Minuten";
+  const std = Math.round(min / 60);
+  if (std < 48) return "vor " + std + " Stunden";
+  return "vor " + Math.round(std / 24) + " Tagen";
+}
+
+function reportLiveZeichnen(){
+  const m = MANDANTEN[S.mandant];
+  const ziel = document.getElementById("report-inhalt");
+  const quelleEl = document.getElementById("report-quelle");
+  const mf = (S_REPORT.daten && S_REPORT.daten.mindestfallzahl) || 20;
+  const wirksam = Math.max(S.schwelle, mf);
+  document.getElementById("stufen-hinweis").innerHTML =
+    "Mandant " + esc(m.name) + ", Reporting-Stufe im Stammdatensatz: " + m.reportingStufe +
+    ", Betriebsvereinbarung: " + (m.betriebsvereinbarung ? "ja" : "nein") + ". " +
+    "Die Datenbank unterdrückt jede Zelle unter " + mf + " Besuchen, in Stufe drei unter 50. " +
+    "Der Regler kann die Schwelle nur anheben; wirksam sind gerade " + wirksam + ".";
+
+  if (S_REPORT.fehler){
+    ziel.innerHTML = '<div class="kasten warn"><p style="margin:0">Der Report ist nicht abrufbar: ' + esc(S_REPORT.fehler) +
+                     '. Die Seite rechnet in diesem Fall nicht selbst weiter, weil der erfundene Bestand hier wie eine Datenbankzahl aussähe.</p></div>';
+    quelleEl.innerHTML = "Quelle: Datenbank über die Route <code>/klickout/report</code>, gerade nicht erreichbar.";
+    return;
+  }
+  const d = S_REPORT.daten;
+  const zeilen = d.zeilen || [];
+  const unter = function(z){ return z.unterdrueckt || z.grundgesamtheit === null || z.grundgesamtheit < wirksam; };
+  const eu = function(x){ return x === null || x === undefined ? "-" : euro(Number(x)); };
+  const s1 = zeilen.filter(function(z){ return z.stufe === 1; })[0];
+
+  let h = '<h4>Stufe eins: ' + esc(m.name) + ' gesamt, ' + esc(d.monat) + '</h4>';
+  if (!s1 || unter(s1)){
+    h += '<div class="kasten warn"><p style="margin:0"><strong>Unterdrückt.</strong> ' +
+         esc((s1 && s1.hinweis) || ("weniger als " + wirksam + " Besuche")) +
+         ' Auch der Mandant gesamt ist eine Zelle; darunter verlässt keine Zahl die Datenbank.</p></div>';
+  } else {
+    const anteil = s1.anteil_nicht_erfasst === null ? "" : " (" + pz(Number(s1.anteil_nicht_erfasst), 1) + ")";
+    h += '<div class="tabellenrahmen"><table class="d">' +
+      '<tr><th>Kennzahl</th><th class="zahl">Wert</th><th>Belegstatus</th><th>Herkunft in Kurzform</th></tr>' +
+      zeileJoin("Registrierte Nutzer, bereinigt", "-", "nicht erfasst", "braucht das Nutzerkonto aus dem Portalsystem; die Rohzeilen tragen kein Konto") +
+      zeileJoin("Monatlich aktive Nutzer", "-", "nicht erfasst", "braucht das Portalsystem; nicht angemeldete Besuche sind keinem Konto zuzuordnen") +
+      zeileJoin("Aktivierungsquote", "-", "nicht erfasst", "Zähler fehlt; Belegschaft " + zahl(m.belegschaft) + ", Stand " + m.belegschaftStand) +
+      zeileJoin("Besuche in der Zelle", zahl(s1.grundgesamtheit), "gemessen", "Seitenladungen mit Angebotsansicht, Klick-out oder Einlösung; Grundlage der Mindestfallzahl") +
+      zeileJoin("Angebotsansichten", zahl(s1.angebotsansichten), "gemessen", "Messpunkt offer.detail.open") +
+      zeileJoin("Klick-outs", zahl(s1.klickouts), "gemessen", "Browser und Tabelle zusammen, je Klick-ID (modell.klick_out)") +
+      zeileJoin("Ersparnis, belegt", eu(s1.ersparnis_belegt), "gemessen", "bestätigte Transaktionen über Klick-ID oder Code") +
+      zeileJoin("Ersparnis, hochgerechnet", eu(s1.ersparnis_geschaetzt), "geschätzt", "Partner ohne Rückkanal: Klick-outs mal Einlösungsquote der Kategorie aus dem synthetischen Grundbestand") +
+      zeileJoin("Klick-outs ohne Rückkanal", zahl(s1.klickouts_ohne_rueckkanal) + anteil, "nicht erfasst", "zu diesen Klick-outs ist keine Ersparnis belegbar") +
+      "</table></div>";
+  }
+
+  if (S.stufe === "2"){
+    if (m.reportingStufe < 2){
+      h += '<div class="kasten warn"><p style="margin:0">Stufe zwei ist für ' + esc(m.name) + ' nicht freigegeben.</p></div>';
+    } else {
+      ["kategorie", "angebot"].forEach(function(ebene){
+        const liste = zeilen.filter(function(z){ return z.stufe === 2 && z.ebene === ebene && z.schluessel; });
+        liste.sort(function(a, b){
+          if (unter(a) !== unter(b)) return unter(a) ? 1 : -1;
+          return (b.klickouts || 0) - (a.klickouts || 0);
+        });
+        let u = 0;
+        let t = '<h4>Stufe zwei: ' + (ebene === "kategorie" ? "Kategorien" : "Angebote") + '</h4>' +
+                '<div class="tabellenrahmen"><table class="d"><tr><th>' + (ebene === "kategorie" ? "Kategorie" : "Angebot") + '</th>' +
+                '<th class="zahl">Besuche</th><th class="zahl">Ansichten</th><th class="zahl">Klick-outs</th>' +
+                '<th class="zahl">Ersparnis belegt</th><th class="zahl">Ersparnis hochgerechnet</th>' +
+                '<th class="zahl">Klick-outs ohne Rückkanal</th><th>Belegstatus</th></tr>';
+        if (!liste.length) t += '<tr><td colspan="8" class="leise">Keine Zelle in diesem Monat.</td></tr>';
+        liste.forEach(function(z){
+          let name = esc(z.schluessel);
+          if (ebene === "kategorie" && KATEGORIE_INFO[z.schluessel]) name = esc(KATEGORIE_INFO[z.schluessel].name);
+          if (ebene === "angebot"){
+            const a = angebot(z.schluessel);
+            if (a) name = esc(a.id) + " " + esc(a.titel) + ' <span class="pill">' + esc(a.anbieter) + "</span>";
+          }
+          if (unter(z)){
+            u++;
+            t += '<tr class="unterdrückt"><td>' + name + '</td><td colspan="7">unterdrückt, n unter Schwelle</td></tr>';
+            return;
+          }
+          let bs = "gemessen";
+          if (!Number(z.ersparnis_belegt) && Number(z.ersparnis_geschaetzt) > 0) bs = "geschätzt";
+          if (!Number(z.ersparnis_belegt) && !Number(z.ersparnis_geschaetzt)) bs = "nicht erfasst";
+          t += '<tr><td>' + name + '</td><td class="zahl">' + zahl(z.grundgesamtheit) + '</td>' +
+               '<td class="zahl">' + zahl(z.angebotsansichten) + '</td><td class="zahl">' + zahl(z.klickouts) + '</td>' +
+               '<td class="zahl">' + eu(z.ersparnis_belegt) + '</td><td class="zahl">' + eu(z.ersparnis_geschaetzt) + '</td>' +
+               '<td class="zahl">' + zahl(z.klickouts_ohne_rueckkanal) + '</td><td>' + belegPill(bs) + '</td></tr>';
+        });
+        t += '</table></div><p class="leise">' + liste.length + ' Zellen, davon ' + u + ' unterdrückt.</p>';
+        h += t;
+      });
+    }
+  }
+  if (S.stufe === "3"){
+    const s3 = zeilen.filter(function(z){ return z.stufe === 3; })[0];
+    h += '<h4>Stufe drei: Standorte</h4><div class="kasten' + (m.betriebsvereinbarung ? '' : ' warn') + '"><p style="margin:0">' +
+         esc((s3 && s3.hinweis) || "keine Angabe der Datenbank") + '</p></div>';
+  }
+  ziel.innerHTML = h;
+  quelleEl.innerHTML = '<b>Quelle: Datenbank</b>, Route <code>/klickout/report</code>, Funktion <code>modell.arbeitgeber_report</code> auf den Tabellen ' +
+    (d.tabellen || []).map(function(x){ return "<code>" + esc(x) + "</code>"; }).join(", ") + '. Datenbasis: ' +
+    (d.quelle === "synthetisch" ? "synthetischer Grundbestand" : "echte Zeilen") + ', Monat ' + esc(d.monat) +
+    '. Jüngste Zeile dieser Datenbasis: ' + (d.juengste_zeile ? esc(new Date(d.juengste_zeile).toLocaleString("de-DE")) + ", " : "") +
+    alterText(d.juengste_zeile) + '. Geladen in ' + S_REPORT.dauer + ' ms.';
 }
 </script>
 <script>
@@ -3208,12 +3405,33 @@ function pruefungZeichnen(){
       suchFehler.push("Suchpunkt " + n + ": Attribut data-mw-eigen fehlt, der Punkt würde doppelt feuern");
   });
 
+  // Vierte Prüfung: der Arbeitgeber-Report. Er hat eine Quellenangabe,
+  // der Weg in die Datenbank ist verdrahtet, und kein Report aus der
+  // Datenbank zeigt eine Zelle unter der Mindestfallzahl oder eine
+  // unterdrückte Zelle mit Zahlen. Die dritte Bedingung prüft den zuletzt
+  // geladenen Report; ohne Live-Schalter gibt es keinen, dann entfällt sie.
+  const reportFehler = [];
+  if (!document.getElementById("report-quelle")) reportFehler.push("Arbeitgeber-Report: das Feld für die Quellenangabe fehlt");
+  if (typeof KLICKOUT_URL !== "string" || KLICKOUT_URL.indexOf("/functions/v1/klickout") === -1)
+    reportFehler.push("Arbeitgeber-Report: die Adresse der Route /klickout/report ist nicht gesetzt");
+  if (S_REPORT.daten){
+    const mfDb = S_REPORT.daten.mindestfallzahl || 20;
+    (S_REPORT.daten.zeilen || []).forEach(function(z){
+      if (z.grundgesamtheit !== null && z.grundgesamtheit < (z.stufe === 3 ? 50 : mfDb))
+        reportFehler.push("Arbeitgeber-Report: Zelle " + (z.schluessel || z.ebene) + " kam mit " + z.grundgesamtheit + " Besuchen aus der Datenbank");
+      if (z.unterdrueckt && [z.grundgesamtheit, z.angebotsansichten, z.klickouts, z.ersparnis_belegt, z.ersparnis_geschaetzt,
+                             z.klickouts_ohne_rueckkanal].some(function(x){ return x !== null && x !== undefined; }))
+        reportFehler.push("Arbeitgeber-Report: die unterdrückte Zelle " + (z.schluessel || z.ebene) + " trägt Zahlen");
+    });
+  }
+
   const fehler = nurMarkup.length + nurPlan.length + teaserFehler.length +
-                 fehlendeBelegungen.length + suchFehler.length;
+                 fehlendeBelegungen.length + suchFehler.length + reportFehler.length;
   let h = "";
   if (fehler === 0){
     h += '<div class="kasten gut"><p style="margin:0">Keine Abweichung. Alle Messpunkte aus dem Markup stehen im Plan, ' +
-         'alle Markup-Messpunkte des Plans kommen im Markup vor, und jeder Teaser trägt die fünf Pflichtfelder.</p></div>';
+         'alle Markup-Messpunkte des Plans kommen im Markup vor, jeder Teaser trägt die fünf Pflichtfelder, und der Arbeitgeber-Report hat Quellenangabe und Datenbankweg' +
+         (S_REPORT.daten ? ' und keine Zelle unter der Mindestfallzahl.' : '.') + '</p></div>';
   } else {
     h += '<div class="kasten warn"><p style="margin-top:0"><strong>' + fehler +
          ' Abweichung' + (fehler === 1 ? '' : 'en') + ' gefunden.</strong></p><ul class="fehlerliste">';
@@ -3227,6 +3445,7 @@ function pruefungZeichnen(){
     });
     teaserFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
     suchFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
+    reportFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
     fehlendeBelegungen.forEach(function(b){
       h += "<li>Belegung <code>" + esc(b) + "</code> steht im Belegungsplan, aber in keinem Teaser dieser Seite.</li>";
     });
@@ -3235,7 +3454,8 @@ function pruefungZeichnen(){
   h += '<p class="leise">Geprüfte Elemente: ' + Object.keys(imMarkup).length + ' verschiedene Eventnamen im Markup, ' +
        teaser.length + ' Teaser mit Attribut, ' + Object.keys(pflichtImMarkup).length +
        ' Messpunkte, die in jedem Zustand der Seite im Markup stehen müssen, und ' +
-       belegungenFuerMandant().length + ' Belegungen im Plan des Mandanten. ' +
+       belegungenFuerMandant().length + ' Belegungen im Plan des Mandanten' +
+       (S_REPORT.daten ? ', dazu ' + (S_REPORT.daten.zeilen || []).length + ' Zellen des zuletzt geladenen Reports aus der Datenbank. ' : '. ') +
        'Die Prüfung liest den Zustand des Dokuments, nicht eine gepflegte Liste.</p>';
   document.getElementById("pruefergebnis").innerHTML = h;
 }
@@ -3970,6 +4190,7 @@ document.getElementById("chk-live").addEventListener("change", function(){
   S.live.an = this.checked;
   document.getElementById("lbl-live").textContent = this.checked ? "an" : "aus";
   liveZeichnen();
+  if (S.ansicht === "auswertung") reportZeichnen();
   mwTrack(this.checked ? "live.an" : "live.aus", { sitzung: S.sitzung }, "Skript");
 });
 document.getElementById("btn-live-pruefen").addEventListener("click", liveVerbindungPruefen);
