@@ -243,7 +243,7 @@ input[type=range]{width:260px}
     <div id="k-z"><div class="zaehler" id="zaehlerfeld"></div></div>
   </div>
 
-  <div class="kfuss">
+  <div class="kfuss" id="k-fuss">
     Kein Request verlässt diese Seite. Die Zeilen oben zeigen, was ein Tracker senden würde.
     Ein Neuladen setzt alles zurück, weil nichts gespeichert wird.
   </div>
@@ -1305,7 +1305,19 @@ function sendemarkeZeichnen(e, klasse){
   m.className = "sende" + (klasse ? " " + klasse : "");
 }
 
+// Der Fußtext der Konsole muss sagen, was gerade stimmt. Bei ausgeschaltetem
+// Schalter verlässt kein Request die Seite, bei eingeschaltetem sehr wohl; ein
+// stehender Satz wäre an dieser Stelle schlicht falsch.
+function konsolenfussZeichnen(){
+  var f = document.getElementById("k-fuss");
+  if (!f) return;
+  f.textContent = S.live.an
+    ? "Der Schalter \u201eLive senden\u201c ist an: jede Zeile oben geht zusätzlich an den Sammler. Ein Neuladen setzt die Anzeige zurück und erzeugt eine neue Sitzungskennung, weil nichts gespeichert wird."
+    : "Kein Request verlässt diese Seite. Die Zeilen oben zeigen, was ein Tracker senden würde. Ein Neuladen setzt alles zurück, weil nichts gespeichert wird.";
+}
+
 function liveZeichnen(){
+  konsolenfussZeichnen();
   const feld = document.getElementById("k-live");
   if (!feld) return;
   feld.textContent = S.live.an
