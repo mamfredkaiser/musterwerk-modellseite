@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Attrappe Partnerseite: Deeplink-Partner mit Postback</title>
+<style>
+/* Absichtlich eine andere Optik als das Portal: das hier ist ein anderes Haus. */
+:root{ --grund:#f3f6f4; --flaeche:#fff; --linie:#c6d1ca; --text:#182019; --leise:#5c6a60; --marke:#1f6b4a; --marke-hell:#e3f1e9; --warn:#8a3b12; --warn-hell:#fbeee6; }
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--grund);color:var(--text);font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.55}
+.hinweisleiste{background:#2b2b2b;color:#fff;font-family:Helvetica,Arial,sans-serif;font-size:14px;padding:8px 16px;text-align:center}
+header{background:var(--marke);color:#fff;padding:18px 24px}
+header .marke{font-size:26px;font-weight:700;letter-spacing:.01em}
+header .unter{opacity:.85;font-size:14px;font-family:Helvetica,Arial,sans-serif}
+main{max-width:920px;margin:0 auto;padding:16px 16px 60px 16px}
+h1{font-size:28px;margin:16px 0 6px 0}
+h2{font-size:20px;margin:26px 0 8px 0;color:var(--marke)}
+p{margin:8px 0}
+.leise{color:var(--leise);font-size:15px;font-family:Helvetica,Arial,sans-serif}
+.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;word-break:break-all}
+.kasten{background:var(--flaeche);border:1px solid var(--linie);border-radius:6px;padding:14px 16px;margin:12px 0}
+.kasten.warn{border-color:#e2b9a3;background:var(--warn-hell)}
+.kasten.marke{border-color:#a9cdb9;background:var(--marke-hell)}
+.produkt{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start}
+.bild{width:180px;height:130px;background:linear-gradient(135deg,#cfe3d7,#8fbfa3);border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;color:#1f6b4a;font-family:Helvetica,Arial,sans-serif;font-size:13px}
+button{font:inherit;font-family:Helvetica,Arial,sans-serif;font-size:16px;padding:9px 16px;border-radius:5px;border:1px solid var(--marke);background:var(--marke);color:#fff;cursor:pointer}
+button.sekundaer{background:#fff;color:var(--marke)}
+button:disabled{opacity:.45;cursor:default}
+input{font:inherit;font-size:16px;padding:7px 9px;border:1px solid var(--linie);border-radius:5px;width:130px}
+.knopfreihe{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.knopfreihe > *{max-width:100%}
+h1,h2,p,td{overflow-wrap:anywhere}
+table{table-layout:fixed}
+pre{background:#1e2429;color:#d8e0e6;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.45;overflow:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all;font-family:"SFMono-Regular",Consolas,Menlo,monospace}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:#fff;font-family:Helvetica,Arial,sans-serif}
+th,td{border:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#eef3f0;font-weight:600}
+.pixelstatus{display:inline-block;padding:2px 9px;border-radius:12px;font-size:13px;font-family:Helvetica,Arial,sans-serif;border:1px solid var(--linie);background:#fff}
+.pixelstatus.gut{background:var(--marke-hell);border-color:#a9cdb9}
+.pixelstatus.schlecht{background:var(--warn-hell);border-color:#e2b9a3}
+</style>
+</head>
+<body>
+<div class="hinweisleiste">Attrappe. Diese Seite gehoert zu keinem Unternehmen und verkauft nichts. Sie steht fuer die Website eines Anbieters, auf der das Portal nichts mehr sieht.</div>
+<header>
+  <div class="marke" id="shopname">Nordlicht Handelskontor</div>
+  <div class="unter">Onlineshop eines Netzwerk-Partners. Rueckkanal: Klick-ID in der Adresse, Pixel im Browser, Postback vom Server.</div>
+</header>
+<main>
+
+<div class="kasten marke" id="begruessung">
+  <p style="margin:0"><b>Willkommen ueber das Musterwerk Vorteilsportal.</b> Ihr Vorteil ist hinterlegt, Sie muessen nichts eingeben. <span class="leise">Der Shop weiss das, weil in der Adresse ein Parameter steht, und nur deshalb.</span></p>
+</div>
+
+<h1>Ihr Angebot</h1>
+<div class="kasten">
+  <div class="produkt">
+    <div class="bild">Produktbild (Attrappe)</div>
+    <div style="flex:1;min-width:240px">
+      <p style="margin:0;font-size:20px"><b id="produkttitel">Vorteilsartikel aus dem Portal</b></p>
+      <p class="leise" style="margin:2px 0 8px 0">Kampagne <span class="mono" id="kampagne">-</span></p>
+      <p style="margin:0">Preis mit Vorteil: <b><span id="preisanzeige">149,00</span> Euro</b></p>
+      <div class="knopfreihe">
+        <label class="leise" for="bestellwert">Bestellwert</label>
+        <input type="number" id="bestellwert" value="149" min="1" step="1"> <span class="leise">Euro</span>
+        <button type="button" id="btn-bestellen">Jetzt bestellen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="bestellung" hidden>
+  <div class="kasten marke">
+    <p style="margin:0;font-size:20px"><b>Vielen Dank fuer Ihre Bestellung.</b></p>
+    <p style="margin:4px 0 0 0">Bestellnummer <span class="mono" id="bestellnummer">-</span>, Bestellwert <b><span id="bestellwert-anzeige">-</span> Euro</b>, Status <b>offen</b>.</p>
+    <p class="leise" style="margin:6px 0 0 0">Diese Bestaetigungsseite ist die Stelle, an der ein Shop den Bestell-Pixel des Netzwerks einbaut. Sie kennt die Klick-ID noch, weil alles auf einer Seite passiert; ein echter Shop muesste sie sich ueber mehrere Seiten hinweg merken, in einem Erstanbieter-Cookie oder in der Sitzung seines Servers.</p>
+  </div>
+
+  <h2>Rueckkanal 1: der Bestell-Pixel im Browser</h2>
+  <p class="leise">Ein Bild, das der Browser des Nutzers vom Portal-Endpunkt laedt. Er ist schnell und einfach eingebaut, und er scheitert, sobald ein Blocker laeuft oder die Bestaetigungsseite nie gerendert wird.</p>
+  <pre id="pixel-bestellung-anzeige"></pre>
+  <p>Status: <span class="pixelstatus" id="pixel-bestellung-status">nicht gesendet</span></p>
+
+  <h2>Rueckkanal 2: das Postback vom Server des Shops</h2>
+  <p class="leise">Das Shopsystem meldet die Bestellung von Server zu Server, unabhaengig vom Browser, und spaeter auch Storno oder Freigabe. Der Shop hier hat kein Backend; die Meldung geht deshalb an den Pfad <span class="mono">/postback/partnershop</span>, der das Shopsystem nachspielt und die Zeile als <span class="mono">weg = s2s</span> verbucht.</p>
+  <div class="knopfreihe">
+    <button type="button" id="btn-s2s">Postback vom Server senden</button>
+    <button type="button" class="sekundaer" id="btn-storno" disabled>Bestellung stornieren (Server)</button>
+  </div>
+  <pre id="s2s-anzeige">noch nichts gesendet</pre>
+</div>
+
+<h2>Was dieser Shop vom Portal bekommen hat</h2>
+<table>
+  <tr><th style="width:34%">Adresse dieser Seite</th><td class="mono" id="adresse">-</td></tr>
+  <tr><th>Klick-ID (<span class="mono">cbk</span>)</th><td class="mono" id="cbk">-</td></tr>
+  <tr><th>Referrer</th><td class="mono" id="referrer">-</td></tr>
+  <tr><th>Was nicht mitkommt</th><td>Mandant, Nutzerschluessel, Sitzungskennung, Suchbegriff, Slot und Position. Der Partner bekommt eine Referenz, keinen Menschen.</td></tr>
+  <tr><th>Speicher auf diesem Geraet</th><td><span id="speicher">nicht geprueft</span> <button type="button" class="sekundaer" id="btn-speicher" style="padding:3px 9px;font-size:13px">pruefen</button></td></tr>
+</table>
+
+<h2>Der Landungs-Pixel dieser Seite</h2>
+<p class="leise">Beim Laden meldet die Seite dem Portal: die Klick-ID ist angekommen. In der Zuordnungstabelle fuellt das <span class="mono">angekommen_am</span>. Ohne diesen Pixel steht die Zeile mit leerem Ankunftsdatum da, und niemand kann sagen, ob die Weiterleitung geklappt hat.</p>
+<pre id="pixel-landung-anzeige"></pre>
+<p>Status: <span class="pixelstatus" id="pixel-landung-status">nicht gesendet</span></p>
+
+<p class="leise" style="margin-top:28px"><a id="zurueck" href="../index.html#strecke">Zurueck zum Portal, Ansicht Klick-out-Strecke</a></p>
+</main>
+
+<script>
+"use strict";
+/* Deeplink-Partner. Liest die Klick-ID aus der Adresse, meldet die Landung
+   per Pixel, die Bestellung per Pixel und per simuliertem Server-Postback.
+   Setzt nichts auf dem Geraet. */
+const POSTBACK_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/postback";
+const PARTNER = "deeplink";
+const q = new URLSearchParams(location.search);
+const cbk = q.get("cbk") || "";
+const TROCKEN = location.protocol === "file:" || q.get("trocken") === "1";
+const el = function(id){ return document.getElementById(id); };
+let bestellnummer = "";
+
+function pixelUrl(art, extra){
+  const s = new URLSearchParams({ art:art, klick:cbk, partner:PARTNER, t:String(Date.now()) });
+  Object.keys(extra || {}).forEach(function(k){ if (extra[k] !== "" && extra[k] !== undefined) s.set(k, extra[k]); });
+  return POSTBACK_URL + "?" + s.toString();
+}
+
+function pixelFeuern(art, extra, anzeigeId, statusId){
+  const url = pixelUrl(art, extra);
+  el(anzeigeId).textContent = '<img src="' + url + '" width="1" height="1" alt="" style="position:absolute;left:-9999px">';
+  const st = el(statusId);
+  if (!cbk){ st.textContent = "keine Klick-ID in der Adresse, nicht gesendet"; st.className = "pixelstatus schlecht"; return; }
+  if (TROCKEN){ st.textContent = "Trockenlauf (file:// oder ?trocken=1), nicht gesendet"; st.className = "pixelstatus"; return; }
+  const img = new Image(1, 1);
+  const t0 = performance.now();
+  img.onload  = function(){ st.textContent = "geladen nach " + Math.round(performance.now() - t0) + " ms, Antwort ist ein 1x1-GIF"; st.className = "pixelstatus gut"; };
+  img.onerror = function(){ st.textContent = "fehlgeschlagen oder blockiert nach " + Math.round(performance.now() - t0) + " ms"; st.className = "pixelstatus schlecht"; };
+  img.alt = "";
+  img.style.cssText = "position:absolute;left:-9999px";
+  img.src = url;
+  document.body.appendChild(img);
+  st.textContent = "gesendet, warte auf das Bild ...";
+}
+
+async function serverPostback(art){
+  const wert = Math.max(1, parseInt(el("bestellwert").value, 10) || 1);
+  const body = { art:art, klick:cbk, partner:PARTNER, bestellnummer:bestellnummer, wert:wert,
+                 bestellt_am:new Date().toISOString(), shop:el("shopname").textContent };
+  const zeile = "POST " + POSTBACK_URL + "/partnershop\nContent-Type: application/json\n\n" + JSON.stringify(body, null, 2);
+  if (TROCKEN){ el("s2s-anzeige").textContent = zeile + "\n\n(Trockenlauf, nicht gesendet)"; return; }
+  el("s2s-anzeige").textContent = zeile + "\n\nwarte ...";
+  try {
+    const r = await fetch(POSTBACK_URL + "/partnershop", { method:"POST", mode:"cors", cache:"no-store",
+                          headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) });
+    const j = await r.json();
+    el("s2s-anzeige").textContent = zeile + "\n\nAntwort " + r.status + ":\n" + JSON.stringify(j, null, 2) +
+      (j.klick_bekannt === false ? "\n\nDas Portal kennt diese Klick-ID nicht: der Weiterleitungs-Endpunkt hat sie nie geschrieben. Die Meldung ist verbucht und als verwaist markiert." : "");
+    if (art === "bestellung") el("btn-storno").disabled = false;
+  } catch (e) {
+    el("s2s-anzeige").textContent = zeile + "\n\nFehler: " + e.name + " " + (e.message || "");
+  }
+}
+
+function speicherLesen(){
+  let c, l, s;
+  try { c = document.cookie === "" ? "leer" : document.cookie; } catch(e){ c = "nicht lesbar"; }
+  try { l = Object.keys(localStorage).length; } catch(e){ l = "nicht lesbar"; }
+  try { s = Object.keys(sessionStorage).length; } catch(e){ s = "nicht lesbar"; }
+  return "Cookie " + c + ", localStorage " + l + " Schluessel, sessionStorage " + s + " Schluessel";
+}
+
+(function start(){
+  // Rueckweg: war der Besuch live, bleibt er es; im Trockenlauf bleibt der Schalter aus.
+  if (q.get("trocken") !== "1" && location.protocol !== "file:") el("zurueck").href = "../index.html?live=1#strecke";
+  el("adresse").textContent = location.href;
+  el("cbk").textContent = cbk || "(fehlt)";
+  el("referrer").textContent = document.referrer || "(leer; der Browser hat keinen Referrer geschickt)";
+  el("kampagne").textContent = q.get("utm_campaign") || "-";
+  if (q.get("shop")) el("shopname").textContent = q.get("shop");
+  el("produkttitel").textContent = q.get("titel") || "Vorteilsartikel aus dem Portal";
+  el("btn-speicher").addEventListener("click", function(){ el("speicher").textContent = speicherLesen(); });
+  el("bestellwert").addEventListener("input", function(){ el("preisanzeige").textContent = (parseInt(this.value, 10) || 0) + ",00"; });
+
+  pixelFeuern("landung", {}, "pixel-landung-anzeige", "pixel-landung-status");
+
+  el("btn-bestellen").addEventListener("click", function(){
+    bestellnummer = "B-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    const wert = Math.max(1, parseInt(el("bestellwert").value, 10) || 1);
+    el("bestellnummer").textContent = bestellnummer;
+    el("bestellwert-anzeige").textContent = wert + ",00";
+    el("bestellung").hidden = false;
+    el("btn-bestellen").disabled = true;
+    pixelFeuern("bestellung", { bestellnummer:bestellnummer, wert:String(wert) }, "pixel-bestellung-anzeige", "pixel-bestellung-status");
+    el("bestellung").scrollIntoView({ behavior:"smooth" });
+  });
+  el("btn-s2s").addEventListener("click", function(){ serverPostback("bestellung"); });
+  el("btn-storno").addEventListener("click", function(){ serverPostback("storno"); });
+})();
+</script>
+</body>
+</html>

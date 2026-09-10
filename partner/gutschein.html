@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Attrappe Partnerseite: Gutscheincode-Partner</title>
+<style>
+/* Wieder eine andere Optik: dritter Laden, dritte Hausfarbe. */
+:root{ --grund:#f8f5f0; --flaeche:#fff; --linie:#d6cdbf; --text:#231d15; --leise:#6b6053; --marke:#9a4f10; --marke-hell:#f8e9da; --warn:#8a3b12; --warn-hell:#fbeee6; }
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--grund);color:var(--text);font-family:Verdana,Geneva,sans-serif;font-size:16px;line-height:1.55}
+.hinweisleiste{background:#2b2b2b;color:#fff;font-size:14px;padding:8px 16px;text-align:center}
+header{background:var(--marke);color:#fff;padding:18px 24px}
+header .marke{font-size:24px;font-weight:700}
+header .unter{opacity:.9;font-size:14px}
+main{max-width:920px;margin:0 auto;padding:16px 16px 60px 16px}
+h1{font-size:26px;margin:16px 0 6px 0}
+h2{font-size:19px;margin:26px 0 8px 0;color:var(--marke)}
+p{margin:8px 0}
+.leise{color:var(--leise);font-size:14.5px}
+.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;word-break:break-all}
+.kasten{background:var(--flaeche);border:1px solid var(--linie);border-radius:6px;padding:14px 16px;margin:12px 0}
+.kasten.warn{border-color:#e2b9a3;background:var(--warn-hell)}
+.kasten.marke{border-color:#e0c3a3;background:var(--marke-hell)}
+button{font:inherit;font-size:15px;padding:9px 16px;border-radius:5px;border:1px solid var(--marke);background:var(--marke);color:#fff;cursor:pointer}
+button.sekundaer{background:#fff;color:var(--marke)}
+button:disabled{opacity:.45;cursor:default}
+input{font:inherit;font-size:16px;padding:7px 9px;border:1px solid var(--linie);border-radius:5px}
+.knopfreihe{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.knopfreihe > *{max-width:100%}
+h1,h2,p,td{overflow-wrap:anywhere}
+table{table-layout:fixed}
+pre{background:#1e2429;color:#d8e0e6;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.45;overflow:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all;font-family:"SFMono-Regular",Consolas,Menlo,monospace}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{border:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f3ede4;font-weight:600}
+.pixelstatus{display:inline-block;padding:2px 9px;border-radius:12px;font-size:13px;border:1px solid var(--linie);background:#fff}
+.pixelstatus.gut{background:var(--marke-hell);border-color:#e0c3a3}
+.pixelstatus.schlecht{background:var(--warn-hell);border-color:#e2b9a3}
+.code{font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:22px;letter-spacing:.06em;background:#fff;border:2px dashed var(--marke);padding:8px 14px;border-radius:6px;display:inline-block}
+</style>
+</head>
+<body>
+<div class="hinweisleiste">Attrappe. Diese Seite gehoert zu keinem Unternehmen und verkauft nichts. Sie steht fuer die Website eines Anbieters, der Gutscheincodes einloest.</div>
+<header>
+  <div class="marke" id="shopname">Marktplatz Weserbogen</div>
+  <div class="unter">Onlineshop eines Gutscheincode-Partners. Rueckkanal: der Code, gemeldet in der Monatsabrechnung, ohne Klick-ID.</div>
+</header>
+<main>
+
+<h1>Gutscheincode einloesen</h1>
+<div class="kasten marke">
+  <p style="margin:0 0 8px 0">Ihr Code aus dem Vorteilsportal:</p>
+  <span class="code" id="code-anzeige">-</span>
+  <p class="leise" style="margin:10px 0 0 0">Der Code ist je Belegung und Monat gleich fuer alle, die ihn sehen. Er sagt dem Shop, aus welchem Slot in welchem Monat der Kauf stammt; wer ihn eingegeben hat, sagt er nicht. Im Betrieb tippt der Kunde ihn ab, hier steht er schon im Feld.</p>
+</div>
+
+<div class="kasten">
+  <p style="margin:0;font-size:19px"><b id="produkttitel">Vorteilsartikel aus dem Portal</b></p>
+  <p class="leise" style="margin:2px 0 8px 0">Kampagne <span class="mono" id="kampagne">-</span></p>
+  <div class="knopfreihe">
+    <label class="leise" for="codefeld">Code</label>
+    <input type="text" id="codefeld" value="" style="width:220px;font-family:monospace">
+    <label class="leise" for="bestellwert">Bestellwert</label>
+    <input type="number" id="bestellwert" value="240" min="1" step="1" style="width:110px"> <span class="leise">Euro</span>
+    <button type="button" id="btn-bestellen">Mit Code bestellen</button>
+  </div>
+</div>
+
+<div id="bestellung" hidden>
+  <div class="kasten marke">
+    <p style="margin:0;font-size:19px"><b>Bestellung eingegangen.</b></p>
+    <p style="margin:4px 0 0 0">Bestellnummer <span class="mono" id="bestellnummer">-</span>, Code <span class="mono" id="code-bestellt">-</span>, Bestellwert <b><span id="bestellwert-anzeige">-</span> Euro</b>.</p>
+    <p class="leise" style="margin:6px 0 0 0">In dieser Bestellung steht keine Klick-ID. Der Shop hat sie nie gebraucht: der Code ist sein einziger Bezug zum Portal. Zurueckgemeldet wird nicht jetzt, sondern in der Monatsabrechnung, als Liste eingeloester Codes mit Umsatz.</p>
+  </div>
+
+  <h2>Rueckkanal: die Monatsabrechnung ueber den Code</h2>
+  <p class="leise">Der Server des Shops meldet dem Portal einmal im Monat, welche Codes wie oft und mit welchem Umsatz eingeloest wurden. Die Meldung kommt spaet, ohne Klick-ID, und sie laesst sich nur der Belegung und dem Monat zuordnen, nicht dem Klick. Der Knopf schickt sie sofort, mit einem Meldedatum, das im naechsten Monat liegt, damit der Abstand in der Tabelle sichtbar ist.</p>
+  <div class="knopfreihe">
+    <button type="button" id="btn-abrechnung">Monatsabrechnung an das Portal senden</button>
+  </div>
+  <pre id="s2s-anzeige">noch nichts gesendet</pre>
+</div>
+
+<h2>Was dieser Shop vom Portal bekommen hat</h2>
+<table>
+  <tr><th style="width:34%">Adresse dieser Seite</th><td class="mono" id="adresse">-</td></tr>
+  <tr><th>Klick-ID (<span class="mono">cbk</span>)</th><td class="mono" id="cbk">-</td></tr>
+  <tr><th>Referrer</th><td class="mono" id="referrer">-</td></tr>
+  <tr><th>Was der Shop damit tut</th><td>Die Klick-ID landet in keiner Bestellung. Der Shop hat sein Kassensystem nie an einen Rueckkanal mit Klick-ID angeschlossen; er kennt nur Codes.</td></tr>
+  <tr><th>Speicher auf diesem Geraet</th><td><span id="speicher">nicht geprueft</span> <button type="button" class="sekundaer" id="btn-speicher" style="padding:3px 9px;font-size:13px">pruefen</button></td></tr>
+</table>
+
+<h2>Der Landungs-Pixel dieser Seite</h2>
+<p class="leise">Die Ankunft laesst sich auch bei diesem Partner messen, weil das Portal ihm den Pixel fuer die Startseite gegeben hat. Danach reisst die Klick-ID ab: der Pixel auf der Bestellseite fehlt, die Bestellung kennt sie nicht.</p>
+<pre id="pixel-landung-anzeige"></pre>
+<p>Status: <span class="pixelstatus" id="pixel-landung-status">nicht gesendet</span></p>
+
+<p class="leise" style="margin-top:28px"><a id="zurueck" href="../index.html#strecke">Zurueck zum Portal, Ansicht Klick-out-Strecke</a></p>
+</main>
+
+<script>
+"use strict";
+/* Gutscheincode-Partner. Landung per Pixel, Bestellung ohne Klick-ID,
+   Rueckmeldung ueber den Code als Monatsabrechnung vom Server. */
+const POSTBACK_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/postback";
+const PARTNER = "gutschein";
+const q = new URLSearchParams(location.search);
+const cbk = q.get("cbk") || "";
+const TROCKEN = location.protocol === "file:" || q.get("trocken") === "1";
+const el = function(id){ return document.getElementById(id); };
+let bestellnummer = "";
+let bestelltAm = null;
+
+function pixelFeuern(art, extra, anzeigeId, statusId){
+  const s = new URLSearchParams({ art:art, klick:cbk, partner:PARTNER, t:String(Date.now()) });
+  Object.keys(extra || {}).forEach(function(k){ if (extra[k] !== "" && extra[k] !== undefined) s.set(k, extra[k]); });
+  const url = POSTBACK_URL + "?" + s.toString();
+  el(anzeigeId).textContent = '<img src="' + url + '" width="1" height="1" alt="" style="position:absolute;left:-9999px">';
+  const st = el(statusId);
+  if (!cbk){ st.textContent = "keine Klick-ID in der Adresse, nicht gesendet"; st.className = "pixelstatus schlecht"; return; }
+  if (TROCKEN){ st.textContent = "Trockenlauf (file:// oder ?trocken=1), nicht gesendet"; st.className = "pixelstatus"; return; }
+  const img = new Image(1, 1);
+  const t0 = performance.now();
+  img.onload  = function(){ st.textContent = "geladen nach " + Math.round(performance.now() - t0) + " ms, Antwort ist ein 1x1-GIF"; st.className = "pixelstatus gut"; };
+  img.onerror = function(){ st.textContent = "fehlgeschlagen oder blockiert nach " + Math.round(performance.now() - t0) + " ms"; st.className = "pixelstatus schlecht"; };
+  img.alt = "";
+  img.style.cssText = "position:absolute;left:-9999px";
+  img.src = url;
+  document.body.appendChild(img);
+  st.textContent = "gesendet, warte auf das Bild ...";
+}
+
+function monatsende(){
+  // Meldedatum: der fuenfte Tag des Folgemonats, wie eine Abrechnung.
+  const d = new Date();
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 5, 9, 0, 0)).toISOString();
+}
+
+async function abrechnung(){
+  const code = el("codefeld").value.trim();
+  const wert = Math.max(1, parseInt(el("bestellwert").value, 10) || 1);
+  // Bewusst ohne Klick-ID: der Shop hat sie nicht in der Bestellung.
+  const body = { art:"code_einloesung", code:code, partner:PARTNER, bestellnummer:bestellnummer, wert:wert,
+                 bestellt_am:bestelltAm, gemeldet_am:monatsende(), shop:el("shopname").textContent };
+  const zeile = "POST " + POSTBACK_URL + "/partnershop\nContent-Type: application/json\n\n" + JSON.stringify(body, null, 2);
+  if (TROCKEN){ el("s2s-anzeige").textContent = zeile + "\n\n(Trockenlauf, nicht gesendet)"; return; }
+  el("s2s-anzeige").textContent = zeile + "\n\nwarte ...";
+  try {
+    const r = await fetch(POSTBACK_URL + "/partnershop", { method:"POST", mode:"cors", cache:"no-store",
+                          headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) });
+    const j = await r.json();
+    el("s2s-anzeige").textContent = zeile + "\n\nAntwort " + r.status + ":\n" + JSON.stringify(j, null, 2) +
+      "\n\nklick_id ist leer: die Zuordnung laeuft im Portal ueber den Code auf die Belegung und den Monat. Haben mehrere Klicks denselben Code, ist sie unscharf, und genau das ist der Preis dieses Rueckkanals.";
+  } catch (e) {
+    el("s2s-anzeige").textContent = zeile + "\n\nFehler: " + e.name + " " + (e.message || "");
+  }
+}
+
+function speicherLesen(){
+  let c, l, s;
+  try { c = document.cookie === "" ? "leer" : document.cookie; } catch(e){ c = "nicht lesbar"; }
+  try { l = Object.keys(localStorage).length; } catch(e){ l = "nicht lesbar"; }
+  try { s = Object.keys(sessionStorage).length; } catch(e){ s = "nicht lesbar"; }
+  return "Cookie " + c + ", localStorage " + l + " Schluessel, sessionStorage " + s + " Schluessel";
+}
+
+(function start(){
+  const code = q.get("code") || "";
+  // Rueckweg: war der Besuch live, bleibt er es; im Trockenlauf bleibt der Schalter aus.
+  if (q.get("trocken") !== "1" && location.protocol !== "file:") el("zurueck").href = "../index.html?live=1#strecke";
+  el("adresse").textContent = location.href;
+  el("cbk").textContent = cbk || "(fehlt)";
+  el("referrer").textContent = document.referrer || "(leer; der Browser hat keinen Referrer geschickt)";
+  el("kampagne").textContent = q.get("utm_campaign") || "-";
+  el("code-anzeige").textContent = code || "(kein Code in der Adresse)";
+  el("codefeld").value = code;
+  if (q.get("shop")) el("shopname").textContent = q.get("shop");
+  el("produkttitel").textContent = q.get("titel") || "Vorteilsartikel aus dem Portal";
+  el("btn-speicher").addEventListener("click", function(){ el("speicher").textContent = speicherLesen(); });
+
+  pixelFeuern("landung", {}, "pixel-landung-anzeige", "pixel-landung-status");
+
+  el("btn-bestellen").addEventListener("click", function(){
+    bestellnummer = "G-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    bestelltAm = new Date().toISOString();
+    const wert = Math.max(1, parseInt(el("bestellwert").value, 10) || 1);
+    el("bestellnummer").textContent = bestellnummer;
+    el("code-bestellt").textContent = el("codefeld").value.trim() || "(leer)";
+    el("bestellwert-anzeige").textContent = wert + ",00";
+    el("bestellung").hidden = false;
+    el("btn-bestellen").disabled = true;
+    el("bestellung").scrollIntoView({ behavior:"smooth" });
+  });
+  el("btn-abrechnung").addEventListener("click", abrechnung);
+})();
+</script>
+</body>
+</html>

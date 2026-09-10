@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Attrappe Partnerseite: Partner ohne Rueckkanal</title>
+<style>
+/* Sieht aus wie ein Laden, meldet nichts. Das ist der Punkt. */
+:root{ --grund:#f2f4f7; --flaeche:#fff; --linie:#c9cfd8; --text:#171c24; --leise:#5d6773; --marke:#3a4a63; --marke-hell:#e6ebf2; --warn:#8a3b12; --warn-hell:#fbeee6; }
+*{box-sizing:border-box} html,body{margin:0;padding:0}
+body{background:var(--grund);color:var(--text);font-family:"Trebuchet MS",Tahoma,sans-serif;font-size:16px;line-height:1.55}
+.hinweisleiste{background:#2b2b2b;color:#fff;font-size:14px;padding:8px 16px;text-align:center}
+header{background:var(--marke);color:#fff;padding:18px 24px}
+header .marke{font-size:24px;font-weight:700}
+header .unter{opacity:.9;font-size:14px}
+main{max-width:920px;margin:0 auto;padding:16px 16px 60px 16px}
+h1{font-size:26px;margin:16px 0 6px 0}
+h2{font-size:19px;margin:26px 0 8px 0;color:var(--marke)}
+p{margin:8px 0}
+.leise{color:var(--leise);font-size:14.5px}
+.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;word-break:break-all}
+.kasten{background:var(--flaeche);border:1px solid var(--linie);border-radius:6px;padding:14px 16px;margin:12px 0}
+.kasten.warn{border-color:#e2b9a3;background:var(--warn-hell)}
+.kasten.marke{border-color:#b7c3d6;background:var(--marke-hell)}
+.kasten.tot{border:2px dashed #c9cfd8;background:#fafbfc;color:var(--leise)}
+button{font:inherit;font-size:15px;padding:9px 16px;border-radius:5px;border:1px solid var(--marke);background:var(--marke);color:#fff;cursor:pointer}
+button.sekundaer{background:#fff;color:var(--marke)}
+button:disabled{opacity:.45;cursor:default}
+input{font:inherit;font-size:16px;padding:7px 9px;border:1px solid var(--linie);border-radius:5px;width:120px}
+.knopfreihe{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;align-items:center}
+.knopfreihe > *{max-width:100%}
+h1,h2,p,td{overflow-wrap:anywhere}
+table{table-layout:fixed}
+pre{background:#e9edf2;color:#4c5664;border-radius:6px;padding:12px 14px;font-size:13px;line-height:1.45;overflow:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all;font-family:"SFMono-Regular",Consolas,Menlo,monospace;text-decoration:line-through}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{border:1px solid var(--linie);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#eef1f5;font-weight:600}
+</style>
+</head>
+<body>
+<div class="hinweisleiste">Attrappe. Diese Seite gehoert zu keinem Unternehmen und verkauft nichts. Sie steht fuer die Website eines Anbieters ohne Rueckkanal.</div>
+<header>
+  <div class="marke" id="shopname">Stadtwerke-Portal Mustertal</div>
+  <div class="unter">Website eines Anbieters ohne Rueckkanal. Kein Pixel, kein Postback, keine Abrechnung ueber Codes.</div>
+</header>
+<main>
+
+<h1>Ihr Angebot</h1>
+<div class="kasten">
+  <p style="margin:0;font-size:19px"><b id="produkttitel">Vorteilsartikel aus dem Portal</b></p>
+  <p class="leise" style="margin:2px 0 8px 0">Kampagne <span class="mono" id="kampagne">-</span></p>
+  <p style="margin:0">Der Vorteil gilt fuer Beschaeftigte der angeschlossenen Unternehmen. Nennen Sie im Formular unten Ihren Arbeitgeber.</p>
+  <div class="knopfreihe">
+    <label class="leise" for="bestellwert">Auftragswert</label>
+    <input type="number" id="bestellwert" value="380" min="1" step="1"> <span class="leise">Euro</span>
+    <button type="button" id="btn-bestellen">Anfrage abschicken</button>
+  </div>
+</div>
+
+<div id="bestellung" hidden>
+  <div class="kasten marke">
+    <p style="margin:0;font-size:19px"><b>Vielen Dank, wir melden uns.</b></p>
+    <p style="margin:4px 0 0 0">Vorgangsnummer <span class="mono" id="bestellnummer">-</span>, Auftragswert <b><span id="bestellwert-anzeige">-</span> Euro</b>.</p>
+    <p class="leise" style="margin:6px 0 0 0">Nichts davon erfaehrt das Portal. Kein Pixel, kein Postback, keine Monatsabrechnung. Der Anbieter zahlt fuer den Slot, nicht fuer den Abschluss, und hat deshalb keinen Grund, einen Rueckkanal zu bauen.</p>
+  </div>
+</div>
+
+<h2>Was dieser Anbieter vom Portal bekommen hat</h2>
+<table>
+  <tr><th style="width:34%">Adresse dieser Seite</th><td class="mono" id="adresse">-</td></tr>
+  <tr><th>Klick-ID (<span class="mono">cbk</span>)</th><td class="mono" id="cbk">-</td></tr>
+  <tr><th>Referrer</th><td class="mono" id="referrer">-</td></tr>
+  <tr><th>Was der Anbieter damit tut</th><td>Nichts. Der Parameter steht in seinem Serverlog und sonst nirgends.</td></tr>
+  <tr><th>Speicher auf diesem Geraet</th><td><span id="speicher">nicht geprueft</span> <button type="button" class="sekundaer" id="btn-speicher" style="padding:3px 9px;font-size:13px">pruefen</button></td></tr>
+</table>
+
+<h2>Hier waere der Pixel</h2>
+<div class="kasten tot">
+  <p style="margin:0 0 6px 0"><b>Nicht eingebaut.</b> So saehe der Aufruf aus, den die anderen Partnerseiten beim Laden absetzen. Diese Seite setzt ihn nicht ab, und das Portal kann den Unterschied zwischen „nicht angekommen“ und „angekommen, aber ohne Pixel“ nicht sehen.</p>
+  <pre id="pixel-anzeige"></pre>
+  <p class="leise" style="margin:6px 0 0 0">In der Zuordnungstabelle bleibt <span class="mono">angekommen_am</span> leer. Im synthetischen Datensatz ist genau dieser Anbieter der Kernbefund: 21.567 Euro Provision, die nie in der Messung ankommen. Die Luecke ist keine Null, sie ist eine fehlende Zeile.</p>
+</div>
+
+<h2>Was das Portal trotzdem tun kann</h2>
+<div class="kasten">
+  <p style="margin:0">Zwei Wege bleiben. Erstens die Vertragsseite: der Anbieter liefert eine Monatszahl der Abschluesse ueber das Portal, ohne Klick-Bezug, mit Belegstatus „gemeldet“ statt „gemessen“. Zweitens die Schaetzung: aus der Klick-out-Rate und der Abschlussquote vergleichbarer Anbieter, mit Belegstatus „geschaetzt“ und einem Konfidenzband. Beides steht im Arbeitgeber-Report als das, was es ist, nicht als Messung.</p>
+</div>
+
+<p class="leise" style="margin-top:28px"><a id="zurueck" href="../index.html#strecke">Zurueck zum Portal, Ansicht Klick-out-Strecke</a></p>
+</main>
+
+<script>
+"use strict";
+/* Partner ohne Rueckkanal. Zeigt, was er bekommen hat, und sendet nichts. */
+const POSTBACK_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/postback";
+const q = new URLSearchParams(location.search);
+const cbk = q.get("cbk") || "";
+const el = function(id){ return document.getElementById(id); };
+
+function speicherLesen(){
+  let c, l, s;
+  try { c = document.cookie === "" ? "leer" : document.cookie; } catch(e){ c = "nicht lesbar"; }
+  try { l = Object.keys(localStorage).length; } catch(e){ l = "nicht lesbar"; }
+  try { s = Object.keys(sessionStorage).length; } catch(e){ s = "nicht lesbar"; }
+  return "Cookie " + c + ", localStorage " + l + " Schluessel, sessionStorage " + s + " Schluessel";
+}
+
+(function start(){
+  // Rueckweg: war der Besuch live, bleibt er es; im Trockenlauf bleibt der Schalter aus.
+  if (q.get("trocken") !== "1" && location.protocol !== "file:") el("zurueck").href = "../index.html?live=1#strecke";
+  el("adresse").textContent = location.href;
+  el("cbk").textContent = cbk || "(fehlt)";
+  el("referrer").textContent = document.referrer || "(leer; der Browser hat keinen Referrer geschickt)";
+  el("kampagne").textContent = q.get("utm_campaign") || "-";
+  if (q.get("shop")) el("shopname").textContent = q.get("shop");
+  el("produkttitel").textContent = q.get("titel") || "Vorteilsartikel aus dem Portal";
+  el("pixel-anzeige").textContent = '<img src="' + POSTBACK_URL + "?art=landung&klick=" + encodeURIComponent(cbk || "...") + '&partner=ohne" width="1" height="1" alt="">';
+  el("btn-speicher").addEventListener("click", function(){ el("speicher").textContent = speicherLesen(); });
+  el("btn-bestellen").addEventListener("click", function(){
+    el("bestellnummer").textContent = "V-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    el("bestellwert-anzeige").textContent = (Math.max(1, parseInt(el("bestellwert").value, 10) || 1)) + ",00";
+    el("bestellung").hidden = false;
+    el("btn-bestellen").disabled = true;
+  });
+})();
+</script>
+</body>
+</html>
