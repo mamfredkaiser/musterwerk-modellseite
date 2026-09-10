@@ -40,6 +40,11 @@ th{background:#eef3f0;font-weight:600}
 .pixelstatus{display:inline-block;padding:2px 9px;border-radius:12px;font-size:13px;font-family:Helvetica,Arial,sans-serif;border:1px solid var(--linie);background:#fff}
 .pixelstatus.gut{background:var(--marke-hell);border-color:#a9cdb9}
 .pixelstatus.schlecht{background:var(--warn-hell);border-color:#e2b9a3}
+select{font:inherit;font-family:Helvetica,Arial,sans-serif;font-size:15px;padding:6px 8px;border:1px solid var(--linie);border-radius:5px;background:#fff;max-width:100%}
+.schalterzeile{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;margin:6px 0 0 0;font-family:Helvetica,Arial,sans-serif;font-size:15px}
+.schalterzeile label{display:inline-flex;gap:6px;align-items:center}
+.backoffice{border:1px dashed #8a9a90;border-radius:6px;padding:12px 14px;margin:14px 0;background:#fafcfb}
+.backoffice h3{margin:0 0 6px 0;font-size:17px;font-family:Helvetica,Arial,sans-serif}
 </style>
 </head>
 <body>
@@ -67,6 +72,17 @@ th{background:#eef3f0;font-weight:600}
         <input type="number" id="bestellwert" value="149" min="1" step="1"> <span class="leise">Euro</span>
         <button type="button" id="btn-bestellen">Jetzt bestellen</button>
       </div>
+      <div class="schalterzeile">
+        <label><input type="checkbox" id="chk-shopserver" checked> Bestellung ueber den Shop-Server melden</label>
+        <label><span class="leise">Ausgang</span>
+          <select id="sel-ausgang">
+            <option value="zufall">gewuerfelt, 8 Prozent Storno</option>
+            <option value="freigabe">Freigabe nach 14 Tagen</option>
+            <option value="storno">Storno nach 2 bis 13 Tagen</option>
+          </select>
+        </label>
+      </div>
+      <p class="leise" id="shopserver-hinweis" style="margin:6px 0 0 0">An: Der Shop nimmt die Bestellung auf seinem Server an, vergibt die Bestellnummer und meldet sie von dort an das Portal, sofort als offen, Freigabe oder Storno spaeter im Nachtlauf. Aus: der alte Weg, auf dem der Browser dieser Seite die Server-Meldung nachspielt.</p>
     </div>
   </div>
 </div>
@@ -84,12 +100,32 @@ th{background:#eef3f0;font-weight:600}
   <p>Status: <span class="pixelstatus" id="pixel-bestellung-status">nicht gesendet</span></p>
 
   <h2>Rueckkanal 2: das Postback vom Server des Shops</h2>
-  <p class="leise">Das Shopsystem meldet die Bestellung von Server zu Server, unabhaengig vom Browser, und spaeter auch Storno oder Freigabe. Der Shop hier hat kein Backend; die Meldung geht deshalb an den Pfad <span class="mono">/postback/partnershop</span>, der das Shopsystem nachspielt und die Zeile als <span class="mono">weg = s2s</span> verbucht.</p>
-  <div class="knopfreihe">
-    <button type="button" id="btn-s2s">Postback vom Server senden</button>
-    <button type="button" class="sekundaer" id="btn-storno" disabled>Bestellung stornieren (Server)</button>
+  <div id="s2s-server">
+    <p class="leise">Die Bestellung ging nicht vom Browser an das Portal, sondern an den Server dieses Shops (Edge Function <span class="mono">partnershop</span>). Er hat sie in seiner eigenen Tabelle gespeichert und von dort an <span class="mono">/postback/partnershop</span> gemeldet, signiert mit einem Geheimnis, das kein Browser kennt. Die Zeile im Portal traegt <span class="mono">weg = s2s</span> und, wenn das Geheimnis im Projekt gesetzt ist, <span class="mono">signatur = geprueft</span>. Schliesst jemand jetzt den Reiter, meldet der Shop Freigabe oder Storno trotzdem.</p>
+    <pre id="shop-anzeige">noch nichts gesendet</pre>
+    <div class="backoffice">
+      <h3>Backoffice des Shops</h3>
+      <p class="leise" style="margin:0 0 8px 0">Der Nachtlauf meldet, was faellig ist: die Freigabe 14 Tage nach der Bestellung, das Storno an seinem Tag, und Meldungen, die beim ersten Versuch nicht durchgingen. Im Betrieb liefe er jede Nacht von selbst. Fuer die Vorfuehrung laesst sich die Uhr des Shops vorstellen; jede Meldung traegt die vorgestellte Uhr und die Zahl der Tage.</p>
+      <div class="knopfreihe" style="margin:6px 0">
+        <label class="leise" for="sel-vorspulen">Uhr des Shops</label>
+        <select id="sel-vorspulen">
+          <option value="0">heute</option>
+          <option value="14" selected>14 Tage vorgestellt</option>
+        </select>
+        <button type="button" id="btn-lauf" disabled>Nachtlauf starten</button>
+        <button type="button" class="sekundaer" id="btn-stand" disabled>Stand beim Shop</button>
+      </div>
+      <pre id="lauf-anzeige">noch kein Lauf</pre>
+    </div>
   </div>
-  <pre id="s2s-anzeige">noch nichts gesendet</pre>
+  <div id="s2s-browser" hidden>
+    <p class="leise">Der alte Weg: dieser Browser spielt das Shopsystem nach und schickt die Meldung selbst an <span class="mono">/postback/partnershop</span>. Die Zeile heisst trotzdem <span class="mono">weg = s2s</span>, sie traegt aber keine Signatur und die Geraeteklasse des Browsers; daran ist sie im Portal zu erkennen.</p>
+    <div class="knopfreihe">
+      <button type="button" id="btn-s2s">Postback vom Server senden</button>
+      <button type="button" class="sekundaer" id="btn-storno" disabled>Bestellung stornieren (Server)</button>
+    </div>
+    <pre id="s2s-anzeige">noch nichts gesendet</pre>
+  </div>
 </div>
 
 <h2>Was dieser Shop vom Portal bekommen hat</h2>
@@ -112,9 +148,12 @@ th{background:#eef3f0;font-weight:600}
 <script>
 "use strict";
 /* Deeplink-Partner. Liest die Klick-ID aus der Adresse, meldet die Landung
-   per Pixel, die Bestellung per Pixel und per simuliertem Server-Postback.
-   Setzt nichts auf dem Geraet. */
+   per Pixel und die Bestellung per Pixel. Die Server-Meldung kommt seit dem
+   10.09.2026 abends vom Server des Shops (Edge Function partnershop), der die
+   Bestellung annimmt, speichert und selbst meldet; der alte Weg aus dem
+   Browser bleibt als Schalterstellung. Setzt nichts auf dem Geraet. */
 const POSTBACK_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/postback";
+const PARTNERSHOP_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/partnershop";
 const PARTNER = "deeplink";
 const q = new URLSearchParams(location.search);
 const cbk = q.get("cbk") || "";
@@ -164,6 +203,77 @@ async function serverPostback(art){
   }
 }
 
+function shopServerAn(){ return el("chk-shopserver").checked; }
+
+function wegeZeigen(){
+  el("s2s-server").hidden = !shopServerAn();
+  el("s2s-browser").hidden = shopServerAn();
+}
+
+function jsonText(o){ return JSON.stringify(o, null, 2); }
+
+// Die Bestellung geht an den Server des Shops. Er vergibt die Nummer; die
+// Bestaetigungsseite und ihr Pixel kommen erst danach, wie in einem echten
+// Shop, dessen Server die Seite nach dem Kauf ausliefert.
+async function shopBestellen(wert){
+  const body = { klick:cbk, wert:wert, shop:el("shopname").textContent, kampagne:q.get("utm_campaign") || "" };
+  if (el("sel-ausgang").value !== "zufall") body.ausgang = el("sel-ausgang").value;
+  const zeile = "POST " + PARTNERSHOP_URL + "\nContent-Type: application/json\n\n" + jsonText(body);
+  if (TROCKEN){ el("shop-anzeige").textContent = zeile + "\n\n(Trockenlauf, nicht gesendet; die Bestellnummer vergibt diese Seite)"; return null; }
+  el("shop-anzeige").textContent = zeile + "\n\nwarte auf den Shop-Server ...";
+  try {
+    const r = await fetch(PARTNERSHOP_URL, { method:"POST", mode:"cors", cache:"no-store",
+                          headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) });
+    const j = await r.json();
+    const m = j.meldung || {};
+    el("shop-anzeige").textContent = zeile + "\n\nAntwort des Shop-Servers " + r.status + ":\n" + jsonText(j) +
+      (m.angenommen ? "\n\nDer Shop hat die Bestellung um " + new Date(j.bestellt_am).toLocaleTimeString("de-DE") +
+        " gespeichert und dem Portal selbst gemeldet" + (m.signiert ? ", signiert" : ", ohne Signatur, weil im Projekt kein Geheimnis gesetzt ist") + ". " +
+        (j.ausgang === "storno" ? "Ausgang: Storno, faellig am " : "Ausgang: Freigabe, faellig am ") +
+        new Date(j.abschluss_faellig_am).toLocaleDateString("de-DE") + " (" + j.ausgang_grund + ")."
+       : (r.ok ? "\n\nDie Meldung an das Portal ging nicht durch. Die Bestellung steht beim Shop im Postausgang, der Nachtlauf holt sie nach." : ""));
+    return r.ok ? j : null;
+  } catch (e) {
+    el("shop-anzeige").textContent = zeile + "\n\nFehler: " + e.name + " " + (e.message || "") + "\nDer Shop-Server war nicht erreichbar; die Bestellnummer vergibt diese Seite.";
+    return null;
+  }
+}
+
+async function nachtlauf(){
+  const body = { bestellnummer:bestellnummer, vorspulen_tage:parseInt(el("sel-vorspulen").value, 10) || 0 };
+  const zeile = "POST " + PARTNERSHOP_URL + "/lauf\nContent-Type: application/json\n\n" + jsonText(body);
+  if (TROCKEN){ el("lauf-anzeige").textContent = zeile + "\n\n(Trockenlauf, nicht gesendet)"; return; }
+  el("lauf-anzeige").textContent = zeile + "\n\nwarte ...";
+  try {
+    const r = await fetch(PARTNERSHOP_URL + "/lauf", { method:"POST", mode:"cors", cache:"no-store",
+                          headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) });
+    const j = await r.json();
+    let satz = "";
+    if (j.gemeldet && j.gemeldet.length){
+      satz = j.gemeldet.map(function(g){ return "Gemeldet: " + g.was + " (Status " + g.status + "), Portal " + (g.angenommen ? "hat angenommen" : "hat abgelehnt") + ", Signatur " + (g.signatur || "-"); }).join("\n");
+    } else if (j.bestellung && j.bestellung.abschluss_gemeldet_am){
+      satz = "Nichts mehr zu melden: der Abschluss dieser Bestellung ist schon gemeldet.";
+    } else if (j.bestellung){
+      satz = "Nichts faellig. Die Uhr des Shops steht auf " + new Date(j.uhr_shop).toLocaleDateString("de-DE") +
+             ", der Abschluss ist faellig am " + new Date(j.bestellung.abschluss_faellig_am).toLocaleDateString("de-DE") + ".";
+    }
+    el("lauf-anzeige").textContent = zeile + "\n\nAntwort " + r.status + ":\n" + jsonText(j) + (satz ? "\n\n" + satz : "");
+  } catch (e) {
+    el("lauf-anzeige").textContent = zeile + "\n\nFehler: " + e.name + " " + (e.message || "");
+  }
+}
+
+async function shopStand(){
+  const url = PARTNERSHOP_URL + "/status?bestellnummer=" + encodeURIComponent(bestellnummer);
+  if (TROCKEN){ el("lauf-anzeige").textContent = "GET " + url + "\n\n(Trockenlauf, nicht gesendet)"; return; }
+  try {
+    const r = await fetch(url, { mode:"cors", cache:"no-store" });
+    el("lauf-anzeige").textContent = "GET " + url + "\n\nAntwort " + r.status + ":\n" + jsonText(await r.json());
+  } catch (e) {
+    el("lauf-anzeige").textContent = "GET " + url + "\n\nFehler: " + e.name + " " + (e.message || "");
+  }
+}
+
 function speicherLesen(){
   let c, l, s;
   try { c = document.cookie === "" ? "leer" : document.cookie; } catch(e){ c = "nicht lesbar"; }
@@ -186,9 +296,19 @@ function speicherLesen(){
 
   pixelFeuern("landung", {}, "pixel-landung-anzeige", "pixel-landung-status");
 
-  el("btn-bestellen").addEventListener("click", function(){
-    bestellnummer = "B-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+  el("chk-shopserver").addEventListener("change", wegeZeigen);
+  wegeZeigen();
+  el("btn-bestellen").addEventListener("click", async function(){
     const wert = Math.max(1, parseInt(el("bestellwert").value, 10) || 1);
+    el("btn-bestellen").disabled = true;
+    el("chk-shopserver").disabled = true;
+    el("sel-ausgang").disabled = true;
+    let vomShop = null;
+    if (shopServerAn()) vomShop = await shopBestellen(wert);
+    bestellnummer = (vomShop && vomShop.bestellnummer) || ("B-" + Math.random().toString(36).slice(2, 8).toUpperCase());
+    if (vomShop || (shopServerAn() && TROCKEN)){ el("btn-lauf").disabled = false; el("btn-stand").disabled = false; }
+    // War der Shop-Server nicht erreichbar, bleibt der alte Weg als Ausweg sichtbar.
+    if (shopServerAn() && !vomShop && !TROCKEN) el("s2s-browser").hidden = false;
     el("bestellnummer").textContent = bestellnummer;
     el("bestellwert-anzeige").textContent = wert + ",00";
     el("bestellung").hidden = false;
@@ -197,6 +317,8 @@ function speicherLesen(){
     el("bestellung").scrollIntoView({ behavior:"smooth" });
   });
   el("btn-s2s").addEventListener("click", function(){ serverPostback("bestellung"); });
+  el("btn-lauf").addEventListener("click", nachtlauf);
+  el("btn-stand").addEventListener("click", shopStand);
   el("btn-storno").addEventListener("click", function(){ serverPostback("storno"); });
 })();
 </script>
