@@ -3046,12 +3046,16 @@ function rangZeichnen(){
   }).join("");
 
   // Wie stark unterscheiden sich zwei Ranglisten? Der Anteil, der in
-  // beiden ersten Zehn steht, ist die einfachste brauchbare Zahl.
-  const zehn = function(id){
-    return rangfolgeLokal(liste, id, F.segment).slice(0, 10)
+  // beiden ersten Zehn steht, ist die einfachste brauchbare Zahl. Gerechnet
+  // wird sie auf dem ganzen Katalog, nicht auf der gefilterten Menge: in
+  // einer Kategorie mit vierzehn Angeboten ueberschneiden sich zwei
+  // Zehnerlisten zwangslaeufig, und das sagt nichts ueber die Strategien.
+  const zehn = function(menge, id){
+    return rangfolgeLokal(menge, id, F.segment).slice(0, 10)
              .map(function(e){ return e.angebot.id; });
   };
-  const a = zehn("beliebtheit"), b = zehn("ertrag");
+  const ganz = angeboteFuerMandant();
+  const a = zehn(ganz, "beliebtheit"), b = zehn(ganz, "ertrag");
   const gemeinsam = a.filter(function(x){ return b.indexOf(x) !== -1; }).length;
 
   ziel.innerHTML =
@@ -3060,7 +3064,7 @@ function rangZeichnen(){
       (F.kategorie ? ' der Kategorie ' + esc(KATEGORIE_INFO[F.kategorie].name) : '') + '.</p>' +
 
     '<div class="kasten hinweis"><p style="margin:0 0 6px 0"><b>Die Rangfolge ist eine Entscheidung, keine Eigenschaft.</b></p>' +
-    '<p style="margin:0">Von den ersten zehn Plaetzen der Beliebtheit stehen <b>' + gemeinsam + ' von 10</b> auch in den ersten zehn des Ertrags. Wer die Reihenfolge umstellt, verteilt Aufmerksamkeit um, und Aufmerksamkeit ist hier das Produkt, das der Vertrieb verkauft. Deshalb gehoert die Strategie in den Request: ohne sie ist ein Klick auf Platz eins nicht von einem Klick auf ein gutes Angebot zu unterscheiden.</p></div>' +
+    '<p style="margin:0">Über den ganzen Katalog (' + ganz.length + ' Angebote) stehen von den ersten zehn Plätzen der Beliebtheit <b>' + gemeinsam + ' von 10</b> auch in den ersten zehn des Ertrags. Wer die Reihenfolge umstellt, verteilt Aufmerksamkeit um, und Aufmerksamkeit ist hier das Produkt, das der Vertrieb verkauft. Deshalb gehoert die Strategie in den Request: ohne sie ist ein Klick auf Platz eins nicht von einem Klick auf ein gutes Angebot zu unterscheiden.</p></div>' +
 
     '<h3>Vier Strategien auf derselben Menge</h3>' +
     '<div class="rangvergleich">' + spalten + '</div>' +
