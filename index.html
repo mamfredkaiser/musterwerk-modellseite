@@ -3214,8 +3214,8 @@ function reportLiveZeichnen(){
 
   let h = '<h4>Stufe eins: ' + esc(m.name) + ' gesamt, ' + esc(d.monat) + '</h4>';
   if (!s1 || unter(s1)){
-    h += '<div class="kasten warn"><p style="margin:0"><strong>Unterdrückt.</strong> ' +
-         esc((s1 && s1.hinweis) || ("weniger als " + wirksam + " Besuche")) +
+    h += '<div class="kasten warn"><p style="margin:0"><strong>Mandant gesamt unter der Schwelle.</strong> ' +
+         esc((s1 && s1.hinweis) || ("unterdrückt: weniger als " + wirksam + " Besuche")) +
          ' Auch der Mandant gesamt ist eine Zelle; darunter verlässt keine Zahl die Datenbank.</p></div>';
   } else {
     const anteil = s1.anteil_nicht_erfasst === null ? "" : " (" + pz(Number(s1.anteil_nicht_erfasst), 1) + ")";

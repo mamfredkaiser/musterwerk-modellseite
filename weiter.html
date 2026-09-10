@@ -191,6 +191,9 @@ function senden(ev, extra){
               mandant:P.mandant, plattform:"web", mediacode:P.mediacode, variante:P.variante, sid:P.sid,
               klickId:P.klick, angebot:P.angebot, anbieter:P.anbieter, strecke:P.strecke, fall:P.fall };
   if (P.userKey) p.userKey = P.userKey;
+  // Ob der Reiter sichtbar war: verborgene Reiter drosseln Timer, und dann
+  // ist eine gemessene Dauer auf der Zwischenseite anders zu lesen.
+  if (ev.indexOf("redirect.") === 0) p.reiter = document.visibilityState;
   Object.keys(extra || {}).forEach(function(k){ if (extra[k] !== undefined && extra[k] !== null && extra[k] !== "") p[k] = String(extra[k]); });
   p.ts = new Date().toISOString();
   const qs = Object.keys(p).filter(function(k){ return p[k] !== ""; })
@@ -355,9 +358,13 @@ async function starten(){
 
   // Fehlerfall abbruch: der Browser gibt den Request nach 250 ms auf.
   // Angezeigt wird die gemessene Zeit, nicht die Sollzeit: ein Timer feuert
-  // nie frueher als bestellt, aber spaeter, wenn der Browser beschaeftigt ist
-  // oder den Reiter im Hintergrund drosselt. In der Abnahme vom 10.09.2026
-  // stand hier 250 ms, gemessen waren 733 ms.
+  // nie frueher als bestellt, aber spaeter. Die Ursache der 733 ms aus der
+  // Abnahme vom 10.09.2026 ist gefunden: der Reiter war verborgen
+  // (document.visibilityState = hidden, so oeffnet ihn die Browsersteuerung),
+  // und Chrome legt Timer verborgener Reiter auf volle Sekunden. In der
+  // Nachabnahme stand dieselbe Seite verborgen bei 1053 ms, sichtbar im
+  // kopflosen Chromium bei 250 ms. Die Anzeige sagt deshalb dazu, ob der
+  // Reiter sichtbar war.
   if (P.fall === "abbruch"){
     timerSpaeter(function(){
       if (ergebnisGesendet) return;
@@ -365,7 +372,8 @@ async function starten(){
       clearInterval(balken);
       const gemessen = Math.round(performance.now() - start);
       senden("redirect.write", { ergebnis:"abbruch", dauer_ms: gemessen, status:"" });
-      abbrechen("nach " + gemessen + " ms (Soll " + ABBRUCH_NACH_MS + " ms), Fall abbruch");
+      abbrechen("nach " + gemessen + " ms (Soll " + ABBRUCH_NACH_MS + " ms" +
+                (document.visibilityState === "hidden" ? ", Reiter verborgen, der Browser drosselt Timer" : "") + "), Fall abbruch");
     }, ABBRUCH_NACH_MS);
   }
 
@@ -451,11 +459,11 @@ async function starten(){
     return;
   }
   senden("page.view", { ansicht:"weiterleitung" });
-  // Erst nach dem ersten Bild starten. Lief starten() noch im Aufbau der
-  // Seite, stand der Abbruch-Timer hinter Layout und erstem Zeichnen an und
-  // feuerte bei 733 statt 250 ms. Zwei Bildwechsel abwarten heisst: die Seite
-  // ist gezeichnet, der Nutzer sieht den Status, dann laeuft die Uhr. Im
-  // Hintergrundreiter gibt es keine Bildwechsel; dort startet ein Timeout.
+  // Erst nach dem ersten Bild starten: die Seite ist gezeichnet, der Nutzer
+  // sieht den Status, dann laeuft die Uhr, und der Abbruch-Timer steht nicht
+  // hinter Layout und erstem Zeichnen an. Im verborgenen Reiter gibt es keine
+  // Bildwechsel; dort startet ein Timeout, und der Timer wird ohnehin auf
+  // volle Sekunden gelegt (siehe Fehlerfall abbruch in starten()).
   if (document.visibilityState === "visible" && window.requestAnimationFrame){
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ starten(); }); });
   } else {
