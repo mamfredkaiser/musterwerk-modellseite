@@ -1,13 +1,17 @@
 // =====================================================================
 // klickout: der Weiterleitungs-Endpunkt der Klick-out-Strecke
-// Supabase Edge Function, Deno. Stand 10.09.2026, Arbeitspaket 4.
+// Supabase Edge Function, Deno. Stand 10.09.2026, Arbeitspaket 4; Route
+// report ergaenzt am 10.09.2026 nachmittags (Arbeitspaket 5).
 //
-// Drei Pfade:
+// Vier Pfade:
 //   POST oder GET  /klickout            schreibt die Klick-ID in public.klickouts
 //                                       und antwortet mit dem Ziel beim Partner
 //   GET            /klickout/status     sagt, ob eine Klick-ID in der Tabelle steht
 //   GET            /klickout/trichter   liefert den Trichter je Partnerart und die
 //                                       letzten Klick-IDs mit ihren vier Wahrheiten
+//   GET            /klickout/report     der Arbeitgeber-Report eines Mandanten und
+//                                       Monats aus modell.arbeitgeber_report, nur
+//                                       Zellen ueber der Mindestfallzahl mit Zahlen
 //
 // Das Ziel kommt aus der Datenbank, nicht aus der Adresse. Wer die Zieladresse
 // vom Browser entgegennimmt, baut eine offene Weiterleitung, und die ist die
@@ -322,6 +326,83 @@ async function trichter(req: Request, origin: string | null): Promise<Response> 
   }), { status: 200, headers: kopf });
 }
 
+// ---------------------------------------------------------------------
+// Pfad 4: der Arbeitgeber-Report
+// Die Datenbank unterdrueckt jede Zelle unter der Mindestfallzahl selbst.
+// Diese Funktion prueft es ein zweites Mal und nimmt Zahlen aus jeder Zelle,
+// die unterdrueckt ist oder unter der Schwelle liegt, bevor sie antwortet:
+// eine kleine Zahl soll nicht deshalb die Datenbank verlassen, weil jemand
+// die Funktion in der Datenbank aendert und hier niemand hinsieht.
+// ---------------------------------------------------------------------
+const MINDESTFALLZAHL = 20;       // Teil G 6.2, Stufe eins und zwei
+const MINDESTFALLZAHL_STUFE_3 = 50;
+const REPORT_TABELLEN = ["rohereignisse", "klickouts", "postbacks", "angebote", "anbieter"];
+const ZAHLENFELDER = ["grundgesamtheit", "angebotsansichten", "klickouts", "ersparnis_belegt", "ersparnis_geschaetzt",
+                      "klickouts_ohne_rueckkanal", "anteil_nicht_erfasst"];
+
+function monatBerlin(): string {
+  const teile = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", year: "numeric", month: "2-digit" })
+    .formatToParts(new Date());
+  const jahr = teile.find((x) => x.type === "year")?.value ?? "1970";
+  const monat = teile.find((x) => x.type === "month")?.value ?? "01";
+  return jahr + "-" + monat;
+}
+
+async function report(req: Request, origin: string | null): Promise<Response> {
+  const kopf = kopfzeilen(origin);
+  const q = new URL(req.url).searchParams;
+  const mandant = q.get("mandant") || "";
+  const monat = q.get("monat") || monatBerlin();
+  const quelle = q.get("quelle") || "live";
+  if (!/^[a-z0-9_-]{1,40}$/.test(mandant)) {
+    return new Response(JSON.stringify({ fehler: "Parameter mandant fehlt oder ist ungueltig" }), { status: 400, headers: kopf });
+  }
+  if (!/^20[0-9]{2}-(0[1-9]|1[0-2])$/.test(monat)) {
+    return new Response(JSON.stringify({ fehler: "Parameter monat muss die Form JJJJ-MM haben" }), { status: 400, headers: kopf });
+  }
+  if (quelle !== "live" && quelle !== "synthetisch") {
+    return new Response(JSON.stringify({ fehler: "Parameter quelle muss live oder synthetisch sein" }), { status: 400, headers: kopf });
+  }
+
+  const r = await rest("/rpc/arbeitgeber_report", {
+    method: "POST",
+    body: JSON.stringify({ p_mandant: mandant, p_monat: monat + "-01", p_quelle: quelle }),
+  });
+  if (!r.ok) {
+    const text = await r.text();
+    console.error("arbeitgeber_report fehlgeschlagen", r.status, text);
+    const unbekannt = text.includes("steht nicht in modell.mandant");
+    return new Response(JSON.stringify({ fehler: unbekannt ? "Mandant unbekannt" : "Report nicht lesbar", status: r.status }),
+      { status: unbekannt ? 400 : 502, headers: kopf });
+  }
+  const zeilen = (await r.json()) as Record<string, unknown>[];
+  let nachgeschwaerzt = 0;
+  for (const z of zeilen) {
+    const schwelle = z.stufe === 3 ? MINDESTFALLZAHL_STUFE_3 : MINDESTFALLZAHL;
+    const n = typeof z.grundgesamtheit === "number" ? z.grundgesamtheit : null;
+    if (z.unterdrueckt === true || n === null || n < schwelle) {
+      for (const f of ZAHLENFELDER) {
+        if (z[f] !== null && z[f] !== undefined) { z[f] = null; nachgeschwaerzt++; }
+      }
+      z.unterdrueckt = true;
+    }
+  }
+  if (nachgeschwaerzt > 0) console.error("report: Zahlen in unterdrueckten Zellen nachgeschwaerzt", nachgeschwaerzt);
+  const juengste = zeilen.length ? (zeilen[0].juengste_zeile ?? null) : null;
+  for (const z of zeilen) delete z.juengste_zeile;
+  return new Response(JSON.stringify({
+    mandant, monat, quelle,
+    mindestfallzahl: MINDESTFALLZAHL,
+    mindestfallzahl_stufe_3: MINDESTFALLZAHL_STUFE_3,
+    tabellen: REPORT_TABELLEN,
+    funktion: "modell.arbeitgeber_report",
+    juengste_zeile: juengste,
+    nachgeschwaerzt,
+    zeilen,
+    abgefragt_am: new Date().toISOString(),
+  }), { status: 200, headers: kopf });
+}
+
 Deno.serve(async (req: Request) => {
   const origin = req.headers.get("origin");
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: kopfzeilen(origin, false) });
@@ -332,6 +413,7 @@ Deno.serve(async (req: Request) => {
   try {
     if (pfad === "status"   && req.method === "GET") return await status(req, origin);
     if (pfad === "trichter" && req.method === "GET") return await trichter(req, origin);
+    if (pfad === "report"   && req.method === "GET") return await report(req, origin);
     if (pfad === "" && (req.method === "GET" || req.method === "POST")) return await schreiben(req, origin);
     return new Response(JSON.stringify({ fehler: "unbekannter Pfad oder Methode" }), { status: 404, headers: kopfzeilen(origin) });
   } catch (e) {

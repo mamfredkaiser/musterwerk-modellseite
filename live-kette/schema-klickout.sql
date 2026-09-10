@@ -1,6 +1,8 @@
 -- =====================================================================
 -- Live-Kette Musterwerk Vorteilsportal: Klick-out-Strecke
--- Stand 10.09.2026, Arbeitspaket 4
+-- Stand 10.09.2026, Arbeitspaket 4; Trichter und Rechte ergaenzt am 10.09.2026
+-- nachmittags (Arbeitspaket 5): Browserzeilen je Quelle, Spalte nur_partner,
+-- Ausfuehrungsrecht von PUBLIC entzogen
 --
 -- Drei Tabellen fuer drei Wahrheiten:
 --   klickouts          was der eigene Weiterleitungs-Endpunkt geschrieben hat
@@ -217,23 +219,36 @@ begin
 end;
 $$;
 
-revoke all on function public.klickout_aufraeumen(integer) from anon, authenticated;
+-- PUBLIC gehoert dazu, siehe schema.sql Abschnitt 4: sonst kann anon die
+-- Funktion ueber die Schnittstelle aufrufen, und sie ist security definer.
+revoke all on function public.klickout_aufraeumen(integer) from public, anon, authenticated;
 grant execute on function public.klickout_aufraeumen(integer) to service_role;
 
 -- ---------------------------------------------------------------------
 -- 6. Der Trichter
 -- Vier Wahrheiten je Partnerart, aus den Tabellen gelesen, nicht gepflegt:
---   browser_klicks   Messpunkte offer.clickout und offer.code.show in rohereignisse
---                    (die Seite hat den Klick gesehen)
+--   browser_klicks   Klick-IDs der Messpunkte offer.clickout und offer.code.show in
+--                    rohereignisse (die Seite hat den Klick gesehen), je Quelle
 --   tabelle          Zeilen in klickouts (der Endpunkt hat geschrieben)
 --   angekommen       davon mit Landungs-Pixel (der Partner hat den Nutzer gesehen)
 --   bestellungen     Postbacks der Art bestellung oder code_einloesung
---   verwaist         Postbacks mit einer Klick-ID, die klickouts nicht kennt
+--   verwaist         Postbacks mit einer Klick-ID, die klickouts beim Empfang nicht kannte
+--   nur_partner      Klick-IDs, die der Partner gemeldet hat und die in klickouts
+--                    fehlen: der Befund "nur Partner" aus klickout_wahrheiten, als Zahl
 -- p_quelle: live, synthetisch oder alle. p_stunden begrenzt das Fenster,
 -- NULL heisst ohne Grenze.
 -- Der Browser-Zaehler kennt keine Partnerart, weil die Seite sie nicht
 -- schickt; er wird ueber den Katalog (angebote, anbieter) zugeordnet.
+--
+-- Seit Arbeitspaket 5 hat rohereignisse die Spalte quelle, und der Seed
+-- schreibt Browserzeilen. Der Browser-Zaehler filtert deshalb nach quelle
+-- wie die anderen Zaehler und zaehlt Klick-IDs statt Ereignisse, damit ein
+-- doppelt gesendeter Messpunkt nicht als zweiter Klick erscheint. Die neue
+-- Spalte nur_partner aendert die Rueckgabe; create or replace kann das
+-- nicht, deshalb wird die Funktion unter demselben Namen neu angelegt.
 -- ---------------------------------------------------------------------
+
+drop function if exists public.klickout_trichter(text, integer);
 
 create or replace function public.klickout_trichter(
     p_quelle  text    default 'live',
@@ -247,7 +262,8 @@ create or replace function public.klickout_trichter(
     bestellwert      numeric,
     verwaist         bigint,
     luecke_tabelle   bigint,   -- Browser sah den Klick, Tabelle hat keine Zeile
-    luecke_ankunft   bigint    -- Tabelle hat die Zeile, Partner sah niemanden
+    luecke_ankunft   bigint,   -- Tabelle hat die Zeile, Partner sah niemanden
+    nur_partner      bigint    -- Partner meldet die Klick-ID, Tabelle hat keine Zeile
 )
 language sql
 stable
@@ -268,12 +284,13 @@ as $$
           join public.anbieter b on b.anbieter_id = a.anbieter_id
     ),
     browser as (
-        select coalesce(art.partner, 'unbekannt') as partner, count(*) as n
+        select coalesce(art.partner, 'unbekannt') as partner,
+               count(distinct coalesce(r.klick_id, r.id::text)) as n
           from public.rohereignisse r
           left join art on art.angebot_id = r.angebot
          where r.ereignis in ('offer.clickout', 'offer.code.show')
            and r.empfangen_am >= (select ab from grenze)
-           and (p_quelle = 'alle' or p_quelle = 'live')
+           and (p_quelle = 'alle' or r.quelle = p_quelle)
          group by 1
     ),
     ko as (
@@ -313,11 +330,22 @@ as $$
            and (p_quelle = 'alle' or p.quelle = p_quelle)
          group by 1
     ),
+    nur_partner as (
+        select coalesce(p.partner, 'unbekannt') as partner,
+               count(distinct p.klick_id) as n
+          from public.postbacks p
+         where p.klick_id is not null
+           and not exists (select 1 from public.klickouts k where k.klick_id = p.klick_id)
+           and p.empfangen_am >= (select ab from grenze)
+           and (p_quelle = 'alle' or p.quelle = p_quelle)
+         group by 1
+    ),
     alle as (
         select partner from browser
         union select partner from ko
         union select partner from pb
         union select partner from verwaist
+        union select partner from nur_partner
     )
     select alle.partner,
            coalesce(browser.n, 0)          as browser_klicks,
@@ -327,19 +355,21 @@ as $$
            coalesce(pb.bestellwert, 0)     as bestellwert,
            coalesce(verwaist.n, 0)         as verwaist,
            greatest(coalesce(browser.n, 0) - coalesce(ko.n, 0), 0)      as luecke_tabelle,
-           greatest(coalesce(ko.n, 0) - coalesce(ko.angekommen, 0), 0)  as luecke_ankunft
+           greatest(coalesce(ko.n, 0) - coalesce(ko.angekommen, 0), 0)  as luecke_ankunft,
+           coalesce(nur_partner.n, 0)      as nur_partner
       from alle
       left join browser  on browser.partner  = alle.partner
       left join ko       on ko.partner       = alle.partner
       left join pb       on pb.partner       = alle.partner
       left join verwaist on verwaist.partner = alle.partner
+      left join nur_partner on nur_partner.partner = alle.partner
      order by case alle.partner when 'deeplink' then 1 when 'gutschein' then 2 when 'ohne' then 3 else 4 end;
 $$;
 
 comment on function public.klickout_trichter is
-    'Trichter je Partnerart aus rohereignisse, klickouts und postbacks. p_quelle live, synthetisch oder alle; p_stunden begrenzt das Fenster.';
+    'Trichter je Partnerart aus rohereignisse, klickouts und postbacks, je Quelle. nur_partner zaehlt Klick-IDs, die nur der Partner kennt. p_quelle live, synthetisch oder alle; p_stunden begrenzt das Fenster.';
 
-revoke all on function public.klickout_trichter(text, integer) from anon, authenticated;
+revoke all on function public.klickout_trichter(text, integer) from public, anon, authenticated;
 grant execute on function public.klickout_trichter(text, integer) to service_role;
 
 -- ---------------------------------------------------------------------
