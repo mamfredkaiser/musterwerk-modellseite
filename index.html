@@ -1,0 +1,2680 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Musterwerk Vorteilsportal - Modellseite Tracking</title>
+<style>
+/* Neutrales Layout, große Schrift, keine externen Ressourcen.
+   Farben bewusst grau und blau, ohne Bezug zu einer echten Marke. */
+:root{
+  --grund:#f7f7f6;
+  --flaeche:#ffffff;
+  --linie:#c9c9c4;
+  --linie-hell:#e4e4e0;
+  --text:#1b1b1a;
+  --text-leise:#5a5a55;
+  --akzent:#1d4e79;
+  --akzent-hell:#e8f0f7;
+  --warn:#8a3b12;
+  --warn-hell:#fbeee6;
+  --gut:#1f5d34;
+  --gut-hell:#e9f3ec;
+  --konsole-breite:430px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--grund);
+  color:var(--text);
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:17px;
+  line-height:1.55;
+}
+#haupt{
+  margin-right:var(--konsole-breite);
+  padding:0 32px 80px 32px;
+  max-width:1100px;
+}
+h1{font-size:30px;margin:0 0 4px 0;letter-spacing:-0.01em}
+h2{font-size:24px;margin:36px 0 10px 0;border-bottom:2px solid var(--linie);padding-bottom:6px}
+h3{font-size:19px;margin:26px 0 8px 0}
+h4{font-size:17px;margin:18px 0 6px 0}
+p{margin:10px 0}
+a{color:var(--akzent)}
+code,kbd,samp,.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:14px}
+
+/* Kopf */
+header#kopf{
+  background:var(--flaeche);
+  border-bottom:2px solid var(--linie);
+  padding:18px 32px 0 32px;
+  margin:0 -32px 0 -32px;
+  position:sticky;top:0;z-index:20;
+}
+.kopf-zeile{display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;justify-content:space-between}
+.kopf-titel .unter{color:var(--text-leise);font-size:15px;margin:2px 0 0 0}
+.kopf-schalter{display:flex;gap:18px;align-items:center;flex-wrap:wrap;font-size:15px}
+.kopf-schalter label{font-weight:600;display:block;font-size:13px;color:var(--text-leise);margin-bottom:2px}
+select,input[type=text],input[type=number]{
+  font:inherit;font-size:15px;padding:5px 8px;border:1px solid var(--linie);
+  background:var(--flaeche);border-radius:3px;color:var(--text);
+}
+nav#reiter{display:flex;gap:2px;margin-top:14px}
+nav#reiter a{
+  display:block;padding:9px 16px;text-decoration:none;color:var(--text);
+  border:1px solid var(--linie);border-bottom:none;border-radius:4px 4px 0 0;
+  background:var(--grund);font-size:15px;
+}
+nav#reiter a.aktiv{background:var(--flaeche);font-weight:700;border-color:var(--linie);position:relative;top:2px;color:var(--akzent)}
+
+/* Ansichten */
+section.ansicht{display:none;padding-top:22px}
+section.ansicht.sichtbar{display:block}
+
+/* Kästen */
+.kasten{background:var(--flaeche);border:1px solid var(--linie);border-radius:4px;padding:16px 18px;margin:16px 0}
+.kasten.hinweis{background:var(--akzent-hell);border-color:#b8cfe2}
+.kasten.warn{background:var(--warn-hell);border-color:#e0bda6}
+.kasten.gut{background:var(--gut-hell);border-color:#b6d3bf}
+.leise{color:var(--text-leise);font-size:15px}
+
+/* Slots und Teaser */
+.slot{border:1px dashed var(--linie);border-radius:4px;padding:8px;margin:14px 0;background:var(--flaeche)}
+.slot-kopf{font-size:13px;color:var(--text-leise);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:6px}
+.teaser{border:1px solid var(--linie);border-radius:4px;padding:14px 16px;background:var(--flaeche)}
+.teaser h4{margin:0 0 4px 0;font-size:18px}
+.teaser .anbieter{color:var(--text-leise);font-size:14px;margin:0 0 8px 0}
+.teaser .preis{font-weight:700;font-size:18px;margin:6px 0}
+.teaser-liste{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hero .teaser{border-left:6px solid var(--akzent);padding:22px 24px}
+.hero .teaser h4{font-size:24px}
+.katnav{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.skyscraper .teaser{min-height:150px}
+
+button{
+  font:inherit;font-size:15px;padding:8px 14px;border-radius:3px;
+  border:1px solid var(--akzent);background:var(--akzent);color:#fff;cursor:pointer;
+}
+button.sekundaer{background:var(--flaeche);color:var(--akzent)}
+button.klein{font-size:13px;padding:4px 9px}
+button:hover{filter:brightness(1.08)}
+.knopfreihe{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+/* Tabellen */
+table.d{border-collapse:collapse;width:100%;margin:12px 0;font-size:14px;background:var(--flaeche)}
+table.d th,table.d td{border:1px solid var(--linie-hell);padding:6px 8px;text-align:left;vertical-align:top}
+table.d th{background:#efefec;font-size:13px;letter-spacing:0.02em}
+table.d td.zahl,table.d th.zahl{text-align:right;font-variant-numeric:tabular-nums}
+table.d tr.unterdrückt td{background:#f2f2ef;color:var(--text-leise);font-style:italic}
+.tabellenrahmen{overflow-x:auto}
+
+/* Belegstatus */
+.beleg{font-size:11px;padding:1px 5px;border-radius:9px;border:1px solid var(--linie);white-space:nowrap;color:var(--text-leise)}
+.beleg.gemessen{background:var(--gut-hell);border-color:#b6d3bf;color:var(--gut)}
+.beleg.geschätzt{background:#fdf6e3;border-color:#ddd0a8;color:#7a5c12}
+.beleg.nicht{background:#f0f0ed}
+
+/* Konsole */
+#konsole{
+  position:fixed;top:0;right:0;width:var(--konsole-breite);height:100vh;
+  background:#1c2126;color:#dfe4e8;overflow-y:auto;z-index:30;
+  border-left:3px solid #0f1316;
+  font-size:13px;line-height:1.45;
+}
+#konsole h2{font-size:15px;color:#fff;border:none;margin:0;padding:12px 14px;background:#0f1316;position:sticky;top:0;z-index:2;letter-spacing:0.02em}
+#konsole .kbereich{border-bottom:1px solid #2c343b;padding:10px 14px}
+#konsole .kbereich > h3{font-size:12px;text-transform:uppercase;letter-spacing:0.08em;color:#8fa3b0;margin:0 0 6px 0;cursor:pointer;user-select:none}
+#konsole .kbereich > h3 .pfeil{display:inline-block;width:12px}
+#konsole code,#konsole .mono{font-size:12px}
+#konsole button{font-size:12px;padding:4px 9px}
+#konsole button{background:#2b343c;border:1px solid #4a5a66;color:#dfe4e8}
+#konsole button:hover{background:#3a4650}
+.req{border:1px solid #39444d;border-radius:3px;margin-bottom:7px;background:#232a30}
+.req .zeile1{padding:5px 7px;cursor:pointer;display:flex;gap:6px;align-items:baseline}
+.req .marke{font-size:10px;padding:0 5px;border-radius:8px;background:#3d5a3f;color:#cfe6d1;white-space:nowrap}
+.req .marke.klick{background:#5a4630;color:#f0dcc4}
+.req .marke.teaser{background:#30485a;color:#c8dff0}
+.req .marke.seite{background:#3d3d5a;color:#d2d2f0}
+.req .evname{font-family:monospace;font-size:12px;word-break:break-all}
+.req .zeit{color:#7b8b96;font-size:11px;margin-left:auto}
+.req .sende{font-size:10px;padding:0 5px;border-radius:8px;background:#2b343c;color:#8fa3b0;white-space:nowrap}
+.req .sende.gut{background:#3d5a3f;color:#cfe6d1}
+.req .sende.schlecht{background:#5a3030;color:#f0c4c4}
+.req .detail{display:none;padding:6px 8px;border-top:1px solid #39444d;background:#1b2126}
+.req.offen .detail{display:block}
+.req .url{word-break:break-all;color:#9fd0a3;font-family:monospace;font-size:11px;margin-bottom:6px}
+.req table{width:100%;border-collapse:collapse;font-size:11px}
+.req table td{padding:1px 4px;border-bottom:1px solid #2c343b;vertical-align:top}
+.req table td:first-child{color:#8fa3b0;white-space:nowrap;width:40%}
+.dl-block{margin-bottom:8px}
+.dl-block .dlname{color:#9fd0a3;font-family:monospace;font-size:12px}
+.dl-block table{width:100%;border-collapse:collapse;font-size:11px;margin-top:3px}
+.dl-block table td{padding:1px 4px;border-bottom:1px solid #2c343b;vertical-align:top}
+.dl-block table td:first-child{color:#8fa3b0;white-space:nowrap;width:46%}
+.geht-nicht{text-decoration:line-through;color:#a3737a}
+.geht-mit{color:#9fd0a3}
+#speicherausgabe{font-family:monospace;font-size:11px;white-space:pre-wrap;margin-top:7px;background:#12171b;padding:7px;border-radius:3px;border:1px solid #2c343b}
+.zaehler{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:12px}
+.zaehler b{font-variant-numeric:tabular-nums}
+.kfuss{padding:10px 14px;color:#7b8b96;font-size:11px}
+
+/* Kleinigkeiten */
+.pill{display:inline-block;font-size:12px;padding:1px 7px;border:1px solid var(--linie);border-radius:9px;background:var(--flaeche);color:var(--text-leise)}
+.abstand{height:520px;border-top:1px dashed var(--linie-hell);margin-top:24px;padding-top:10px;color:var(--text-leise);font-size:14px}
+.regler-zeile{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:10px 0}
+input[type=range]{width:260px}
+.fehlerliste li{margin-bottom:4px}
+/* Suche */
+.suchblock{background:var(--flaeche);border:1px solid var(--linie);border-radius:4px;padding:14px 16px;margin:16px 0}
+.suchzeile{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+#suchfeld{flex:1;min-width:240px;font-size:18px;padding:9px 12px}
+.vorschlaege{border:1px solid var(--linie);border-top:none;border-radius:0 0 4px 4px;background:var(--flaeche);margin:0;padding:0;list-style:none}
+.vorschlaege li{padding:8px 12px;border-bottom:1px solid var(--linie-hell);cursor:pointer;display:flex;gap:10px;align-items:baseline}
+.vorschlaege li:last-child{border-bottom:none}
+.vorschlaege li:hover,.vorschlaege li.aktiv{background:var(--akzent-hell)}
+.vorschlaege .pos{color:var(--text-leise);font-size:12px;width:14px;flex:none}
+.vorschlaege .typ{margin-left:auto;font-size:12px;color:var(--text-leise)}
+.treffer{border:1px solid var(--linie);border-radius:4px;padding:12px 14px;margin:10px 0;background:var(--flaeche);cursor:pointer}
+.treffer:hover{background:var(--akzent-hell)}
+.treffer h4{margin:0 0 3px 0}
+.variantenzeile{font-size:14px;color:var(--text-leise);margin-top:8px}
+@media print{#konsole{position:static;width:auto;height:auto}#haupt{margin-right:0}}
+</style>
+</head>
+<body>
+<!-- ================= Tracking-Konsole (rechts, in jeder Ansicht sichtbar) ================= -->
+<aside id="konsole" aria-label="Tracking-Konsole">
+  <h2>Tracking-Konsole</h2>
+
+  <div class="kbereich">
+    <h3 data-klapp="k-req"><span class="pfeil">&#9660;</span> Messpunkte dieser Sitzung</h3>
+    <div id="k-req">
+      <div class="knopfreihe" style="margin:0 0 8px 0">
+        <button class="klein" id="btn-req-leeren" type="button">Liste leeren</button>
+        <button class="klein" id="btn-req-alle" type="button">Alle aufklappen</button>
+      </div>
+      <div id="reqliste"></div>
+    </div>
+  </div>
+
+  <div class="kbereich">
+    <h3 data-klapp="k-dl"><span class="pfeil">&#9660;</span> Datenlayer</h3>
+    <div id="k-dl"></div>
+  </div>
+
+  <div class="kbereich">
+    <h3 data-klapp="k-sp"><span class="pfeil">&#9660;</span> Speicher und Kampagne</h3>
+    <div id="k-sp">
+      <div class="knopfreihe" style="margin:0">
+        <button class="klein" id="btn-speicher" type="button">Speicher prüfen</button>
+        <button class="klein" id="btn-teasermarkup" type="button">Teaser-Markup zeigen</button>
+      </div>
+      <pre id="speicherausgabe">Noch nicht geprüft.</pre>
+      <div style="margin-top:8px">
+        <div style="color:#8fa3b0">Mediacode dieser Sitzung</div>
+        <div class="mono" id="k-mediacode" style="color:#9fd0a3;word-break:break-all">-</div>
+        <div id="k-mediacode-grund" style="color:#8fa3b0;font-size:11px"></div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="color:#8fa3b0">Sitzungskennung dieser Seitenladung</div>
+        <div class="mono" id="k-sitzung" style="color:#9fd0a3">-</div>
+        <div style="color:#8fa3b0;font-size:11px">lebt in einer Variablen, stirbt beim Neuladen</div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="color:#8fa3b0">Live senden</div>
+        <div class="mono" id="k-live" style="color:#9fd0a3">aus</div>
+        <div id="k-live-grund" style="color:#8fa3b0;font-size:11px"></div>
+        <div class="knopfreihe" style="margin-top:6px">
+          <button class="klein" id="btn-live-pruefen" type="button">Verbindung prüfen</button>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="color:#8fa3b0">Variante der Autovervollständigung</div>
+        <div class="mono" id="k-variante" style="color:#9fd0a3">-</div>
+        <div id="k-variante-grund" style="color:#8fa3b0;font-size:11px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kbereich">
+    <h3 data-klapp="k-z"><span class="pfeil">&#9660;</span> Zähler</h3>
+    <div id="k-z"><div class="zaehler" id="zaehlerfeld"></div></div>
+  </div>
+
+  <div class="kfuss">
+    Kein Request verlässt diese Seite. Die Zeilen oben zeigen, was ein Tracker senden würde.
+    Ein Neuladen setzt alles zurück, weil nichts gespeichert wird.
+  </div>
+</aside>
+
+<!-- ================= Hauptbereich ================= -->
+<div id="haupt">
+
+<header id="kopf">
+  <div class="kopf-zeile">
+    <div class="kopf-titel">
+      <h1>Musterwerk Vorteilsportal</h1>
+      <p class="unter">Fiktives Vorteilsportal zur Vorführung einer Messarchitektur. Keine echten Marken, keine echten Daten, kein Versand.</p>
+    </div>
+    <div class="kopf-schalter">
+      <div>
+        <label for="sel-mandant">Mandant</label>
+        <select id="sel-mandant"></select>
+      </div>
+      <div>
+        <label for="chk-login">Anmeldung</label>
+        <span><input type="checkbox" id="chk-login"> <span id="lbl-login">abgemeldet</span></span>
+      </div>
+      <div>
+        <label for="chk-live">Live senden</label>
+        <span><input type="checkbox" id="chk-live"> <span id="lbl-live">aus</span></span>
+      </div>
+    </div>
+  </div>
+  <nav id="reiter">
+    <a href="#start" data-ansicht="start">Startseite</a>
+    <a href="#suche" data-ansicht="suche">Suche</a>
+    <a href="#angebot" data-ansicht="angebot">Angebot</a>
+    <a href="#anbieter" data-ansicht="anbieter">Anbieterseite</a>
+    <a href="#auswertung" data-ansicht="auswertung">Auswertung</a>
+    <a href="#messplan" data-ansicht="messplan">Messplan</a>
+    <a href="#datenschutz" data-ansicht="datenschutz">Datenschutz</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ---------- Startseite ---------- -->
+<section class="ansicht" id="v-start">
+  <div class="kasten hinweis">
+    <p style="margin:0">Rechts steht die Tracking-Konsole. Jeder Messpunkt erscheint dort in dem Moment, in dem er entsteht, und kein Request verlässt die Seite.</p>
+  </div>
+
+
+  <div class="suchblock">
+    <div class="suchzeile">
+      <input type="text" id="suchfeld" autocomplete="off" spellcheck="false"
+             placeholder="Angebot, Kategorie oder Anbieter suchen"
+             data-mw-event="search.open" data-mw-such="open" data-mw-eigen="ja"
+             data-mw-label="Suchfeld geöffnet">
+      <button type="button" id="btn-suche"
+              data-mw-event="search.submit" data-mw-such="submit" data-mw-eigen="ja"
+              data-mw-label="Suche abschicken">Suchen</button>
+      <button type="button" class="sekundaer" id="btn-suche-zu">Schließen</button>
+    </div>
+    <ul class="vorschlaege" id="vorschlaege" hidden></ul>
+    <p class="variantenzeile" id="variantenzeile"></p>
+  </div>
+
+  <div class="slot hero" data-slot="Hero">
+    <div class="slot-kopf">Slot Hero</div>
+    <div data-slotinhalt="Hero"></div>
+  </div>
+
+  <div class="slot" data-slot="Kat-Nav">
+    <div class="slot-kopf">Slots Kat-Nav1 bis Kat-Nav3</div>
+    <div class="katnav" data-slotinhalt="Kat-Nav"></div>
+  </div>
+
+  <div class="slot skyscraper" data-slot="Skyscraper">
+    <div class="slot-kopf">Slot Skyscraper</div>
+    <div data-slotinhalt="Skyscraper"></div>
+  </div>
+
+  <h2>Kampagneneinstieg ausprobieren</h2>
+  <p class="leise">Die Links laden dieselbe Datei mit Kampagnenparametern neu. Der Mediacode entsteht beim Laden aus <code>utm_medium</code>, <code>utm_source</code>, <code>utm_campaign</code> und <code>utm_content</code>, gegen die geschlossene Werteliste und die Prüfausdrücke des UTM-Konzepts geprüft.</p>
+  <div class="knopfreihe" id="kampagnenlinks"></div>
+
+  <h2>Kategorien</h2>
+  <div class="knopfreihe" id="katnavigation"></div>
+
+  <div class="abstand">
+    <p>Ab hier beginnt der Bereich, der beim Laden nicht im Blick liegt. Die Liste darunter zählt erst als sichtbar, wenn sie zur Hälfte im Fenster war. Weiterscrollen.</p>
+  </div>
+
+  <div class="slot" data-slot="Liste">
+    <div class="slot-kopf">Slots Liste Position 1 bis 6</div>
+    <div class="teaser-liste" data-slotinhalt="Liste"></div>
+  </div>
+
+  <h2>Fußbereich</h2>
+  <div class="knopfreihe">
+    <button type="button" class="sekundaer" data-mw-event="footer.teaser.tell-a-colleague" data-mw-label="Kollegin empfehlen">Kollegin oder Kollegen empfehlen</button>
+    <button type="button" class="sekundaer" data-mw-event="footer.link.datenschutz" data-mw-label="Datenschutz">Datenschutz</button>
+    <button type="button" class="sekundaer" data-mw-event="footer.link.kontakt" data-mw-label="Kontakt">Kontakt</button>
+  </div>
+</section>
+
+<!-- ---------- Suchergebnis ---------- -->
+<section class="ansicht" id="v-suche">
+  <div id="suche-inhalt"></div>
+</section>
+
+<!-- ---------- Angebotsseite ---------- -->
+<section class="ansicht" id="v-angebot">
+  <div id="angebot-inhalt"></div>
+</section>
+
+<!-- ---------- Simulierte Anbieterseite ---------- -->
+<section class="ansicht" id="v-anbieter">
+  <div id="anbieter-inhalt"></div>
+</section>
+
+<!-- ---------- Auswertung ---------- -->
+<section class="ansicht" id="v-auswertung">
+  <h2>Auswertung</h2>
+  <p class="leise">Die Slot- und Join-Tabellen zeigen die Ereignisse dieser Sitzung. Der Arbeitgeber-Report rechnet zusätzlich mit einem synthetischen Bestand von rund 300 fiktiven Konten über beide Mandanten, mit festem Startwert des Zufallsgenerators, damit die Zahlen bei jedem Aufruf gleich sind.</p>
+
+  <h3>Slots: Auslieferung, Sichtbarkeit, Klick</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-slots"></table></div>
+  <p class="leise" id="hinweis-position"></p>
+
+  <h3>Klick-Schlüssel und Rückkanal</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-join"></table></div>
+  <h4>Zuordnungstabelle der Klick-IDs</h4>
+  <div class="tabellenrahmen"><table class="d" id="tab-klicks"></table></div>
+  <h4>Gemeldete Transaktionen</h4>
+  <div class="tabellenrahmen"><table class="d" id="tab-transaktionen"></table></div>
+
+  <h3>Suche</h3>
+  <p class="leise">Die Zahlen gelten für die laufende Sitzung und für die Variante, die oben in der Konsole steht. Ein Neuladen setzt sie zurück.</p>
+  <div class="tabellenrahmen"><table class="d" id="tab-suche"></table></div>
+  <h4>Suchstrecken dieser Sitzung</h4>
+  <div class="tabellenrahmen"><table class="d" id="tab-strecken"></table></div>
+
+  <h3>Kampagneneinstieg</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-kampagne"></table></div>
+
+  <h3>Arbeitgeber-Report</h3>
+  <div class="kasten">
+    <div class="regler-zeile">
+      <div>
+        <label for="sel-stufe" style="font-size:13px;color:var(--text-leise);display:block">Reporting-Stufe</label>
+        <select id="sel-stufe">
+          <option value="1">Stufe eins: Mandant gesamt</option>
+          <option value="2" selected>Stufe zwei: Kategorien und Angebote</option>
+          <option value="3">Stufe drei: Standorte</option>
+        </select>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <label for="regler" style="font-size:13px;color:var(--text-leise);display:block">Mindestfallzahl je Zelle: <b id="regler-wert">20</b> Konten</label>
+        <input type="range" id="regler" min="0" max="80" step="5" value="20"
+               data-mw-event="report.threshold.change" data-mw-label="Mindestfallzahl geändert">
+      </div>
+    </div>
+    <p class="leise" id="stufen-hinweis" style="margin-bottom:0"></p>
+  </div>
+  <div id="report-inhalt"></div>
+</section>
+
+<!-- ---------- Messplan ---------- -->
+<section class="ansicht" id="v-messplan">
+  <h2>Messplan</h2>
+  <p class="leise">Der Messplan ist die Liste der Messpunkte mit Auslöser, Parametern und Zweck. Darunter steht die Prüfung: Sie liest die Attribute aus dem Markup dieser Seite und vergleicht sie mit dem Plan, in beide Richtungen.</p>
+
+  <h3>Prüfung Markup gegen Messplan</h3>
+  <div id="pruefergebnis"></div>
+
+  <h3>Messpunkte</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-messplan"></table></div>
+
+  <h3>Seitentaxonomie</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-taxonomie"></table></div>
+
+  <h3>Parameter im Request</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-parameter"></table></div>
+
+  <h3>Werteliste utm_medium</h3>
+  <div class="tabellenrahmen"><table class="d" id="tab-medium"></table></div>
+</section>
+
+<!-- ---------- Datenschutz ---------- -->
+<section class="ansicht" id="v-datenschutz">
+  <h2>Datenschutz auf dieser Seite</h2>
+  <p class="leise">Diese Seite ist eine Vorführung. Sie gehört zu keinem Unternehmen, sie verkauft nichts, und die Angebote, Anbieter und Mandanten sind erfunden.</p>
+
+  <h3>Was diese Seite auf Ihrem Gerät tut</h3>
+  <p>Nichts. Sie setzt kein Cookie, sie schreibt nicht in den lokalen Speicher und sie liest dort nichts. Der Knopf „Speicher prüfen“ in der Konsole rechts liest <code>document.cookie</code>, <code>localStorage</code> und <code>sessionStorage</code> aus und zeigt Ihnen, dass alle drei leer sind. Damit gibt es keinen Zugriff auf Ihr Endgerät im Sinne von § 25 TDDDG, und es ist keine Einwilligung einzuholen.</p>
+
+  <h3>Was gesendet wird</h3>
+  <p>Solange der Schalter „Live senden“ oben aus ist: gar nichts. Die Konsole zeigt dann nur, wie ein Request aussehen würde.</p>
+  <p>Ist der Schalter an, geht je Messpunkt eine Zeile an einen eigenen Sammler. Sie enthält den Namen des Messpunkts, den Seitennamen, die Seitengruppen, den erfundenen Mandanten, die Kampagnenkennung aus der Adresse, die Variante der Autovervollständigung und je nach Messpunkt Angebot, Anbieter, Belegung, Slot, Position, Trefferzahl oder Suchbegriff. Dazu eine Sitzungskennung, die diese Seite beim Laden zufällig erzeugt und in einer Variablen hält; ein Neuladen erzeugt eine neue, und damit endet jede Wiedererkennung.</p>
+  <p>Der Suchbegriff wird vorher kleingeschrieben, von überflüssigen Leerzeichen befreit, gegen vier Prüfausdrücke gehalten (Mailadresse, Telefonnummer, IBAN, lange Ziffernfolge) und auf 40 Zeichen gekürzt. Was durchfällt, geht als <code>[gefiltert]</code> mit.</p>
+  <p>Schalten Sie oben „Anmeldung“ ein, kommt zusätzlich ein <code>userKey</code> mit. Das ist der Hash einer erfundenen Kontonummer einer erfundenen Person und gehört zu keinem Menschen.</p>
+
+  <h3>Was nicht gesendet wird</h3>
+  <p>Keine IP-Adresse, auch nicht gekürzt. Keine Zeichenkette des Browsers; der Sammler bildet daraus nur eine von drei Klassen (Desktop, Mobil, Bot). Kein Name, keine Mailadresse, kein Geburtsdatum, keine Postleitzahl. Die Konsole rechts zeigt im Block „Datenlayer“ grün, was mitgeht, und durchgestrichen, was liegen bleibt.</p>
+
+  <h3>Wo die Daten liegen und wie lange</h3>
+  <p>In einer Postgres-Datenbank bei Supabase in Irland (Region eu-west-1), in der Tabelle <code>rohereignisse</code>. Der Zugriff läuft über einen Dienstschlüssel, der nicht in dieser Seite steht. Die Zeilen werden nach 30 Tagen gelöscht.</p>
+
+  <h3>Grundlage und Zweck</h3>
+  <p>Berechtigtes Interesse nach Art. 6 Abs. 1 lit. f DSGVO: die eigene Messarchitektur vorführen und prüfen. Es findet keine Werbung statt, keine Profilbildung und keine Weitergabe an Dritte.</p>
+  <p>Der ausführliche Rahmen steht im Datenschutzkonzept zum Musterwerk-Portal, das zu dieser Vorführung gehört und nicht öffentlich liegt.</p>
+
+  <h3>Verantwortlich und Impressum</h3>
+  <p>Florian Holzenkämpfer. Anschrift und Kontakt stehen im Impressum der Hauptseite: <a href="https://florian-holzenkaempfer.de" rel="noopener">florian-holzenkaempfer.de</a>.</p>
+  <div class="knopfreihe"><button type="button" class="sekundaer" data-start="1">Zurück zur Startseite</button></div>
+</section>
+
+</main>
+</div>
+<script>
+"use strict";
+/* =====================================================================
+   Musterwerk Vorteilsportal - Modellseite
+   Eine einzelne Datei, kein Server, kein Netzwerkzugriff, keine Speicherung.
+   Der gesamte Zustand liegt in den Variablen dieses Skripts. Ein Neuladen
+   setzt ihn zurück; genau das ist Teil der Vorführung.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Stammdaten (frei erfunden)
+   ------------------------------------------------------------------ */
+
+const MONAT = "09";
+const JAHRMONAT = "2609";          // für Gutscheincodes: Jahr 26, Monat 09
+const KAMPAGNENMONAT = "2026-09";
+
+const MANDANTEN = {
+  musterwerk: {
+    platformId: "musterwerk",
+    name: "Musterwerk AG",
+    land: "DE", sprache: "de",
+    branche: "Maschinenbau",
+    belegschaft: 1840,
+    belegschaftStand: "2026-06-30",
+    reportingStufe: 3,
+    betriebsvereinbarung: true,
+    standorte: ["Werk Nord", "Verwaltung Süd"],
+    klickSchluesselStufe: 2      // Stufe zwei: userKey darf in die Zuordnungstabelle
+  },
+  nordkontor: {
+    platformId: "nordkontor",
+    name: "Nordkontor GmbH",
+    land: "DE", sprache: "de",
+    branche: "Handel",
+    belegschaft: 610,
+    belegschaftStand: "2026-08-31",
+    reportingStufe: 2,
+    betriebsvereinbarung: false,
+    standorte: ["Kontor Hafen", "Kontor Ost"],
+    klickSchluesselStufe: 1      // Stufe eins: nur Mandant, kein userKey
+  }
+};
+
+// Rückkanaltyp bestimmt den Belegstatus der Ersparnis.
+const ANBIETER = {
+  AN10412: { name: "Norddeutsche Reifenwerke", rueckkanal: "Netzwerk", netzwerk: "Partnernetz Nord" },
+  AN20873: { name: "Tellhorst Küchen",        rueckkanal: "Direkt",   netzwerk: "" },
+  AN31556: { name: "Vellbach Sport",           rueckkanal: "Code",     netzwerk: "" },
+  AN44021: { name: "Kranzler Reisen",          rueckkanal: "Netzwerk", netzwerk: "Partnernetz Nord" },
+  AN52309: { name: "Bergmann Elektro",         rueckkanal: "Direkt",   netzwerk: "" },
+  AN61140: { name: "Stadtwerke Mustertal",     rueckkanal: "keiner",   netzwerk: "" },
+  AN70918: { name: "Lindquist Mode",           rueckkanal: "Netzwerk", netzwerk: "Partnernetz Ost" }
+};
+
+/* offerId nach dem Muster PN<nummer>, wie in der Seitentaxonomie.
+   angebotstyp bestimmt, ob es einen Klick-out oder eine Code-Anzeige gibt.
+   mandanten leer heißt: für alle; sonst Mandantenausschnitt. */
+const ANGEBOTE = [
+  { id:"PN10001", titel:"Winterreifen mit Montage",   kategorie:"mobilitaet", unterkategorie:"reifen",
+    anbieter:"AN10412", typ:"Deeplink", vorteil:"18 Prozent auf den Listenpreis", wert:38, mandanten:[] },
+  { id:"PN10002", titel:"Küchenplanung mit Rabatt",  kategorie:"wohnen", unterkategorie:"kueche",
+    anbieter:"AN20873", typ:"Code", vorteil:"12 Prozent auf die Planung", wert:145, mandanten:[] },
+  { id:"PN10003", titel:"Laufschuhe der Vorsaison",   kategorie:"sport", unterkategorie:"schuhe",
+    anbieter:"AN31556", typ:"Code", vorteil:"25 Prozent im Onlineshop", wert:27, mandanten:[] },
+  { id:"PN10004", titel:"Städtereisen im Herbst",    kategorie:"reisen", unterkategorie:"staedtereisen",
+    anbieter:"AN44021", typ:"Deeplink", vorteil:"60 Euro je Buchung", wert:60, mandanten:[] },
+  { id:"PN10005", titel:"Hausgeräte zum Mitarbeitertarif", kategorie:"elektronik", unterkategorie:"grossgeraete",
+    anbieter:"AN52309", typ:"Deeplink", vorteil:"bis zu 22 Prozent", wert:96, mandanten:[] },
+  { id:"PN10006", titel:"Ökostrom für Zuhause",     kategorie:"energie", unterkategorie:"strom",
+    anbieter:"AN61140", typ:"Deeplink", vorteil:"70 Euro Wechselprämie", wert:70, mandanten:[] },
+  { id:"PN10007", titel:"Herbstmode mit Vorteil",     kategorie:"mode", unterkategorie:"damenmode",
+    anbieter:"AN70918", typ:"Deeplink", vorteil:"20 Prozent auf Neuware", wert:31, mandanten:[] },
+  { id:"PN10008", titel:"Fitnessstudio im Umkreis",   kategorie:"sport", unterkategorie:"fitness",
+    anbieter:"AN31556", typ:"Code", vorteil:"Aufnahmegebühr entfällt", wert:49, mandanten:["musterwerk"] }
+];
+
+/* Belegungen: der Belegungsplan des Vertriebs. Slot, Platzierungstyp, Monat,
+   gebuchter Preis, Sichtbarkeitsregel. Das ist die Entität, an der die
+   Messung und der verkaufte Preis zusammenkommen. */
+const BELEGUNGEN = [
+  { id:"BEL-2609-HERO",  slot:"Hero",       platzierung:"Startseite", position:1, angebot:"PN10001", preis:2400, sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-SKY",   slot:"Skyscraper", platzierung:"Startseite", position:1, angebot:"PN10002", preis:1450, sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-KN1",   slot:"Kat-Nav1",   platzierung:"Kat-Nav",    position:1, angebot:"PN10003", preis:900,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-KN2",   slot:"Kat-Nav2",   platzierung:"Kat-Nav",    position:2, angebot:"PN10004", preis:800,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-KN3",   slot:"Kat-Nav3",   platzierung:"Kat-Nav",    position:3, angebot:"PN10005", preis:700,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L1",    slot:"Liste 1",    platzierung:"Liste",      position:1, angebot:"PN10006", preis:520,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L2",    slot:"Liste 2",    platzierung:"Liste",      position:2, angebot:"PN10007", preis:480,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L3",    slot:"Liste 3",    platzierung:"Liste",      position:3, angebot:"PN10008", preis:440,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L4",    slot:"Liste 4",    platzierung:"Liste",      position:4, angebot:"PN10003", preis:400,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L5",    slot:"Liste 5",    platzierung:"Liste",      position:5, angebot:"PN10005", preis:360,  sicht:"50 Prozent, eine Sekunde" },
+  { id:"BEL-2609-L6",    slot:"Liste 6",    platzierung:"Liste",      position:6, angebot:"PN10002", preis:320,  sicht:"50 Prozent, eine Sekunde" }
+];
+
+/* ---------------------------------------------------------------------
+   2. Kampagnenkonvention (Werteliste und Prüfausdrücke aus dem UTM-Konzept)
+   ------------------------------------------------------------------ */
+
+const UTM_MEDIUM = {
+  "cpc":            { bereich:"A", bedeutung:"bezahlte Suche" },
+  "display":        { bereich:"A", bedeutung:"Bannerwerbung" },
+  "paidsocial":     { bereich:"A", bedeutung:"bezahlte soziale Netzwerke" },
+  "social":         { bereich:"A", bedeutung:"organische soziale Netzwerke" },
+  "email":          { bereich:"A", bedeutung:"eigene Vertriebsmailings" },
+  "referral":       { bereich:"A", bedeutung:"redaktionelle Verlinkung" },
+  "affiliate":      { bereich:"A", bedeutung:"Partnerprogramm" },
+  "event":          { bereich:"A", bedeutung:"Messe, Konferenz" },
+  "webinar":        { bereich:"A", bedeutung:"Online-Veranstaltung" },
+  "print":          { bereich:"A", bedeutung:"gedruckte Werbemittel" },
+  "hr-email":       { bereich:"B", bedeutung:"Rundmail des Arbeitgebers" },
+  "intranet":       { bereich:"B", bedeutung:"Intranet des Arbeitgebers" },
+  "print-qr":       { bereich:"B", bedeutung:"Aushang, Beileger, Flyer" },
+  "onboarding":     { bereich:"B", bedeutung:"Einstellungsunterlagen" },
+  "messenger":      { bereich:"B", bedeutung:"firmeninterner Messenger" },
+  "event-intern":   { bereich:"B", bedeutung:"Betriebsversammlung, Gesundheitstag" },
+  "push":           { bereich:"B", bedeutung:"App-Benachrichtigung" },
+  "partner-email":  { bereich:"C", bedeutung:"Anbieter-Newsletter" },
+  "partner-web":    { bereich:"C", bedeutung:"Anbieter-Website" },
+  "partner-social": { bereich:"C", bedeutung:"Anbieter in sozialen Netzwerken" },
+  "deeplink":       { bereich:"C", bedeutung:"direkter Angebotslink" }
+};
+
+const UTM_PRUEF = {
+  utm_source:   /^[a-z0-9]+(-[a-z0-9]+)*$/,
+  utm_campaign: /^20[2-9][0-9]-(0[1-9]|1[0-2])-[a-z0-9]+(-[a-z0-9]+)*$/,
+  utm_content:  /^[a-z0-9]+(-[a-z0-9]+)*$/
+};
+
+const AUFFANG = "auffang.unbekannt";
+
+const BEISPIELLINKS = [
+  { text:"Rundmail des Arbeitgebers",
+    q:"utm_medium=hr-email&utm_source=rundmail&utm_campaign=2026-09-start&utm_content=button-mitte" },
+  { text:"QR-Code auf der Gehaltsabrechnung",
+    q:"utm_medium=print-qr&utm_source=gehaltsabrechnung&utm_campaign=2026-09-start&utm_content=beileger" },
+  { text:"Anbieter-Newsletter",
+    q:"utm_medium=partner-email&utm_source=an12345&utm_campaign=2026-09-herbstaktion&utm_content=header" },
+  { text:"Link mit ungültigen Werten",
+    q:"utm_medium=Newsletter&utm_source=Rundmail%202026&utm_campaign=september&utm_content=" }
+];
+
+/* ---------------------------------------------------------------------
+   3. Der Messplan
+   Jeder Eintrag: Name in Punktnotation, Auslöser, Parameter, Zweck.
+   Die Prüfung auf der Messplan-Ansicht vergleicht ihn mit dem Markup.
+   ------------------------------------------------------------------ */
+
+const MESSPLAN = [
+  { name:"page.view", ausloeser:"Aufbau einer Ansicht", art:"Skript",
+    parameter:"pn, pg1 bis pg4, mandant, plattform, mediacode, nc",
+    zweck:"Reichweite, Taxonomie, Kampagneneinstieg" },
+  { name:"teaser.render", ausloeser:"Teaser wird in den Slot geschrieben", art:"Skript",
+    parameter:"belegung, slot, platzierung, anbieter, angebot, position, monat",
+    zweck:"Auslieferung je Belegung, Nenner der rohen Klickrate" },
+  { name:"teaser.visible", ausloeser:"Teaser zu mindestens 50 Prozent im Fenster, einmal je Seitenaufruf", art:"Skript",
+    parameter:"belegung, slot, position, sichtbar",
+    zweck:"sichtbare Auslieferung, Nenner der belastbaren Klickrate" },
+  { name:"teaser.click", ausloeser:"Klick auf einen Teaser", art:"Teaser-Attribut", pflicht:false,
+    parameter:"belegung, slot, position, angebot, anbieter",
+    zweck:"Klickrate je Slot und Position" },
+  { name:"offer.detail.open", ausloeser:"Angebotsseite wird geöffnet", art:"Skript", pflicht:false,
+    parameter:"angebot, anbieter, kategorie",
+    zweck:"Angebotsansichten, Nenner der Klick-out-Rate" },
+  { name:"offer.bookmark.add", ausloeser:"Klick auf Merken", art:"Markup", pflicht:true,
+    parameter:"angebot, anbieter",
+    zweck:"Interesse ohne Klick-out, Sortimentssteuerung" },
+  { name:"offer.clickout", ausloeser:"Klick auf Zum Anbieter", art:"Markup", pflicht:false,
+    parameter:"angebot, anbieter, belegung, klickId, mediacode",
+    zweck:"Klick-out, Übergabe des Schlüssels an den Rückkanal" },
+  { name:"offer.code.show", ausloeser:"Klick auf Code anzeigen", art:"Markup", pflicht:false,
+    parameter:"angebot, anbieter, belegung, klickId, code",
+    zweck:"Klick-out-Äquivalent bei Code-Angeboten" },
+  { name:"offer.share.mail", ausloeser:"Angebot per Mail teilen", art:"Markup", pflicht:true,
+    parameter:"angebot, anbieter",
+    zweck:"Weitergabe im Kollegenkreis" },
+  { name:"partner.postback", ausloeser:"Rückmeldung des Anbieters oder Netzwerks", art:"Skript",
+    parameter:"klickId, wert, status, netzwerk",
+    zweck:"belegte Einlösung, Ende der Messkette" },
+  { name:"user.login", ausloeser:"Umschalter Anmeldung auf angemeldet", art:"Skript", pflicht:false,
+    parameter:"userKey, gebJahr, region",
+    zweck:"Wiedererkennung über Geräte hinweg, nur im angemeldeten Bereich" },
+  { name:"user.logout", ausloeser:"Umschalter Anmeldung auf abgemeldet", art:"Skript", pflicht:false,
+    parameter:"keine",
+    zweck:"Ende der zuordenbaren Strecke" },
+  { name:"nav.category.select", ausloeser:"Klick in der Kategorienavigation", art:"Markup", pflicht:true,
+    parameter:"kategorie",
+    zweck:"Navigationsnutzung" },
+  { name:"footer.teaser.tell-a-colleague", ausloeser:"Klick auf Kollegin empfehlen", art:"Markup", pflicht:true,
+    parameter:"keine",
+    zweck:"Aktivierung über die Belegschaft" },
+  { name:"footer.link.datenschutz", ausloeser:"Klick auf Datenschutz", art:"Markup", pflicht:true,
+    parameter:"keine", zweck:"Nachweis der Erreichbarkeit" },
+  { name:"footer.link.kontakt", ausloeser:"Klick auf Kontakt", art:"Markup", pflicht:true,
+    parameter:"keine", zweck:"Bedarf im Kundenservice" },
+  { name:"report.threshold.change", ausloeser:"Regler der Mindestfallzahl bewegt", art:"Markup", pflicht:true,
+    parameter:"schwelle, stufe",
+    zweck:"Nachvollziehbarkeit der Schutzregel im Report" },
+
+  /* Suche mit Autovervollständigung, Abschnitt 3 des Tickets H.
+     Die Punkte mit Herkunft "Markup" hängen als Attribut am Element und
+     werden von der Prüfung unten gefunden; die übrigen entstehen im Code,
+     weil sie an einem Zeitverlauf hängen und nicht an einem Klick. */
+  { name:"search.open", ausloeser:"Suchfeld erhält den Fokus", art:"Markup", pflicht:true,
+    parameter:"variante, einstieg, strecke",
+    zweck:"Nenner aller Suchstrecken" },
+  { name:"search.input", ausloeser:"Eingabe im Suchfeld, entprellt mit 300 ms, ab Länge 2", art:"Skript", pflicht:false,
+    parameter:"laenge, gedeckelt, variante, strecke",
+    zweck:"Tippverhalten, Deckel gegen Doppelfeuern" },
+  { name:"search.suggest.show", ausloeser:"Vorschlagsliste gezeichnet und gegenüber der vorigen verändert", art:"Skript", pflicht:false,
+    parameter:"anzahl, laenge, latenz_ms, quellen, fehler, variante, strecke",
+    zweck:"Nenner der Annahmequote, Latenz-Leitplanke" },
+  { name:"search.suggest.select", ausloeser:"Klick auf einen Vorschlag", art:"Markup", pflicht:false,
+    parameter:"position, laenge, treffertyp, ziel_id, variante, strecke",
+    zweck:"Annahmequote, Wirkung der Position" },
+  { name:"search.submit", ausloeser:"Freitext abgeschickt", art:"Markup", pflicht:true,
+    parameter:"begriff, laenge, quelle, variante, strecke",
+    zweck:"Suchen je Sitzung, Begriffsliste" },
+  { name:"search.results.view", ausloeser:"Ergebnisliste gezeichnet", art:"Skript", pflicht:false,
+    parameter:"begriff, treffer, seite, variante, strecke",
+    zweck:"Null-Treffer-Quote, Sortimentsbedarf" },
+  { name:"search.results.click", ausloeser:"Klick auf ein Suchergebnis", art:"Markup", pflicht:false,
+    parameter:"position, ziel_id, treffer, variante, strecke",
+    zweck:"Erfolg der Ergebnisliste" },
+  { name:"search.abandon", ausloeser:"Suchstrecke endet ohne Auswahl und ohne Ergebnisklick", art:"Skript", pflicht:false,
+    parameter:"letzte_laenge, letzter_schritt, variante, strecke",
+    zweck:"Abbruch nach Suche" }
+];
+
+/* Parameter, die in den Request gehen. Grundlage der Tabelle im Messplan. */
+const PARAMETER_DOKU = [
+  ["nc",        "immer 1", "Markierung: anonym, ohne clientseitige Speicherung"],
+  ["pn",        "Seitenname", "web.kategorie.unterkategorie.PNangebot"],
+  ["pg1 bis pg4","Seitengruppen", "die vier Stufen der Taxonomie einzeln"],
+  ["mandant",   "platformId", "Mandant als Dimension, nicht als Instanz"],
+  ["plattform", "web oder app", "Trennung der Kanäle"],
+  ["mediacode", "vierstufig", "medium.source.campaign.content, sonst auffang.unbekannt"],
+  ["ev",        "Eventname", "Punktnotation aus dem Messplan"],
+  ["userKey",   "nur angemeldet", "schlüsselabhängiger Hash der Kontonummer"],
+  ["gebJahr",   "nur angemeldet", "Geburtsjahr statt Geburtsdatum"],
+  ["region",    "nur angemeldet", "die ersten zwei Stellen der Postleitzahl"],
+  ["belegung",  "bei Teasern", "Belegung aus dem Belegungsplan"],
+  ["slot",      "bei Teasern", "Hero, Skyscraper, Kat-Nav1 bis 3, Liste 1 bis 6"],
+  ["position",  "bei Teasern", "Position innerhalb der Liste"],
+  ["klickId",   "bei Klick-out", "zufällige, nicht ableitbare Klick-ID"],
+  ["ts",        "immer", "Zeitstempel des Ereignisses"],
+  ["variante",  "immer", "a oder b, Zuweisung der Autovervollständigung; im Echtbetrieb Sitzungsparameter cs20"],
+  ["strecke",   "bei Suche", "Klammer über Öffnen, Tippen, Vorschlag, Absenden, Ergebnis und Ende"],
+  ["laenge",    "bei Suche", "ungekürzte Zeichenzahl der Eingabe"],
+  ["begriff",   "bei submit und results", "normalisiert, gefiltert, auf 40 Zeichen gekürzt"],
+  ["treffer",   "bei results", "Zahl der Suchergebnisse, null steht für Nulltreffer"],
+  ["position",  "bei Vorschlag und Ergebnis", "Rang in der Liste, ab eins"],
+  ["sid",       "immer", "Sitzungskennung der Live-Kette, je Seitenladung gewürfelt, ohne Speicher"]
+];
+
+/* Felder des Nutzerblocks: was in den Request geht und was nicht. */
+const USER_FELDER = [
+  ["anrede",        false, "bleibt im Datenlayer"],
+  ["vorname",       false, "geht nicht mit"],
+  ["nachname",      false, "geht nicht mit"],
+  ["email",         false, "geht nicht mit"],
+  ["geburtsdatum",  false, "nur das Jahr geht mit"],
+  ["postleitzahl",  false, "nur die ersten zwei Stellen gehen mit"],
+  ["geschlecht",    false, "geht nicht mit"],
+  ["kontonummer",   false, "geht nur als Hash mit"],
+  ["userKey",       true,  "schlüsselabhängiger Hash der Kontonummer"],
+  ["gebJahr",       true,  "Geburtsjahr"],
+  ["region",        true,  "erste zwei Stellen der Postleitzahl"]
+];
+
+/* ---------------------------------------------------------------------
+   3b. Suche mit Autovervollständigung
+   Der Suchindex steht als statische Liste im Code, weil die Seite ohne
+   Netzwerk läuft. Im Echtbetrieb käme er aus der Suche des Portals, und
+   die Latenz wäre die Zeit bis zur Antwort statt der Rechenzeit im Browser.
+   ------------------------------------------------------------------ */
+
+const SUCH_MAXVORSCHLAEGE = 6;      // höchstens sechs Vorschläge
+const SUCH_ENTPRELLUNG    = 300;    // Millisekunden zwischen zwei search.input
+const SUCH_MINLAENGE      = 2;      // ab hier wird gemessen und vorgeschlagen
+const SUCH_DECKEL         = 12;     // höchstens so viele search.input je Strecke
+const SUCH_BEGRIFF_MAX    = 40;     // Zeichen; was länger ist, wird gekürzt
+
+/* Die Filterregel aus Abschnitt 5 des Tickets. Sie läuft im Frontend, damit
+   ein Begriff mit Personenbezug gar nicht erst in einen Request gerät. */
+const SUCH_FILTER = [
+  { name:"Mailadresse",        re:/[^\s@]+@[^\s@]+\.[a-z]{2,}/i },
+  { name:"Telefonnummer",      re:/(\+?\d[\s\-/]?){7,}/ },
+  { name:"IBAN",               re:/[A-Z]{2}\d{2}[A-Z0-9]{10,}/i },
+  { name:"lange Ziffernfolge", re:/\b\d{6,}\b/ }
+];
+
+/* Begriffe, die im Index nichts treffen. Sie stehen hier, damit sich die
+   Nulltreffer-Messung vorführen lässt; im synthetischen Datensatz sind es
+   dieselben acht, die dort 20,0 Prozent aller Suchen ohne Treffer erzeugen. */
+const SUCH_NULLTREFFER_BEISPIELE = [
+  "ferienbetreuung", "kinderkrankenpflege", "kita-zuschuss", "physiotherapie",
+  "tagesmutter", "zahnzusatzversicherung", "fitness-app", "brille"
+];
+
+/* Der Index: Angebote, Kategorien und Anbieter. Jeder Eintrag trägt seinen
+   Typ, weil die Auswahl eines Angebots direkt auf die Angebotsseite fuehrt
+   und die Auswahl einer Kategorie auf die Ergebnisliste. */
+function suchIndexBauen(){
+  const eintraege = [];
+  ANGEBOTE.forEach(function(a){
+    eintraege.push({ text:a.titel, typ:"angebot", zielId:a.id,
+                     zusatz:ANBIETER[a.anbieter].name, kategorie:a.kategorie });
+  });
+  const kats = {};
+  ANGEBOTE.forEach(function(a){ kats[a.kategorie] = true; kats[a.unterkategorie] = true; });
+  Object.keys(kats).forEach(function(k){
+    eintraege.push({ text:k, typ:"kategorie", zielId:k, zusatz:"Kategorie", kategorie:k });
+  });
+  Object.keys(ANBIETER).forEach(function(nr){
+    eintraege.push({ text:ANBIETER[nr].name, typ:"anbieter", zielId:nr,
+                     zusatz:"Anbieter " + nr, kategorie:"" });
+  });
+  return eintraege;
+}
+
+const SUCH_INDEX = suchIndexBauen();
+</script>
+<script>
+"use strict";
+
+/* =====================================================================
+   4. Zustand dieser Sitzung. Nur Variablen, kein Speicher.
+   ===================================================================== */
+
+const S = {
+  mandant: "musterwerk",
+  angemeldet: false,
+  ansicht: "start",
+  angebotOffen: "PN10001",
+  mediacode: AUFFANG,
+  mediacodeGrund: "kein Kampagnenparameter in der Adresse",
+  mediacodeBereich: "-",
+  utmRoh: {},
+  requests: [],          // alles, was ein Tracker gesendet hätte
+  render: {},            // belegungId -> Anzahl gerendert
+  sichtbar: {},          // belegungId -> Anzahl sichtbar
+  klicks: {},            // belegungId -> Anzahl Teaser-Klicks
+  sichtbarGesehen: {},   // belegungId -> in diesem Seitenaufruf schon gezählt
+  klickouts: [],         // Zuordnungstabelle
+  transaktionen: [],     // Rückmeldungen
+  seitenaufrufe: 0,
+  schwelle: 20,
+  stufe: "2",
+  suchtreffer: [],       // Ergebnisliste der laufenden Suche
+  suchbegriffRoh: "",    // was im Feld steht, ungekürzt und ungefiltert
+  // Sitzungskennung der Live-Kette: einmal je Seitenladung gewürfelt, in einer
+  // Variablen gehalten, beim Neuladen weg. Das ist die ganze Wiedererkennung,
+  // die diese Seite hat, und sie ist Absicht.
+  sitzung: "w-" + Math.random().toString(36).slice(2, 10),
+  live: { an: false, moeglich: true, grund: "", gesendet: 0, fehler: 0 },
+  suchKontext: null,     // die Strecke, aus der die offene Angebotsseite kam
+  such: {
+    variante: "a",       // a ohne Vorschläge, b mit
+    zuweisung: "sitzung",
+    aktiv: false,
+    strecke: null,       // die laufende Suchstrecke
+    strecken: [],        // die abgeschlossenen dieser Sitzung
+    timer: null,
+    letzteListe: "",     // Signatur der zuletzt gezeigten Vorschlagsliste
+    tippBeginn: 0
+  }
+};
+
+/* Eine Suchstrecke ist die Klammer über Öffnen, Tippen, Vorschlag, Absenden,
+   Ergebnis und Ende. Ohne sie lässt sich in der Auswertung nicht sagen,
+   welche Eingabe zu welcher Vorschlagsliste gehörte, sobald jemand zweimal
+   in einem Besuch sucht. */
+function streckeNeu(){
+  return {
+    id: "s-" + Math.random().toString(36).slice(2, 10),
+    beginn: Date.now(),
+    ersteEingabe: 0,
+    inputZaehler: 0,
+    gedeckelt: false,
+    listenGezeigt: 0,
+    letzteLaenge: 0,
+    letzterSchritt: "open",
+    ausgang: "offen",
+    treffer: null,
+    sekundenBisKlick: null
+  };
+}
+
+/* Der Speicher-Beweis: nichts wird geschrieben. Die Seite liest ihn nur. */
+function speicherLesen(){
+  let c, l, s;
+  try { c = document.cookie === "" ? "(leer)" : document.cookie; } catch(e){ c = "(nicht lesbar: " + e.name + ")"; }
+  try { l = JSON.stringify(Object.keys(localStorage)); } catch(e){ l = "(nicht lesbar: " + e.name + ")"; }
+  try { s = JSON.stringify(Object.keys(sessionStorage)); } catch(e){ s = "(nicht lesbar: " + e.name + ")"; }
+  return "document.cookie        = " + c +
+       "\nObject.keys(localStorage)   = " + l +
+       "\nObject.keys(sessionStorage) = " + s;
+}
+
+/* =====================================================================
+   5. Synthetischer Bestand
+   Fester Startwert, damit jede Vorführung dieselben Zahlen zeigt.
+   ===================================================================== */
+
+function mulberry32(a){
+  return function(){
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const SYN = (function(){
+  const r = mulberry32(20260907);
+  const konten = [];
+  const verteilung = { musterwerk: 185, nordkontor: 115 };
+
+  Object.keys(verteilung).forEach(function(m){
+    const md = MANDANTEN[m];
+    for (let i = 0; i < verteilung[m]; i++){
+      const standort = md.standorte[r() < 0.62 ? 0 : 1];
+      // Aktivität: ein Drittel der Konten ist im Monat aktiv, der Rest ruht.
+      const aktiv = r() < 0.34;
+      konten.push({
+        nr: m.slice(0,2).toUpperCase() + String(1000 + i),
+        mandant: m,
+        standort: standort,
+        registriert: "20" + (24 + Math.floor(r()*3)) + "-" + String(1 + Math.floor(r()*12)).padStart(2,"0"),
+        aktiv: aktiv,
+        ansichten: aktiv ? 1 + Math.floor(r()*14) : (r() < 0.45 ? 0 : 1 + Math.floor(r()*2)),
+        letzteAktivitaetMonate: Math.floor(r()*18)
+      });
+    }
+  });
+
+  // Angebotsnutzung je Konto: welche Angebote gesehen, welche geklickt.
+  const nutzung = [];   // {mandant, standort, kontoNr, angebot, ansichten, klickouts, transaktionen, wert}
+  konten.forEach(function(k){
+    const anzahl = k.ansichten === 0 ? 0 : 1 + Math.floor(r() * Math.min(5, k.ansichten));
+    const gesehen = {};
+    for (let j = 0; j < anzahl; j++){
+      const ang = ANGEBOTE[Math.floor(r()*ANGEBOTE.length)];
+      if (ang.mandanten.length && ang.mandanten.indexOf(k.mandant) === -1) continue;
+      if (gesehen[ang.id]) continue;
+      gesehen[ang.id] = true;
+      const ansichten = 1 + Math.floor(r()*3);
+      const klickouts = r() < 0.42 ? 1 + Math.floor(r()*2) : 0;
+      const ab = ANBIETER[ang.anbieter];
+      let trans = 0, wert = 0;
+      if (klickouts > 0 && ab.rueckkanal !== "keiner" && r() < 0.31){
+        trans = 1;
+        wert = Math.round(ang.wert * (0.7 + r()*0.9));
+      }
+      nutzung.push({ mandant:k.mandant, standort:k.standort, kontoNr:k.nr, angebot:ang.id,
+                     ansichten:ansichten, klickouts:klickouts, transaktionen:trans, wert:wert });
+    }
+  });
+
+  // Slot-Historie über beide Mandanten: liefert die Positionsmittelwerte.
+  const slotHistorie = {};
+  BELEGUNGEN.forEach(function(b){
+    const basis = { "Hero":9200, "Skyscraper":8800, "Kat-Nav1":7400, "Kat-Nav2":7100, "Kat-Nav3":6900 }[b.slot] || 6400;
+    const ausgeliefert = Math.round(basis * (0.85 + r()*0.3));
+    const sichtbar = Math.round(ausgeliefert * (b.platzierung === "Liste" ? 0.52 + r()*0.16 : 0.86 + r()*0.1));
+    // Klickrate fällt mit der Position, der Skyscraper fällt zusätzlich ab.
+    let rate = ({ "Hero":0.061, "Skyscraper":0.017, "Kat-Nav1":0.043, "Kat-Nav2":0.036, "Kat-Nav3":0.029 }[b.slot])
+               || (0.055 / Math.pow(b.position, 0.55));
+    rate = rate * (0.9 + r()*0.2);
+    slotHistorie[b.slot] = {
+      ausgeliefert: ausgeliefert,
+      sichtbar: sichtbar,
+      klicks: Math.round(sichtbar * rate),
+      rate: rate
+    };
+  });
+
+  // Mittelwert der Klickrate je Position, über alle Slot-Typen mit dieser Position.
+  const positionsMittel = {};
+  BELEGUNGEN.forEach(function(b){
+    const p = b.position;
+    if (!positionsMittel[p]) positionsMittel[p] = { summe:0, n:0 };
+    positionsMittel[p].summe += slotHistorie[b.slot].rate;
+    positionsMittel[p].n += 1;
+  });
+  Object.keys(positionsMittel).forEach(function(p){
+    positionsMittel[p] = positionsMittel[p].summe / positionsMittel[p].n;
+  });
+
+  // Besuche mit Mediacode: liefert den Auffangkanal-Anteil.
+  const besuche = { gesamt:0, mitCode:0, auffang:0, bereich:{A:0,B:0,C:0} };
+  for (let i = 0; i < 4200; i++){
+    besuche.gesamt++;
+    const w = r();
+    if (w < 0.38){ /* Direkteinstieg ohne Kampagne */ continue; }
+    besuche.mitCode++;
+    if (r() < 0.11){ besuche.auffang++; continue; }
+    const b = r() < 0.52 ? "B" : (r() < 0.7 ? "A" : "C");
+    besuche.bereich[b]++;
+  }
+
+  return { konten:konten, nutzung:nutzung, slotHistorie:slotHistorie,
+           positionsMittel:positionsMittel, besuche:besuche };
+})();
+
+/* =====================================================================
+   6. Datenlayer in drei Blöcken
+   ===================================================================== */
+
+/* Demo-Ersatz für ein HMAC. Im Echtbetrieb ein schlüsselabhängiger Hash,
+   dessen Geheimnis nur im Portalsystem liegt und nicht im Analytics-Werkzeug.
+   Diese Funktion ist bewusst simpel und nicht kryptografisch. */
+function demoHash(text){
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++){
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return "uk_" + (h >>> 0).toString(36);
+}
+
+const KONTEN_DEMO = {
+  musterwerk: { anrede:"Frau", vorname:"Annika", nachname:"Reimers",
+                email:"annika.reimers@musterwerk-ag.example", geburtsdatum:"1987-04-12",
+                postleitzahl:"28195", geschlecht:"w", kontonummer:"MW-4471902" },
+  nordkontor: { anrede:"Herr", vorname:"Tobias", nachname:"Kelling",
+                email:"tobias.kelling@nordkontor.example", geburtsdatum:"1979-11-03",
+                postleitzahl:"20457", geschlecht:"m", kontonummer:"NK-2210488" }
+};
+
+const dataLayer = { user:{}, platform:{}, page:{} };
+
+function dataLayerAufbauen(){
+  const m = MANDANTEN[S.mandant];
+
+  dataLayer.platform = {
+    platformId: m.platformId,
+    platformName: m.name,
+    platformLand: m.land,
+    platformSprache: m.sprache,
+    platformBranche: m.branche,
+    platformReportingStufe: m.reportingStufe,
+    platformBetriebsvereinbarung: m.betriebsvereinbarung ? "ja" : "nein"
+  };
+
+  if (S.angemeldet){
+    const k = KONTEN_DEMO[S.mandant];
+    dataLayer.user = {
+      angemeldet: true,
+      anrede: k.anrede, vorname: k.vorname, nachname: k.nachname,
+      email: k.email, geburtsdatum: k.geburtsdatum,
+      postleitzahl: k.postleitzahl, geschlecht: k.geschlecht,
+      kontonummer: k.kontonummer,
+      userKey: demoHash(k.kontonummer + "|geheimnis-nur-im-portalsystem"),
+      gebJahr: k.geburtsdatum.slice(0,4),
+      region: k.postleitzahl.slice(0,2)
+    };
+  } else {
+    dataLayer.user = { angemeldet:false };
+  }
+
+  dataLayer.page = seitenBlock();
+}
+
+/* Seitentaxonomie: web.kategorie.unterkategorie.PNangebot plus vier Gruppen. */
+function seitenBlock(){
+  let pn, pg;
+  if (S.ansicht === "angebot"){
+    const a = angebot(S.angebotOffen);
+    pn = ["web", a.kategorie, a.unterkategorie, a.id];
+  } else if (S.ansicht === "start"){
+    pn = ["web", "start", "uebersicht", "PN00000"];
+  } else if (S.ansicht === "suche"){
+    pn = ["web", "suche", "ergebnis", "PN00000"];
+  } else if (S.ansicht === "datenschutz"){
+    pn = ["web", "intern", "datenschutz", "PN00000"];
+  } else if (S.ansicht === "anbieter"){
+    const a = angebot(S.angebotOffen);
+    pn = ["web", "weiterleitung", a.kategorie, a.id];
+  } else if (S.ansicht === "auswertung"){
+    pn = ["web", "report", "arbeitgeber", "PN00000"];
+  } else {
+    pn = ["web", "intern", "messplan", "PN00000"];
+  }
+  pg = pn;
+  return {
+    pageName: pn.join("."),
+    pageGroup1: pg[0], pageGroup2: pg[1], pageGroup3: pg[2], pageGroup4: pg[3],
+    plattform: "web",
+    mediacode: S.mediacode,
+    mediacodeBereich: S.mediacodeBereich
+  };
+}
+
+/* =====================================================================
+   7. Der Tracker
+   Baut den Request so, wie er an eine Trackdomain ginge, und zeigt ihn an.
+   Er sendet nichts: kein fetch, kein sendBeacon, kein Bild-Pixel.
+   ===================================================================== */
+
+const TRACKDOMAIN = "https://text.musterwerk-vorteile.example/wt";
+
+/* Der echte Sammler der Live-Kette: eine Supabase Edge Function, die den
+   Query-String zerlegt und eine Zeile in public.rohereignisse schreibt.
+   Ist der Schalter „Live senden“ aus, wird diese Adresse nie angesprochen. */
+const SAMMLER_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/sammler";
+
+function mwTrack(eventName, extra, art){
+  const p = {};
+  p.nc = "1";                                  // anonym, ohne clientseitige Speicherung
+  p.ev = eventName;
+  p.pn = dataLayer.page.pageName;
+  p.pg1 = dataLayer.page.pageGroup1;
+  p.pg2 = dataLayer.page.pageGroup2;
+  p.pg3 = dataLayer.page.pageGroup3;
+  p.pg4 = dataLayer.page.pageGroup4;
+  p.mandant = dataLayer.platform.platformId;
+  p.plattform = dataLayer.page.plattform;
+  p.mediacode = S.mediacode;
+  p.variante = S.such.variante;      // im Echtbetrieb der Sitzungsparameter cs20
+  p.sid = S.sitzung;
+
+  if (S.angemeldet){
+    p.userKey = dataLayer.user.userKey;
+    p.gebJahr = dataLayer.user.gebJahr;
+    p.region  = dataLayer.user.region;
+  }
+  if (extra) Object.keys(extra).forEach(function(k){
+    if (extra[k] !== undefined && extra[k] !== null && extra[k] !== "") p[k] = String(extra[k]);
+  });
+  p.ts = new Date().toISOString();
+
+  const qs = Object.keys(p).map(function(k){
+    return encodeURIComponent(k) + "=" + encodeURIComponent(p[k]);
+  }).join("&");
+
+  // Die angezeigte Adresse ist die, die auch benutzt wird: im Live-Modus der
+  // Sammler, sonst die erfundene Trackdomain. Alles andere wäre eine
+  // Vorführung, die etwas anderes zeigt als sie tut.
+  const ziel = S.live.an ? SAMMLER_URL : TRACKDOMAIN;
+  const eintrag = { ev:eventName, art:art || "Skript", url:ziel + "?" + qs,
+                    qs:qs, p:p, zeit:new Date(),
+                    live: S.live.an ? "unterwegs" : "aus" };
+  S.requests.unshift(eintrag);
+  if (S.requests.length > 400) S.requests.pop();
+  konsoleRequestZeichnen(eintrag);
+  if (S.live.an) liveSenden(eintrag);
+  zaehlerZeichnen();
+  return eintrag;
+}
+
+/* ---------------------------------------------------------------------
+   7b. Der Versand an den Sammler
+   sendBeacon ist der Weg, den ein echtes Portal nimmt: er blockiert die
+   Seite nicht und überlebt einen Ansichtswechsel. Er liefert dafür nur
+   die Auskunft, ob der Browser den Request in die Warteschlange genommen
+   hat, nicht den Status vom Server. Wer den Status sehen will, nimmt den
+   Knopf „Verbindung pruefen“ in der Konsole; er schickt einen eigenen
+   Request per fetch und zeigt, was zurückkommt.
+   ------------------------------------------------------------------ */
+
+function liveMoeglichPruefen(){
+  if (location.protocol === "file:"){
+    S.live.moeglich = false;
+    S.live.grund = "Die Datei läuft unter file://. Ein Request von dort hat keine Herkunft, " +
+                   "die der Sammler zulassen könnte. Auf der gehosteten Fassung geht es.";
+    return;
+  }
+  S.live.moeglich = true;
+  S.live.grund = "";
+}
+
+function liveSenden(eintrag){
+  const url = SAMMLER_URL + "?" + eintrag.qs;
+  let angenommen = false;
+  try {
+    if (navigator.sendBeacon) angenommen = navigator.sendBeacon(url);
+  } catch (e) { angenommen = false; }
+
+  if (angenommen){
+    eintrag.live = "sendBeacon angenommen";
+    S.live.gesendet++;
+    sendemarkeZeichnen(eintrag, "gut");
+    liveZeichnen();
+    return;
+  }
+
+  // Rückfall: fetch mit keepalive, damit der Request einen Ansichtswechsel
+  // überlebt. Er liefert einen Status, den die Konsole anzeigt.
+  try {
+    fetch(url, { method:"POST", keepalive:true, mode:"cors", cache:"no-store" })
+      .then(function(r){
+        eintrag.live = "fetch " + r.status;
+        if (r.status === 204){ S.live.gesendet++; sendemarkeZeichnen(eintrag, "gut"); }
+        else { S.live.fehler++; sendemarkeZeichnen(eintrag, "schlecht"); }
+        liveZeichnen();
+      })
+      .catch(function(e){
+        eintrag.live = "fetch fehlgeschlagen: " + e.name;
+        S.live.fehler++;
+        sendemarkeZeichnen(eintrag, "schlecht");
+        liveZeichnen();
+      });
+  } catch (e){
+    eintrag.live = "kein Versand moeglich: " + e.name;
+    S.live.fehler++;
+    sendemarkeZeichnen(eintrag, "schlecht");
+    liveZeichnen();
+  }
+}
+
+/* Ein eigener Request an den Sammler, nur um den Status zu sehen. Er trägt
+   den Messpunkt live.check und fällt in der Auswertung als solcher auf. */
+function liveVerbindungPruefen(){
+  const ziel = document.getElementById("k-live-grund");
+  if (!S.live.moeglich){ ziel.textContent = S.live.grund; return; }
+  const url = SAMMLER_URL + "?nc=1&ev=live.check&pn=web.intern.pruefung.PN00000" +
+              "&sid=" + encodeURIComponent(S.sitzung) +
+              "&mandant=" + encodeURIComponent(S.mandant) +
+              "&ts=" + encodeURIComponent(new Date().toISOString());
+  ziel.textContent = "prüfe ...";
+  const t0 = Date.now();
+  fetch(url, { method:"POST", mode:"cors", cache:"no-store" })
+    .then(function(r){
+      ziel.textContent = "Antwort " + r.status + " nach " + (Date.now() - t0) + " ms" +
+        (r.headers.get("set-cookie") ? ", Set-Cookie vorhanden" : ", ohne Set-Cookie");
+    })
+    .catch(function(e){ ziel.textContent = "Fehler: " + e.name + ", " + e.message; });
+}
+
+/* =====================================================================
+   8. Kampagneneinstieg
+   ===================================================================== */
+
+function mediacodeBilden(){
+  const q = new URLSearchParams(location.search);
+  const roh = {
+    utm_medium:   q.get("utm_medium")   || "",
+    utm_source:   q.get("utm_source")   || "",
+    utm_campaign: q.get("utm_campaign") || "",
+    utm_content:  q.get("utm_content")  || ""
+  };
+  S.utmRoh = roh;
+
+  const fehler = [];
+  if (!roh.utm_medium && !roh.utm_source && !roh.utm_campaign && !roh.utm_content){
+    S.mediacode = AUFFANG;
+    S.mediacodeBereich = "-";
+    S.mediacodeGrund = "kein Kampagnenparameter in der Adresse";
+    return;
+  }
+  if (!UTM_MEDIUM[roh.utm_medium]){
+    fehler.push("utm_medium „" + (roh.utm_medium || "leer") + "“ steht nicht in der Werteliste");
+  }
+  ["utm_source","utm_campaign","utm_content"].forEach(function(k){
+    if (!roh[k]) { fehler.push(k + " fehlt"); return; }
+    if (!UTM_PRUEF[k].test(roh[k])) fehler.push(k + " „" + roh[k] + "“ verletzt den Prüfausdruck");
+  });
+
+  if (fehler.length){
+    S.mediacode = AUFFANG;
+    S.mediacodeBereich = "-";
+    S.mediacodeGrund = fehler.join("; ");
+  } else {
+    S.mediacode = [roh.utm_medium, roh.utm_source, roh.utm_campaign, roh.utm_content].join(".");
+    S.mediacodeBereich = UTM_MEDIUM[roh.utm_medium].bereich;
+    S.mediacodeGrund = "gültig, Bereich " + S.mediacodeBereich + ", " + UTM_MEDIUM[roh.utm_medium].bedeutung;
+  }
+}
+
+/* =====================================================================
+   9. Hilfsfunktionen
+   ===================================================================== */
+
+function angebot(id){ return ANGEBOTE.filter(function(a){ return a.id === id; })[0]; }
+function belegung(id){ return BELEGUNGEN.filter(function(b){ return b.id === id; })[0]; }
+function anbieterVon(angId){ const a = angebot(angId); return ANBIETER[a.anbieter]; }
+function anbieterNrVon(angId){ return angebot(angId).anbieter; }
+function esc(t){
+  return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+                  .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function pz(x, n){ return (x*100).toFixed(n === undefined ? 2 : n).replace(".", ",") + " Prozent"; }
+function zahl(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+function euro(x){ return zahl(Math.round(x)) + " Euro"; }
+function uhrzeit(d){ return d.toLocaleTimeString("de-DE", {hour12:false}); }
+
+function belegungenFuerMandant(){
+  return BELEGUNGEN.filter(function(b){
+    const a = angebot(b.angebot);
+    return !a.mandanten.length || a.mandanten.indexOf(S.mandant) !== -1;
+  });
+}
+
+/* Gutscheincode je Belegung und Monat, damit eine gemeldete Einlösung
+   dem Slot zuzuordnen ist, auch wenn sie im Laden stattfand. */
+function codeFuer(bel){
+  const kurz = bel.slot.replace(/[^A-Za-z0-9]/g,"").slice(0,3).toUpperCase();
+  let h = 0;
+  const t = bel.id + JAHRMONAT + S.mandant;
+  for (let i = 0; i < t.length; i++){ h = (h*31 + t.charCodeAt(i)) >>> 0; }
+  const vier = h.toString(16).toUpperCase().slice(0,4).padStart(4,"0");
+  return "MW-" + kurz + "-" + JAHRMONAT + "-" + vier;
+}
+</script>
+<script>
+"use strict";
+
+/* =====================================================================
+   10. Konsole zeichnen
+   ===================================================================== */
+
+const elReq = document.getElementById("reqliste");
+
+function konsoleRequestZeichnen(e){
+  const d = document.createElement("div");
+  d.className = "req";
+  const marke = e.art === "Markup" ? "klick" : (e.art === "Teaser" ? "teaser" : "seite");
+  let zeilen = "";
+  Object.keys(e.p).forEach(function(k){
+    zeilen += "<tr><td>" + esc(k) + "</td><td>" + esc(e.p[k]) + "</td></tr>";
+  });
+  d.innerHTML =
+    '<div class="zeile1"><span class="marke ' + marke + '">' + esc(e.art) + '</span>' +
+    '<span class="evname">' + esc(e.ev) + '</span>' +
+    '<span class="sende">' + esc(e.live || "aus") + '</span>' +
+    '<span class="zeit">' + uhrzeit(e.zeit) + '</span></div>' +
+    '<div class="detail"><div class="url">' + esc(e.url) + '</div><table>' + zeilen + '</table></div>';
+  d.querySelector(".zeile1").addEventListener("click", function(){ d.classList.toggle("offen"); });
+  e.knoten = d;
+  elReq.insertBefore(d, elReq.firstChild);
+  while (elReq.children.length > 60) elReq.removeChild(elReq.lastChild);
+}
+
+/* Der Sendestatus wird an derselben Zeile nachgetragen, an der er entstanden
+   ist. Wer ihn in eine eigene Liste schreibt, hat zwei Wahrheiten. */
+function sendemarkeZeichnen(e, klasse){
+  if (!e.knoten) return;
+  const m = e.knoten.querySelector(".sende");
+  if (!m) return;
+  m.textContent = e.live;
+  m.className = "sende" + (klasse ? " " + klasse : "");
+}
+
+function liveZeichnen(){
+  const feld = document.getElementById("k-live");
+  if (!feld) return;
+  feld.textContent = S.live.an
+    ? ("an, " + S.live.gesendet + " gesendet, " + S.live.fehler + " Fehler")
+    : "aus";
+  const grund = document.getElementById("k-live-grund");
+  if (grund && !S.live.moeglich) grund.textContent = S.live.grund;
+  const sitz = document.getElementById("k-sitzung");
+  if (sitz) sitz.textContent = S.sitzung;
+}
+
+function konsoleDatenlayerZeichnen(){
+  const ziel = document.getElementById("k-dl");
+  let h = "";
+  ["user","platform","page"].forEach(function(block){
+    h += '<div class="dl-block"><div class="dlname">dataLayer.' + block + '</div><table>';
+    const o = dataLayer[block];
+    Object.keys(o).forEach(function(k){
+      let cls = "";
+      if (block === "user"){
+        const f = USER_FELDER.filter(function(x){ return x[0] === k; })[0];
+        if (f) cls = f[1] ? "geht-mit" : "geht-nicht";
+      }
+      h += '<tr><td class="' + cls + '">' + esc(k) + '</td><td class="' + cls + '">' + esc(o[k]) + '</td></tr>';
+    });
+    h += "</table></div>";
+  });
+  h += '<div style="color:#8fa3b0;font-size:11px;margin-top:4px">' +
+       'Grün: geht in den Request. Durchgestrichen: bleibt im Datenlayer.</div>';
+  ziel.innerHTML = h;
+}
+
+function zaehlerZeichnen(){
+  const bel = belegungenFuerMandant();
+  let r = 0, s = 0, k = 0;
+  bel.forEach(function(b){ r += S.render[b.id]||0; s += S.sichtbar[b.id]||0; k += S.klicks[b.id]||0; });
+  const best = S.transaktionen.filter(function(t){ return t.status === "bestätigt"; }).length;
+  document.getElementById("zaehlerfeld").innerHTML =
+    "<div>Messpunkte</div><b>" + S.requests.length + "</b>" +
+    "<div>Seitenaufrufe</div><b>" + S.seitenaufrufe + "</b>" +
+    "<div>Teaser gerendert</div><b>" + r + "</b>" +
+    "<div>davon sichtbar</div><b>" + s + "</b>" +
+    "<div>Teaser-Klicks</div><b>" + k + "</b>" +
+    "<div>Klick-outs</div><b>" + S.klickouts.length + "</b>" +
+    "<div>Transaktionen</div><b>" + S.transaktionen.length + "</b>" +
+    "<div>davon bestätigt</div><b>" + best + "</b>";
+  document.getElementById("k-mediacode").textContent = S.mediacode;
+  document.getElementById("k-mediacode-grund").textContent = S.mediacodeGrund;
+}
+
+/* =====================================================================
+   11. Startseite: Teaser aus dem Belegungsplan bauen
+   Die Messlogik steht als Attribut am Element, nicht im Skript.
+   ===================================================================== */
+
+let beobachter = null;
+
+function teaserMarkup(b){
+  const a = angebot(b.angebot);
+  const anNr = a.anbieter;
+  const ab = ANBIETER[anNr];
+  // Teaser-Attribut nach demselben Muster wie im echten Portal:
+  // 520 Platzierungstyp, 521 Anbieter mit Nummer und Kampagne, 526 Monat,
+  // 527 Slot, 528 Position innerhalb der Liste.
+  const ck = { "520": b.platzierung,
+               "521": ab.name + " -" + anNr + " -MW" + KAMPAGNENMONAT.replace("-","/"),
+               "526": MONAT, "527": b.slot, "528": String(b.position) };
+  const teaserAttr = esc(JSON.stringify({ ck: ck }));
+  // Ein Merken-Knopf trägt bei Kat-Nav3 absichtlich einen falsch geschriebenen
+  // Eventnamen. Die Prüfung auf der Messplan-Ansicht findet ihn.
+  const merkEvent = b.slot === "Kat-Nav3" ? "offer.bokmark.add" : "offer.bookmark.add";
+  return '<div class="teaser" data-mw-teaser="' + teaserAttr + '" data-belegung="' + b.id + '">' +
+           '<h4>' + esc(a.titel) + '</h4>' +
+           '<p class="anbieter">' + esc(ab.name) + ' <span class="pill">' + anNr + '</span> ' +
+             '<span class="pill">' + esc(b.slot) + '</span> <span class="pill">Position ' + b.position + '</span></p>' +
+           '<p class="preis">' + esc(a.vorteil) + '</p>' +
+           '<div class="knopfreihe">' +
+             '<button type="button" data-teaserklick="' + b.id + '">Angebot ansehen</button>' +
+             '<button type="button" class="sekundaer" data-mw-event="' + merkEvent + '" ' +
+                'data-mw-label="Merken" data-angebot="' + a.id + '">Merken</button>' +
+           '</div>' +
+         '</div>';
+}
+
+function startseiteBauen(){
+  const bel = belegungenFuerMandant();
+  const nach = function(pl){ return bel.filter(function(b){ return b.platzierung === pl || b.slot === pl; }); };
+
+  document.querySelector('[data-slotinhalt="Hero"]').innerHTML =
+    nach("Hero").map(teaserMarkup).join("");
+  document.querySelector('[data-slotinhalt="Skyscraper"]').innerHTML =
+    nach("Skyscraper").map(teaserMarkup).join("");
+  document.querySelector('[data-slotinhalt="Kat-Nav"]').innerHTML =
+    nach("Kat-Nav").map(teaserMarkup).join("");
+  document.querySelector('[data-slotinhalt="Liste"]').innerHTML =
+    nach("Liste").map(teaserMarkup).join("");
+
+  // Kategorienavigation: deklarative Messpunkte im Markup, ohne eigene Ansicht.
+  const kats = [];
+  belegungenFuerMandant().forEach(function(b){
+    const k = angebot(b.angebot).kategorie;
+    if (kats.indexOf(k) === -1) kats.push(k);
+  });
+  document.getElementById("katnavigation").innerHTML = kats.map(function(k){
+    return '<button type="button" class="sekundaer" data-mw-event="nav.category.select" ' +
+           'data-mw-label="' + esc(k) + '">' + esc(k) + '</button>';
+  }).join("");
+
+  // Kampagnenlinks: relative Links auf dieselbe Datei, damit sie unter file:// laufen.
+  document.getElementById("kampagnenlinks").innerHTML = BEISPIELLINKS.map(function(l){
+    return '<a class="pill" style="padding:8px 14px;text-decoration:none" href="index.html?' + l.q + '">' +
+           esc(l.text) + '</a>';
+  }).join("");
+}
+
+/* Auslieferung zählen und Sichtbarkeit beobachten. */
+function teaserMessungStarten(){
+  if (beobachter) beobachter.disconnect();
+  S.sichtbarGesehen = {};
+
+  const teaser = Array.prototype.slice.call(document.querySelectorAll("#v-start [data-mw-teaser]"));
+  teaser.forEach(function(el){
+    const b = belegung(el.getAttribute("data-belegung"));
+    S.render[b.id] = (S.render[b.id] || 0) + 1;
+    mwTrack("teaser.render", {
+      belegung:b.id, slot:b.slot, platzierung:b.platzierung, position:b.position,
+      angebot:b.angebot, anbieter:anbieterNrVon(b.angebot), monat:MONAT, sichtbar:"nein"
+    }, "Teaser");
+  });
+
+  beobachter = new IntersectionObserver(function(eintraege){
+    eintraege.forEach(function(e){
+      if (!e.isIntersecting) return;
+      const id = e.target.getAttribute("data-belegung");
+      if (S.sichtbarGesehen[id]) return;      // einmal je Seitenaufruf
+      S.sichtbarGesehen[id] = true;
+      const b = belegung(id);
+      S.sichtbar[id] = (S.sichtbar[id] || 0) + 1;
+      mwTrack("teaser.visible", {
+        belegung:b.id, slot:b.slot, position:b.position, angebot:b.angebot,
+        anbieter:anbieterNrVon(b.angebot), sichtbar:"ja"
+      }, "Teaser");
+    });
+  }, { threshold: 0.5 });
+
+  teaser.forEach(function(el){ beobachter.observe(el); });
+  zaehlerZeichnen();
+}
+
+/* =====================================================================
+   12. Angebotsseite
+   ===================================================================== */
+
+function angebotsseiteBauen(){
+  const a = angebot(S.angebotOffen);
+  const anNr = a.anbieter;
+  const ab = ANBIETER[anNr];
+  const bel = belegungenFuerMandant().filter(function(b){ return b.angebot === a.id; })[0]
+              || BELEGUNGEN.filter(function(b){ return b.angebot === a.id; })[0];
+  const istCode = a.typ === "Code";
+
+  document.getElementById("angebot-inhalt").innerHTML =
+    '<h2>' + esc(a.titel) + '</h2>' +
+    '<p class="leise">' + esc(ab.name) + ' <span class="pill">' + anNr + '</span> ' +
+      '<span class="pill">Rückkanal: ' + esc(ab.rueckkanal) + '</span> ' +
+      '<span class="pill">Angebotstyp: ' + esc(a.typ) + '</span></p>' +
+    '<div class="kasten"><p style="margin:0"><strong>' + esc(a.vorteil) + '</strong></p>' +
+      '<p class="leise" style="margin-bottom:0">Kategorie ' + esc(a.kategorie) + ', Unterkategorie ' +
+      esc(a.unterkategorie) + '. Seitenname <code>' + esc(dataLayer.page.pageName) + '</code>.</p></div>' +
+    '<div class="knopfreihe">' +
+      (istCode
+        ? '<button type="button" data-klickout="' + a.id + '" data-mw-event="offer.code.show" data-mw-label="Code anzeigen">Code anzeigen</button>'
+        : '<button type="button" data-klickout="' + a.id + '" data-mw-event="offer.clickout" data-mw-label="Zum Anbieter">Zum Anbieter</button>') +
+      '<button type="button" class="sekundaer" data-mw-event="offer.bookmark.add" data-mw-label="Merken" data-angebot="' + a.id + '">Merken</button>' +
+      '<button type="button" class="sekundaer" data-start="1">Zurück zur Startseite</button>' +
+    '</div>' +
+    '<div id="codeausgabe"></div>' +
+    '<h3>Was dieser Klick auslöst</h3>' +
+    '<p>Der Knopf erzeugt eine Klick-ID, schreibt eine Zeile in die Zuordnungstabelle und öffnet die simulierte Anbieterseite. ' +
+      'Die Klick-ID steht dort in der Adresse und geht im Echtbetrieb als SubID an das Netzwerk, bei Awin als <code>clickref</code>, ' +
+      'bei Tradedoubler als <code>epi</code>, bei CJ als <code>sid</code>.</p>' +
+    '<p class="leise">Der Mandant ' + esc(MANDANTEN[S.mandant].name) + ' steht auf Klick-Schlüssel-Stufe ' +
+      MANDANTEN[S.mandant].klickSchluesselStufe + '. ' +
+      (MANDANTEN[S.mandant].klickSchluesselStufe === 2
+        ? 'Stufe zwei: der userKey wird mitgeschrieben, sobald jemand angemeldet ist. Er erscheint in keinem Arbeitgeber-Report.'
+        : 'Stufe eins: nur der Mandant wird mitgeschrieben, kein userKey.') + '</p>' +
+    '<h3>Belegung dieses Angebots</h3>' +
+    '<div class="tabellenrahmen"><table class="d">' +
+      '<tr><th>Belegung</th><th>Slot</th><th>Platzierung</th><th class="zahl">Position</th>' +
+        '<th class="zahl">gebuchter Preis</th><th>Sichtbarkeitsregel</th><th>Code je Belegung und Monat</th></tr>' +
+      '<tr><td class="mono">' + esc(bel.id) + '</td><td>' + esc(bel.slot) + '</td><td>' + esc(bel.platzierung) + '</td>' +
+        '<td class="zahl">' + bel.position + '</td><td class="zahl">' + euro(bel.preis) + '</td>' +
+        '<td>' + esc(bel.sicht) + '</td><td class="mono">' + esc(codeFuer(bel)) + '</td></tr>' +
+    '</table></div>';
+}
+
+/* =====================================================================
+   13. Klick-out und Klick-Schlüssel
+   ===================================================================== */
+
+function klickIdErzeugen(){
+  if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+  // Rückfall, falls randomUUID fehlt.
+  const b = new Uint8Array(16);
+  (window.crypto || {getRandomValues:function(x){ for(let i=0;i<x.length;i++) x[i]=Math.floor(Math.random()*256); }}).getRandomValues(b);
+  return Array.prototype.map.call(b, function(x){ return x.toString(16).padStart(2,"0"); }).join("").replace(
+    /^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5");
+}
+
+function klickOut(angId){
+  const a = angebot(angId);
+  const anNr = a.anbieter;
+  const ab = ANBIETER[anNr];
+  const bel = belegungenFuerMandant().filter(function(b){ return b.angebot === a.id; })[0]
+              || BELEGUNGEN.filter(function(b){ return b.angebot === a.id; })[0];
+  const m = MANDANTEN[S.mandant];
+  const id = klickIdErzeugen();
+
+  const zeile = {
+    klickId: id,
+    zeit: new Date(),
+    mandant: m.platformId,
+    angebot: a.id,
+    anbieter: anNr,
+    belegung: bel.id,
+    mediacode: S.mediacode,
+    plattform: "web",
+    code: a.typ === "Code" ? codeFuer(bel) : "",
+    // Stufe zwei trägt den userKey, Stufe eins nicht.
+    userKey: (m.klickSchluesselStufe === 2 && S.angemeldet) ? dataLayer.user.userKey : "",
+    // Kam der Nutzer über die Suche, trägt die Zuordnungstabelle die Strecke.
+    // Ohne diesen Wert lässt sich später nicht sagen, welche Provision aus
+    // der Suche stammt und welche vom Teaser.
+    suchstrecke: S.suchKontext ? S.suchKontext.id : ""
+  };
+  S.klickouts.unshift(zeile);
+  if (S.suchKontext) S.suchKontext.klickout = true;
+
+  mwTrack(a.typ === "Code" ? "offer.code.show" : "offer.clickout", {
+    angebot:a.id, anbieter:anNr, belegung:bel.id, klickId:id,
+    code:zeile.code, userKeyInZuordnung: zeile.userKey ? "ja" : "nein",
+    strecke: zeile.suchstrecke
+  }, "Markup");
+
+  if (a.typ === "Code"){
+    document.getElementById("codeausgabe").innerHTML =
+      '<div class="kasten gut"><p style="margin:0"><strong>Gutscheincode</strong> ' +
+      '<span class="mono" style="font-size:19px">' + esc(zeile.code) + '</span></p>' +
+      '<p class="leise" style="margin-bottom:0">Der Code ist je Belegung und Monat eindeutig. Eine gemeldete Einlösung ist damit dem Slot zuzuordnen, auch wenn sie im Laden stattfand. ' +
+      'Klick-ID <span class="mono">' + esc(id) + '</span>.</p></div>';
+  }
+  ansichtWechseln("anbieter", id);
+}
+
+/* =====================================================================
+   14. Simulierte Anbieterseite
+   ===================================================================== */
+
+let offenerKlick = null;
+
+function anbieterseiteBauen(klickId){
+  const z = S.klickouts.filter(function(k){ return k.klickId === klickId; })[0] || S.klickouts[0];
+  if (!z){
+    document.getElementById("anbieter-inhalt").innerHTML =
+      '<h2>Simulierte Anbieterseite</h2><div class="kasten warn"><p style="margin:0">Es liegt noch kein Klick-out vor. ' +
+      'Ein Angebot öffnen und dort auf „Zum Anbieter“ oder „Code anzeigen“ klicken.</p></div>';
+    return;
+  }
+  offenerKlick = z;
+  const a = angebot(z.angebot);
+  const ab = ANBIETER[z.anbieter];
+  const trans = S.transaktionen.filter(function(t){ return t.klickId === z.klickId; })[0];
+
+  document.getElementById("anbieter-inhalt").innerHTML =
+    '<h2>' + esc(ab.name) + '</h2>' +
+    '<p class="leise">Simulierte Anbieterseite. Sie steht hier für das, was hinter dem Klick liegt und dem Portal sonst verborgen bleibt.</p>' +
+    '<div class="kasten"><p style="margin:0"><strong>Adresse dieser Seite</strong></p>' +
+      '<p class="mono" style="word-break:break-all;margin:4px 0 0 0">' +
+      esc(location.pathname.split("/").pop() + (location.search || "") + "#anbieter/klick=" + z.klickId) + '</p>' +
+      '<p class="leise" style="margin-bottom:0">Im Echtbetrieb steht die Klick-ID hier als SubID des Netzwerks. ' +
+      'Rückkanaltyp dieses Anbieters: <strong>' + esc(ab.rueckkanal) + '</strong>' +
+      (ab.netzwerk ? ', Netzwerk ' + esc(ab.netzwerk) : '') + '.</p></div>' +
+    (ab.rueckkanal === "keiner"
+      ? '<div class="kasten warn"><p style="margin:0">Dieser Anbieter hat keinen Rückkanal. Ein Postback ist nicht möglich, ' +
+        'und jede Ersparnisaussage zu diesem Angebot trägt den Belegstatus „nicht erfasst“. Der Knopf unten ist trotzdem da, ' +
+        'damit sich der Unterschied zeigen lässt.</p></div>'
+      : '') +
+    '<h3>Kauf und Rückmeldung</h3>' +
+    '<div class="kasten">' +
+      '<div class="regler-zeile">' +
+        '<div><label for="bestellwert" style="font-size:13px;color:var(--text-leise);display:block">Bestellwert in Euro</label>' +
+        '<input type="number" id="bestellwert" value="' + (a.wert * 3) + '" min="1" step="1" style="width:140px"></div>' +
+        '<button type="button" id="btn-postback">Postback senden</button>' +
+      '</div>' +
+      '<div id="postback-status">' + transaktionsBlock(trans) + '</div>' +
+    '</div>' +
+    '<div class="knopfreihe"><button type="button" class="sekundaer" data-start="1">Zurück zur Startseite</button>' +
+    '<a class="pill" style="padding:8px 14px;text-decoration:none" href="#auswertung">Zur Auswertung</a></div>';
+
+  document.getElementById("btn-postback").addEventListener("click", postbackSenden);
+  statusKnoepfeBinden();
+}
+
+function transaktionsBlock(t){
+  if (!t) return '<p class="leise" style="margin:0">Noch kein Postback zu dieser Klick-ID.</p>';
+  return '<p style="margin:0"><strong>Transaktion ' + esc(t.id) + '</strong>, Wert ' + euro(t.wert) +
+    ', Status <span class="pill">' + esc(t.status) + '</span>, gemeldet ' + uhrzeit(t.zeit) + '</p>' +
+    '<div class="knopfreihe"><button type="button" class="klein" data-status="bestätigt">Auf bestätigt setzen</button>' +
+    '<button type="button" class="klein sekundaer" data-status="storniert">Auf storniert setzen</button></div>';
+}
+
+function statusKnoepfeBinden(){
+  Array.prototype.slice.call(document.querySelectorAll("#postback-status [data-status]")).forEach(function(b){
+    b.addEventListener("click", function(){ statusSetzen(b.getAttribute("data-status")); });
+  });
+}
+
+function postbackSenden(){
+  if (!offenerKlick) return;
+  if (S.transaktionen.filter(function(t){ return t.klickId === offenerKlick.klickId; }).length) return;
+  const wert = Math.max(1, parseInt(document.getElementById("bestellwert").value, 10) || 1);
+  const ab = ANBIETER[offenerKlick.anbieter];
+  const t = {
+    id: "TX-" + (1000 + S.transaktionen.length),
+    klickId: offenerKlick.klickId,
+    anbieter: offenerKlick.anbieter,
+    netzwerk: ab.netzwerk || "direkt",
+    wert: wert,
+    provision: Math.round(wert * 0.06),
+    status: "offen",
+    zeit: new Date()
+  };
+  S.transaktionen.unshift(t);
+  mwTrack("partner.postback", { klickId:t.klickId, wert:t.wert, status:t.status,
+                                netzwerk:t.netzwerk, anbieter:t.anbieter }, "Skript");
+  document.getElementById("postback-status").innerHTML = transaktionsBlock(t);
+  statusKnoepfeBinden();
+  zaehlerZeichnen();
+}
+
+function statusSetzen(neu){
+  const t = S.transaktionen.filter(function(x){ return x.klickId === offenerKlick.klickId; })[0];
+  if (!t) return;
+  t.status = neu;
+  t.zeit = new Date();
+  mwTrack("partner.postback", { klickId:t.klickId, wert:t.wert, status:neu,
+                                netzwerk:t.netzwerk, anbieter:t.anbieter }, "Skript");
+  document.getElementById("postback-status").innerHTML = transaktionsBlock(t);
+  statusKnoepfeBinden();
+  zaehlerZeichnen();
+}
+</script>
+<script>
+"use strict";
+
+/* =====================================================================
+   14b. Suche mit Autovervollständigung
+   Acht Messpunkte nach Abschnitt 3 des Tickets H. Die Entprellung, der
+   Deckel und die Signatur der Vorschlagsliste sind der Grund, warum hier
+   mehr Code steht als für die Anzeige nötig wäre: ohne sie feuert die
+   Messung mehrfach, und niemand sieht es dem Request an.
+   ===================================================================== */
+
+function suchNormalisieren(roh){
+  return String(roh).toLowerCase().trim().replace(/\s+/g, " ");
+}
+
+/* Was in den Request geht: normalisiert, gegen die Filterregel geprüft,
+   auf 40 Zeichen gekürzt. Die ungekürzte Länge geht getrennt mit, damit
+   sichtbar bleibt, ob jemand ganze Sätze eintippt. */
+function begriffFuerRequest(roh){
+  const n = suchNormalisieren(roh);
+  for (let i = 0; i < SUCH_FILTER.length; i++){
+    if (SUCH_FILTER[i].re.test(n)) return "[gefiltert]";
+  }
+  return n.length > SUCH_BEGRIFF_MAX ? n.slice(0, SUCH_BEGRIFF_MAX) + "~" : n;
+}
+
+/* Vorschläge: Präfix vor Wortanfang vor Teilwort vor Treffer im Zusatz. */
+function vorschlaegeFinden(roh){
+  const n = suchNormalisieren(roh);
+  if (n.length < SUCH_MINLAENGE) return [];
+  const gefunden = [];
+  SUCH_INDEX.forEach(function(e){
+    const t = e.text.toLowerCase();
+    let rang = -1;
+    if (t.indexOf(n) === 0) rang = 0;
+    else if ((" " + t).indexOf(" " + n) > -1) rang = 1;
+    else if (t.indexOf(n) > -1) rang = 2;
+    else if (e.zusatz && e.zusatz.toLowerCase().indexOf(n) > -1) rang = 3;
+    if (rang > -1) gefunden.push({ e:e, rang:rang });
+  });
+  gefunden.sort(function(a,b){ return a.rang - b.rang || a.e.text.localeCompare(b.e.text); });
+  return gefunden.map(function(x){ return x.e; });
+}
+
+/* Die Ergebnisliste enthält Angebote. Ein Treffer auf einer Kategorie oder
+   einem Anbieter wird zu dessen Angeboten aufgelöst, sonst zeigte die Suche
+   nach "sport" nichts, obwohl es Sportangebote gibt. */
+function suchErgebnisse(roh){
+  const gesehen = {};
+  const raus = [];
+  vorschlaegeFinden(roh).forEach(function(e){
+    if (e.typ === "angebot"){
+      if (!gesehen[e.zielId]){ gesehen[e.zielId] = true; raus.push(angebot(e.zielId)); }
+    } else if (e.typ === "kategorie"){
+      ANGEBOTE.forEach(function(a){
+        if ((a.kategorie === e.zielId || a.unterkategorie === e.zielId) && !gesehen[a.id]){
+          gesehen[a.id] = true; raus.push(a);
+        }
+      });
+    } else {
+      ANGEBOTE.forEach(function(a){
+        if (a.anbieter === e.zielId && !gesehen[a.id]){ gesehen[a.id] = true; raus.push(a); }
+      });
+    }
+  });
+  return raus.filter(function(a){
+    return !a.mandanten.length || a.mandanten.indexOf(S.mandant) !== -1;
+  });
+}
+
+function quellenVon(liste){
+  const typen = {};
+  liste.forEach(function(e){ typen[e.typ] = true; });
+  const k = Object.keys(typen);
+  return k.length === 1 ? k[0] : "gemischt";
+}
+
+/* ---------- Strecke ---------- */
+
+function suchStreckeOeffnen(einstieg){
+  if (S.such.strecke) return;
+  S.such.strecke = streckeNeu();
+  S.such.letzteListe = "";
+  mwTrack("search.open", { einstieg:einstieg, strecke:S.such.strecke.id }, "Markup");
+}
+
+function suchStreckeSchliessen(ausgang){
+  const st = S.such.strecke;
+  if (!st) return;
+  st.ausgang = ausgang;
+  if (ausgang === "abbruch"){
+    mwTrack("search.abandon", { letzte_laenge:st.letzteLaenge, letzter_schritt:st.letzterSchritt,
+                                strecke:st.id }, "Skript");
+  }
+  S.such.strecken.unshift(st);
+  S.such.strecke = null;
+  if (S.such.timer){ clearTimeout(S.such.timer); S.such.timer = null; }
+  vorschlaegeVerbergen();
+}
+
+/* ---------- Tippen ---------- */
+
+function sucheTippen(){
+  const roh = document.getElementById("suchfeld").value;
+  S.suchbegriffRoh = roh;
+  suchStreckeOeffnen("tastatur");
+  const st = S.such.strecke;
+  if (!st.ersteEingabe && suchNormalisieren(roh).length >= SUCH_MINLAENGE) st.ersteEingabe = Date.now();
+  if (S.such.timer) clearTimeout(S.such.timer);
+  // Entprellung: erst wenn 300 ms nichts mehr kam, entsteht ein Messpunkt.
+  S.such.timer = setTimeout(function(){ sucheEingabeMessen(roh); }, SUCH_ENTPRELLUNG);
+}
+
+function sucheEingabeMessen(roh){
+  const st = S.such.strecke;
+  if (!st) return;
+  if (suchNormalisieren(roh).length < SUCH_MINLAENGE){ vorschlaegeVerbergen(); return; }
+  st.letzteLaenge = roh.length;
+  st.letzterSchritt = "input";
+  if (st.inputZaehler < SUCH_DECKEL){
+    st.inputZaehler++;
+    const letzter = st.inputZaehler === SUCH_DECKEL;
+    if (letzter) st.gedeckelt = true;
+    mwTrack("search.input", { laenge:roh.length, gedeckelt: letzter ? "ja" : "nein",
+                              strecke:st.id }, "Skript");
+  }
+  if (S.such.aktiv) vorschlaegeZeichnen(roh);
+}
+
+/* ---------- Vorschlagsliste ---------- */
+
+function vorschlaegeVerbergen(){
+  const ul = document.getElementById("vorschlaege");
+  if (ul){ ul.hidden = true; ul.innerHTML = ""; }
+}
+
+function vorschlaegeZeichnen(roh){
+  const t0 = (window.performance && performance.now) ? performance.now() : Date.now();
+  const liste = vorschlaegeFinden(roh).slice(0, SUCH_MAXVORSCHLAEGE);
+  S.such.liste = liste;
+  const ul = document.getElementById("vorschlaege");
+  if (!liste.length){ vorschlaegeVerbergen(); S.such.letzteListe = ""; return; }
+
+  ul.innerHTML = liste.map(function(e, i){
+    return '<li data-vorschlag="' + i + '" data-mw-event="search.suggest.select" ' +
+           'data-mw-such="select" data-mw-eigen="ja" data-mw-label="Vorschlag gewählt">' +
+           '<span class="pos">' + (i+1) + '</span><span>' + esc(e.text) + '</span>' +
+           '<span class="typ">' + esc(e.zusatz) + '</span></li>';
+  }).join("");
+  ul.hidden = false;
+
+  // Eine Liste, die sich gegenüber der vorigen nicht geändert hat, ist keine
+  // neue Impression. Ohne diese Prüfung zählt jede weitere Taste eine mit.
+  const signatur = liste.map(function(e){ return e.typ + ":" + e.zielId; }).join("|");
+  if (signatur === S.such.letzteListe) return;
+  S.such.letzteListe = signatur;
+
+  const st = S.such.strecke;
+  if (st){ st.listenGezeigt++; st.letzterSchritt = "suggest"; }
+  const jetzt = (window.performance && performance.now) ? performance.now() : Date.now();
+  mwTrack("search.suggest.show", {
+    anzahl: liste.length, laenge: roh.length, latenz_ms: Math.round(jetzt - t0),
+    quellen: quellenVon(liste), fehler: "nein", strecke: st ? st.id : ""
+  }, "Skript");
+}
+
+function vorschlagWaehlen(i){
+  const st = S.such.strecke;
+  const e = (S.such.liste || [])[i];
+  if (!e || !st) return;
+  const roh = document.getElementById("suchfeld").value;
+  st.letzterSchritt = "select";
+  st.sekundenBisKlick = st.ersteEingabe ? (Date.now() - st.ersteEingabe)/1000 : null;
+  mwTrack("search.suggest.select", { position:i+1, laenge:roh.length, treffertyp:e.typ,
+                                     ziel_id:e.zielId, strecke:st.id }, "Markup");
+  document.getElementById("suchfeld").value = e.text;
+  S.suchbegriffRoh = e.text;
+  S.suchKontext = st;
+  suchStreckeSchliessen("vorschlag");
+  if (e.typ === "angebot"){ S.angebotOffen = e.zielId; ansichtWechseln("angebot"); }
+  else { ansichtWechseln("suche"); }
+}
+
+/* ---------- Absenden und Ergebnis ---------- */
+
+function sucheAbsenden(quelle){
+  const roh = document.getElementById("suchfeld").value;
+  if (suchNormalisieren(roh).length < SUCH_MINLAENGE) return;
+  suchStreckeOeffnen("knopf");
+  const st = S.such.strecke;
+  st.letzterSchritt = "submit";
+  st.letzteLaenge = roh.length;
+  st.abgeschickt = true;
+  S.suchbegriffRoh = roh;
+  mwTrack("search.submit", { begriff: begriffFuerRequest(roh), laenge: roh.length,
+                             quelle: quelle, strecke: st.id }, "Markup");
+  vorschlaegeVerbergen();
+  ansichtWechseln("suche");
+}
+
+function suchergebnisBauen(){
+  const roh = S.suchbegriffRoh;
+  const treffer = suchErgebnisse(roh);
+  S.suchtreffer = treffer;
+  const st = S.such.strecke;
+  if (st) st.treffer = treffer.length;
+
+  let h = '<h2>Suche</h2>' +
+    '<p class="leise">Gesucht wurde <code>' + esc(suchNormalisieren(roh) || "-") + '</code>. ' +
+    'In den Request geht <code>' + esc(begriffFuerRequest(roh) || "-") + '</code>, ' +
+    'Länge ' + roh.length + ' Zeichen. Variante <b>' + S.such.variante + '</b>.</p>';
+
+  if (!treffer.length){
+    h += '<div class="kasten warn"><p style="margin:0"><strong>Null Treffer.</strong> ' +
+         'Der Messpunkt <code>search.results.view</code> trägt <code>treffer=0</code>. ' +
+         'Im Betrieb ist das der Punkt, an dem die Suche zur Sortimentsfrage wird: nicht der ' +
+         'Nutzer hat sich verschrieben, das Angebot fehlt.</p></div>';
+  } else {
+    h += '<p class="leise">' + treffer.length + ' Treffer.</p>';
+    h += treffer.map(function(a, i){
+      const ab = ANBIETER[a.anbieter];
+      return '<div class="treffer" data-suchtreffer="' + i + '" ' +
+             'data-mw-event="search.results.click" data-mw-such="results" data-mw-eigen="ja" ' +
+             'data-mw-label="Suchergebnis geöffnet">' +
+             '<h4>' + esc(a.titel) + '</h4>' +
+             '<p class="anbieter" style="margin:0">' + esc(ab.name) +
+             ' <span class="pill">' + esc(a.anbieter) + '</span> ' +
+             '<span class="pill">' + esc(a.kategorie) + '</span> ' +
+             '<span class="pill">Position ' + (i+1) + '</span></p>' +
+             '<p class="preis" style="margin:6px 0 0 0">' + esc(a.vorteil) + '</p></div>';
+    }).join("");
+  }
+  h += '<div class="knopfreihe"><button type="button" class="sekundaer" data-start="1">Zurück zur Startseite</button></div>';
+  document.getElementById("suche-inhalt").innerHTML = h;
+}
+
+function suchErgebnisKlick(i){
+  const a = S.suchtreffer[i];
+  if (!a) return;
+  const st = S.such.strecke;
+  if (st){
+    st.letzterSchritt = "results";
+    st.sekundenBisKlick = st.ersteEingabe ? (Date.now() - st.ersteEingabe)/1000 : null;
+  }
+  mwTrack("search.results.click", { position:i+1, ziel_id:a.id, treffer:S.suchtreffer.length,
+                                    strecke: st ? st.id : "" }, "Markup");
+  S.suchKontext = st;
+  suchStreckeSchliessen("ergebnisklick");
+  S.angebotOffen = a.id;
+  ansichtWechseln("angebot");
+}
+
+/* ---------- Variante ---------- */
+
+function varianteBestimmen(){
+  const q = new URLSearchParams(location.search);
+  const v = (q.get("variante") || "").toLowerCase();
+  if (v === "a" || v === "b"){
+    S.such.variante = v;
+    S.such.zuweisung = "erzwungen";
+  } else {
+    /* Ohne Speicher ist eine Zuweisung je Sitzung nicht stabil: derselbe Mensch
+       käme beim nächsten Besuch in den anderen Arm. Genau das ist die Falle
+       aus Abschnitt 6.1 des Tickets, und deshalb hängt die Zuweisung im
+       Echtbetrieb am Konto und wird serverseitig gerechnet. */
+    S.such.variante = Math.random() < 0.5 ? "a" : "b";
+    S.such.zuweisung = "sitzung";
+  }
+  S.such.aktiv = (S.such.variante === "b");
+}
+
+function varianteZeichnen(){
+  document.getElementById("k-variante").textContent =
+    "variante=" + S.such.variante + (S.such.aktiv ? "  Vorschläge an" : "  Vorschläge aus");
+  document.getElementById("k-variante-grund").textContent =
+    S.such.zuweisung === "erzwungen"
+      ? "aus der Adresse erzwungen"
+      : "zufällig je Sitzung, weil ohne Speicher keine stabile Zuweisung möglich ist";
+  const z = document.getElementById("variantenzeile");
+  if (z){
+    z.innerHTML = 'Variante <b>' + S.such.variante + '</b>, ' +
+      (S.such.aktiv ? 'Autovervollständigung an' : 'Autovervollständigung aus') +
+      '. Erzwingen mit <a href="index.html?variante=a">variante=a</a> oder ' +
+      '<a href="index.html?variante=b">variante=b</a>. ' +
+      'Ein Begriff ohne Treffer, zum Ausprobieren: ' +
+      SUCH_NULLTREFFER_BEISPIELE.slice(0,3).join(", ") + '.';
+  }
+}
+
+/* =====================================================================
+   15. Auswertung: Slots, Join, Kampagne
+   ===================================================================== */
+
+function auswertungZeichnen(){
+  slotTabelle();
+  joinTabelle();
+  klickTabelle();
+  transaktionsTabelle();
+  kampagnenTabelle();
+  sucheTabelle();
+  reportZeichnen();
+}
+
+/* Die Sekundärkennzahlen aus Abschnitt 2.2 des Tickets, gerechnet auf den
+   Strecken dieser Sitzung. Die laufende Strecke zählt mit, damit die Tabelle
+   nicht leer bleibt, wenn jemand die Auswertung mitten in einer Suche öffnet. */
+function sucheTabelle(){
+  const alle = S.such.strecken.concat(S.such.strecke ? [S.such.strecke] : []);
+  const mitListe   = alle.filter(function(s){ return s.listenGezeigt > 0; });
+  const angenommen = alle.filter(function(s){ return s.ausgang === "vorschlag"; });
+  const abgeschickt= alle.filter(function(s){ return s.abgeschickt; });
+  const ergebnis   = alle.filter(function(s){ return s.ausgang === "ergebnisklick"; });
+  const abbruch    = alle.filter(function(s){ return s.ausgang === "abbruch"; });
+  const mitTreffer = alle.filter(function(s){ return s.treffer !== null; });
+  const nullTreffer= mitTreffer.filter(function(s){ return s.treffer === 0; });
+  const mitKlickout= alle.filter(function(s){ return s.klickout; });
+  const zeiten = alle.filter(function(s){ return s.sekundenBisKlick !== null && s.sekundenBisKlick !== undefined; })
+                     .map(function(s){ return s.sekundenBisKlick; }).sort(function(a,b){ return a-b; });
+  const median = zeiten.length ? zeiten[Math.floor(zeiten.length/2)] : null;
+  const suchen = abgeschickt.length + angenommen.length;
+
+  let h = '<tr><th>Kennzahl</th><th class="zahl">Wert</th><th>Anmerkung</th></tr>';
+  const z = function(n, w, a){ return "<tr><td>" + esc(n) + '</td><td class="zahl">' + esc(w) + "</td><td>" + esc(a) + "</td></tr>"; };
+  h += z("Variante", S.such.variante + " (" + S.such.zuweisung + ")",
+         S.such.aktiv ? "Autovervollständigung an" : "Autovervollständigung aus");
+  h += z("Suchstrecken", alle.length, "eine Strecke reicht von search.open bis zum Ende");
+  h += z("davon mit Vorschlagsliste", mitListe.length, "in Variante A ist das null");
+  h += z("Vorschlag angenommen", angenommen.length, "Ausgang search.suggest.select");
+  h += z("Freitext abgeschickt", abgeschickt.length, "Ausgang search.submit");
+  h += z("Anteil Vorschlag angenommen", suchen ? pz(angenommen.length/suchen, 1) : "-",
+         "Auswahl geteilt durch Auswahl plus Absenden, nur in Variante B definiert");
+  h += z("Ergebnisklicks", ergebnis.length, "Ausgang search.results.click");
+  h += z("Abbrüche", abbruch.length, "Strecke endet ohne Auswahl und ohne Ergebnisklick");
+  h += z("Abbruch nach Suche", alle.length ? pz(abbruch.length/alle.length, 1) : "-", "Abbrüche geteilt durch alle Strecken");
+  h += z("Ergebnisansichten", mitTreffer.length, "Strecken mit search.results.view");
+  h += z("davon ohne Treffer", nullTreffer.length, "treffer gleich null");
+  h += z("Null-Treffer-Quote", mitTreffer.length ? pz(nullTreffer.length/mitTreffer.length, 1) : "-",
+         "im synthetischen Jahresbestand liegt sie bei 20,0 Prozent");
+  h += z("Median erstes Zeichen bis Klick", median === null ? "-" : median.toFixed(1).replace(".", ",") + " Sekunden",
+         "Median statt Mittelwert, weil abgebrochene Strecken den Mittelwert zerreißen");
+  h += z("Klick-outs aus Suchstrecken", mitKlickout.length, "der Zähler der Primärkennzahl");
+  h += z("Klick-out-Rate aus Suchstrecken", alle.length ? pz(mitKlickout.length/alle.length, 1) : "-",
+         "Primärkennzahl; im Jahresbestand liegt sie bei 27,12 Prozent");
+  document.getElementById("tab-suche").innerHTML = h;
+
+  let t = '<tr><th>Strecke</th><th>Ausgang</th><th class="zahl">Eingaben</th><th class="zahl">Listen</th>' +
+          '<th class="zahl">letzte Länge</th><th class="zahl">Treffer</th><th class="zahl">Sekunden</th><th>Klick-out</th></tr>';
+  if (!alle.length) t += '<tr><td colspan="8" class="leise">Noch keine Suche in dieser Sitzung.</td></tr>';
+  alle.forEach(function(s){
+    t += '<tr><td class="mono">' + esc(s.id) + "</td><td>" + esc(s.ausgang) + '</td>' +
+         '<td class="zahl">' + s.inputZaehler + (s.gedeckelt ? " (Deckel)" : "") + '</td>' +
+         '<td class="zahl">' + s.listenGezeigt + '</td>' +
+         '<td class="zahl">' + s.letzteLaenge + '</td>' +
+         '<td class="zahl">' + (s.treffer === null ? "-" : s.treffer) + '</td>' +
+         '<td class="zahl">' + (s.sekundenBisKlick === null || s.sekundenBisKlick === undefined
+                                ? "-" : s.sekundenBisKlick.toFixed(1).replace(".", ",")) + '</td>' +
+         "<td>" + (s.klickout ? "ja" : "nein") + "</td></tr>";
+  });
+  document.getElementById("tab-strecken").innerHTML = t;
+}
+
+function slotTabelle(){
+  const bel = belegungenFuerMandant();
+  let h = '<tr><th>Slot</th><th class="zahl">Position</th><th class="zahl">gerendert</th>' +
+          '<th class="zahl">sichtbar</th><th class="zahl">Klicks</th>' +
+          '<th class="zahl">Klickrate auf gerendert</th><th class="zahl">Klickrate auf sichtbar</th>' +
+          '<th class="zahl">positionsbereinigt</th></tr>';
+  bel.forEach(function(b){
+    const r = S.render[b.id] || 0, s = S.sichtbar[b.id] || 0, k = S.klicks[b.id] || 0;
+    const rateR = r ? k / r : 0;
+    const rateS = s ? k / s : 0;
+    const mittel = SYN.positionsMittel[b.position] || 0;
+    const bereinigt = (s && mittel) ? (rateS / mittel) : null;
+    h += "<tr><td>" + esc(b.slot) + '</td><td class="zahl">' + b.position + '</td>' +
+         '<td class="zahl">' + r + '</td><td class="zahl">' + s + '</td><td class="zahl">' + k + '</td>' +
+         '<td class="zahl">' + (r ? pz(rateR,1) : "-") + '</td>' +
+         '<td class="zahl">' + (s ? pz(rateS,1) : "-") + '</td>' +
+         '<td class="zahl">' + (bereinigt === null ? "-" : bereinigt.toFixed(2).replace(".",",") + " mal Mittel") + '</td></tr>';
+  });
+  document.getElementById("tab-slots").innerHTML = h;
+
+  let ph = "Positionsmittelwerte aus dem synthetischen Bestand: ";
+  ph += Object.keys(SYN.positionsMittel).sort().map(function(p){
+    return "Position " + p + " " + pz(SYN.positionsMittel[p],1);
+  }).join(", ") + ". ";
+  ph += "Die positionsbereinigte Zahl ist die Klickrate auf sichtbare Auslieferung, geteilt durch diesen Mittelwert. " +
+        "Ein Wert über eins heißt: der Slot leistet mehr, als seine Position erklärt. " +
+        "In dieser Sitzung stehen ein oder zwei Auslieferungen je Slot, deshalb springt die Zahl. " +
+        "Im Betrieb rechnet dieselbe Formel auf Monatsvolumen, und die Kennzahl trägt dort eine Mindestfallzahl wie jede andere.";
+  document.getElementById("hinweis-position").textContent = ph;
+}
+
+function joinTabelle(){
+  const ko = S.klickouts;
+  const mitTrans = ko.filter(function(k){
+    return S.transaktionen.filter(function(t){ return t.klickId === k.klickId; }).length > 0;
+  });
+  const nach = function(st){ return S.transaktionen.filter(function(t){ return t.status === st; }); };
+  const bestätigt = nach("bestätigt");
+  const wertBest = bestätigt.reduce(function(a,t){ return a + t.wert; }, 0);
+  const mitRueckkanal = ko.filter(function(k){ return ANBIETER[k.anbieter].rueckkanal !== "keiner"; });
+
+  document.getElementById("tab-join").innerHTML =
+    '<tr><th>Größe</th><th class="zahl">Wert</th><th>Belegstatus</th><th>Anmerkung</th></tr>' +
+    zeileJoin("Klick-outs dieser Sitzung", ko.length, "gemessen", "jeder mit eigener Klick-ID") +
+    zeileJoin("davon mit Transaktion", mitTrans.length, "gemessen", "Join über die Klick-ID") +
+    zeileJoin("Transaktionen offen", nach("offen").length, "gemessen", "vorläufig, Freigabe steht aus") +
+    zeileJoin("Transaktionen bestätigt", bestätigt.length, "gemessen", "zählt in die Ersparnis") +
+    zeileJoin("Transaktionen storniert", nach("storniert").length, "gemessen", "wird rückwirkend abgezogen") +
+    zeileJoin("Bestellwert bestätigt", euro(wertBest), "gemessen", "Summe der bestätigten Werte") +
+    zeileJoin("Belegstatus-Abdeckung", ko.length ? pz(mitRueckkanal.length / ko.length, 1) : "-", "gemessen",
+              "Anteil der Klick-outs zu Anbietern mit Rückkanal");
+}
+function zeileJoin(n, w, b, a){
+  return "<tr><td>" + esc(n) + '</td><td class="zahl">' + esc(w) + "</td><td>" + belegPill(b) + "</td><td>" + esc(a) + "</td></tr>";
+}
+function belegPill(b){
+  const cls = b === "gemessen" ? "gemessen" : (b === "geschätzt" ? "geschätzt" : "nicht");
+  const text = b === "geschätzt" ? "geschätzt" : (b === "nicht erfasst" ? "nicht erfasst" : b);
+  return '<span class="beleg ' + cls + '">' + esc(text) + "</span>";
+}
+
+function klickTabelle(){
+  let h = '<tr><th>Klick-ID</th><th>Zeit</th><th>Mandant</th><th>Angebot</th><th>Anbieter</th>' +
+          '<th>Belegung</th><th>Mediacode</th><th>userKey</th><th>Suchstrecke</th></tr>';
+  if (!S.klickouts.length){
+    h += '<tr><td colspan="9" class="leise">Noch kein Klick-out in dieser Sitzung.</td></tr>';
+  }
+  S.klickouts.forEach(function(k){
+    h += '<tr><td class="mono" style="font-size:12px">' + esc(k.klickId) + "</td>" +
+         "<td>" + uhrzeit(k.zeit) + "</td><td>" + esc(k.mandant) + "</td>" +
+         "<td>" + esc(k.angebot) + "</td><td>" + esc(k.anbieter) + "</td>" +
+         '<td class="mono">' + esc(k.belegung) + "</td>" +
+         '<td class="mono" style="font-size:12px">' + esc(k.mediacode) + "</td>" +
+         '<td class="mono" style="font-size:12px">' + (k.userKey ? esc(k.userKey) : '<span class="leise">Stufe eins, kein userKey</span>') + "</td>" +
+         '<td class="mono" style="font-size:12px">' + (k.suchstrecke ? esc(k.suchstrecke) : '<span class="leise">nicht aus der Suche</span>') + "</td></tr>";
+  });
+  document.getElementById("tab-klicks").innerHTML = h;
+}
+
+function transaktionsTabelle(){
+  let h = '<tr><th>Transaktion</th><th>Klick-ID</th><th>Netzwerk</th><th class="zahl">Wert</th>' +
+          '<th class="zahl">Provision</th><th>Status</th><th>gemeldet</th></tr>';
+  if (!S.transaktionen.length){
+    h += '<tr><td colspan="7" class="leise">Noch kein Postback in dieser Sitzung.</td></tr>';
+  }
+  S.transaktionen.forEach(function(t){
+    h += "<tr><td>" + esc(t.id) + '</td><td class="mono" style="font-size:12px">' + esc(t.klickId) + "</td>" +
+         "<td>" + esc(t.netzwerk) + '</td><td class="zahl">' + euro(t.wert) + '</td>' +
+         '<td class="zahl">' + euro(t.provision) + "</td><td>" + esc(t.status) + "</td><td>" + uhrzeit(t.zeit) + "</td></tr>";
+  });
+  document.getElementById("tab-transaktionen").innerHTML = h;
+}
+
+function kampagnenTabelle(){
+  const b = SYN.besuche;
+  const anteil = b.mitCode ? b.auffang / b.mitCode : 0;
+  let h = '<tr><th>Größe</th><th class="zahl">Wert</th><th>Anmerkung</th></tr>';
+  h += "<tr><td>Mediacode dieser Sitzung</td><td class=\"zahl mono\">" + esc(S.mediacode) + "</td><td>" + esc(S.mediacodeGrund) + "</td></tr>";
+  h += "<tr><td>Bereich</td><td class=\"zahl\">" + esc(S.mediacodeBereich) + "</td><td>A Marketing, B Arbeitgeberkanal, C Anbieterkanal</td></tr>";
+  h += "<tr><td>Besuche im synthetischen Bestand</td><td class=\"zahl\">" + zahl(b.gesamt) + "</td><td>Monat " + KAMPAGNENMONAT + "</td></tr>";
+  h += "<tr><td>davon mit Mediacode</td><td class=\"zahl\">" + zahl(b.mitCode) + "</td><td>der Rest sind Direkteinstiege</td></tr>";
+  h += "<tr><td>Auffangkanal-Anteil</td><td class=\"zahl\">" + pz(anteil,1) + "</td><td>unbekannter oder ungültiger Mediacode, geteilt durch Besuche mit Mediacode. Über fünf Prozent hat einen Grund.</td></tr>";
+  h += "<tr><td>Einstiege über Arbeitgeberkanal</td><td class=\"zahl\">" + zahl(b.bereich.B) + "</td><td>Bereich B, Grundlage der Kennzahl je Mandant und Kampagne</td></tr>";
+  h += "<tr><td>Bereich A</td><td class=\"zahl\">" + zahl(b.bereich.A) + "</td><td>Marketing</td></tr>";
+  h += "<tr><td>Bereich C</td><td class=\"zahl\">" + zahl(b.bereich.C) + "</td><td>Anbieterkanal</td></tr>";
+  document.getElementById("tab-kampagne").innerHTML = h;
+
+  // Rohwerte der Adresse mit Pruefergebnis
+  if (Object.keys(S.utmRoh).length){
+    let r = '<h4>Parameter aus der Adresse</h4><div class="tabellenrahmen"><table class="d">' +
+            "<tr><th>Parameter</th><th>Wert</th><th>Prüfung</th></tr>";
+    r += "<tr><td>utm_medium</td><td class=\"mono\">" + esc(S.utmRoh.utm_medium || "-") + "</td><td>" +
+         (UTM_MEDIUM[S.utmRoh.utm_medium] ? "in der Werteliste, Bereich " + UTM_MEDIUM[S.utmRoh.utm_medium].bereich
+          : (S.utmRoh.utm_medium ? "nicht in der Werteliste" : "fehlt")) + "</td></tr>";
+    ["utm_source","utm_campaign","utm_content"].forEach(function(k){
+      const v = S.utmRoh[k];
+      r += "<tr><td>" + k + "</td><td class=\"mono\">" + esc(v || "-") + "</td><td>" +
+           (!v ? "fehlt" : (UTM_PRUEF[k].test(v) ? "Prüfausdruck erfüllt" : "Prüfausdruck verletzt")) + "</td></tr>";
+    });
+    r += "</table></div>";
+    const vorhanden = document.getElementById("utm-roh");
+    if (vorhanden) vorhanden.parentNode.removeChild(vorhanden);
+    document.getElementById("tab-kampagne").insertAdjacentHTML("afterend", '<div id="utm-roh">' + r + "</div>");
+  }
+}
+
+/* =====================================================================
+   16. Arbeitgeber-Report mit Schutzregel
+   ===================================================================== */
+
+function reportGrunddaten(){
+  const konten = SYN.konten.filter(function(k){ return k.mandant === S.mandant; });
+  const nutzung = SYN.nutzung.filter(function(n){ return n.mandant === S.mandant; });
+  // Ereignisse dieser Sitzung dazunehmen, damit sichtbar wird, dass der Report mitwächst.
+  const sitzung = S.klickouts.map(function(k){
+    return { mandant:S.mandant, standort: MANDANTEN[S.mandant].standorte[0],
+             kontoNr: S.angemeldet ? "SITZUNG" : "ANONYM", angebot:k.angebot,
+             ansichten:1, klickouts:1,
+             transaktionen: S.transaktionen.filter(function(t){
+               return t.klickId === k.klickId && t.status === "bestätigt"; }).length,
+             wert: S.transaktionen.filter(function(t){
+               return t.klickId === k.klickId && t.status === "bestätigt"; })
+                 .reduce(function(a,t){ return a + t.wert; }, 0) };
+  });
+  return { konten:konten, nutzung:nutzung.concat(sitzung) };
+}
+
+function belegstatusVon(angId){
+  const rk = ANBIETER[angebot(angId).anbieter].rueckkanal;
+  if (rk === "Netzwerk" || rk === "Direkt") return "gemessen";
+  if (rk === "Code") return "geschätzt";
+  return "nicht erfasst";
+}
+
+function gruppieren(nutzung, schluessel){
+  const g = {};
+  nutzung.forEach(function(n){
+    const s = schluessel(n);
+    if (s === null) return;
+    if (!g[s]) g[s] = { konten:{}, ansichten:0, klickouts:0, ersparnisGemessen:0,
+                        ersparnisGeschaetzt:0, klickoutsNichtErfasst:0 };
+    g[s].konten[n.kontoNr] = true;
+    g[s].ansichten += n.ansichten;
+    g[s].klickouts += n.klickouts;
+    const bs = belegstatusVon(n.angebot);
+    if (bs === "gemessen") g[s].ersparnisGemessen += n.wert;
+    else if (bs === "geschätzt") g[s].ersparnisGeschaetzt += n.klickouts * 0.22 * angebot(n.angebot).wert;
+    else g[s].klickoutsNichtErfasst += n.klickouts;
+  });
+  Object.keys(g).forEach(function(k){ g[k].n = Object.keys(g[k].konten).length; });
+  return g;
+}
+
+function reportZeichnen(){
+  const m = MANDANTEN[S.mandant];
+  const d = reportGrunddaten();
+  const schwelle = S.schwelle;
+  const schwelle3 = Math.round(schwelle * 2.5);
+  const ziel = document.getElementById("report-inhalt");
+
+  document.getElementById("stufen-hinweis").innerHTML =
+    "Mandant " + esc(m.name) + ", Reporting-Stufe im Stammdatensatz: " + m.reportingStufe +
+    ", Betriebsvereinbarung: " + (m.betriebsvereinbarung ? "ja" : "nein") + ". " +
+    "Stufe zwei rechnet mit " + schwelle + " Konten je Zelle, Stufe drei mit dem 2,5-fachen, also " + schwelle3 +
+    ", nach Abschnitt 8 des Datenkonzepts. Bei Schwelle null ist die Schutzregel aus, das ist der Vergleichsfall.";
+
+  // Stufe eins: Mandant gesamt, keine Untergliederung, deshalb keine Unterdrückung.
+  const aktiv = d.konten.filter(function(k){ return k.aktiv; }).length;
+  const bereinigt = d.konten.filter(function(k){ return k.letzteAktivitaetMonate < 12; }).length;
+  const ansichten = d.nutzung.reduce(function(a,n){ return a + n.ansichten; }, 0);
+  const klickouts = d.nutzung.reduce(function(a,n){ return a + n.klickouts; }, 0);
+  const erspGem = d.nutzung.reduce(function(a,n){ return a + (belegstatusVon(n.angebot)==="gemessen" ? n.wert : 0); }, 0);
+  const erspGes = d.nutzung.reduce(function(a,n){
+      return a + (belegstatusVon(n.angebot)==="geschätzt" ? n.klickouts * 0.22 * angebot(n.angebot).wert : 0); }, 0);
+  const koOhne = d.nutzung.reduce(function(a,n){ return a + (belegstatusVon(n.angebot)==="nicht erfasst" ? n.klickouts : 0); }, 0);
+
+  let h = '<h4>Stufe eins: ' + esc(m.name) + ' gesamt</h4>' +
+    '<div class="tabellenrahmen"><table class="d">' +
+    '<tr><th>Kennzahl</th><th class="zahl">Wert</th><th>Belegstatus</th><th>Definition in Kurzform</th></tr>' +
+    zeileJoin("Registrierte Nutzer, bereinigt", zahl(bereinigt), "gemessen", "Konten mit Angebotsansicht in den letzten zwölf Monaten") +
+    zeileJoin("Monatlich aktive Nutzer", zahl(aktiv), "gemessen", "Konten mit Angebotsansicht im Kalendermonat; Login allein zählt nicht") +
+    zeileJoin("Aktivierungsquote", pz(aktiv / m.belegschaft, 1), "gemessen",
+              "aktive Nutzer geteilt durch Belegschaft " + zahl(m.belegschaft) + ", Stand " + m.belegschaftStand) +
+    zeileJoin("Angebotsansichten", zahl(ansichten), "gemessen", "Ereignisse mit Angebotsbezug") +
+    zeileJoin("Klick-outs", zahl(klickouts), "gemessen", "Klick zum Anbieter und Code-Anzeige") +
+    zeileJoin("Ersparnis, belegt", euro(erspGem), "gemessen", "bestätigte Transaktionen über die Klick-ID") +
+    zeileJoin("Ersparnis, hochgerechnet", euro(erspGes), "geschätzt", "Code-Anbieter: Klick-outs mal Einlösungsquote der Kategorie") +
+    zeileJoin("Klick-outs ohne Rückkanal", zahl(koOhne), "nicht erfasst", "zu diesen Angeboten ist keine Ersparnis belegbar") +
+    "</table></div>";
+
+  if (S.stufe === "1"){ ziel.innerHTML = h; return; }
+
+  // Stufe zwei: Kategorien und Angebote
+  if (S.stufe === "2"){
+    const nachKat = gruppieren(d.nutzung, function(n){ return angebot(n.angebot).kategorie; });
+    const nachAng = gruppieren(d.nutzung, function(n){ return n.angebot; });
+    h += '<h4>Stufe zwei: Kategorien</h4>' + tabelleMitSchwelle(nachKat, schwelle, "Kategorie", null);
+    h += '<h4>Stufe zwei: Angebote</h4>' + tabelleMitSchwelle(nachAng, schwelle, "Angebot", function(k){
+      const a = angebot(k);
+      return esc(a.id) + " " + esc(a.titel) + ' <span class="pill">' + esc(a.anbieter) + "</span>";
+    });
+    ziel.innerHTML = h;
+    return;
+  }
+
+  // Stufe drei: Standorte, nur mit Betriebsvereinbarung
+  if (!m.betriebsvereinbarung){
+    h += '<div class="kasten warn"><p style="margin:0"><strong>Stufe drei ist für ' + esc(m.name) + ' gesperrt.</strong> ' +
+         'Eine Auswertung nach Standort oder Bereich gibt es nur mit Betriebsvereinbarung. Der Mandant hat keine, ' +
+         'also endet das Reporting auf Stufe zwei. Die Sperre hängt am Stammdatensatz und nicht an der Bedienung.</p></div>';
+    ziel.innerHTML = h;
+    return;
+  }
+  const nachStandort = gruppieren(d.nutzung, function(n){ return n.standort; });
+  h += '<h4>Stufe drei: Standorte, Schwelle ' + schwelle3 + ' Konten</h4>' +
+       tabelleMitSchwelle(nachStandort, schwelle3, "Standort", null) +
+       '<p class="leise">Der Regler steht auf ' + schwelle + '. Stufe drei rechnet mit ' + schwelle3 +
+       '. Wer den Regler nach rechts schiebt, sieht die Standorte nacheinander verschwinden, ' +
+       'und im Report bleibt stehen, dass an dieser Stelle etwas war.</p>';
+  ziel.innerHTML = h;
+}
+
+function tabelleMitSchwelle(gruppen, schwelle, spaltenname, formatierer){
+  const schluessel = Object.keys(gruppen).sort(function(a,b){ return gruppen[b].n - gruppen[a].n; });
+  let unterdrückt = 0;
+  let h = '<div class="tabellenrahmen"><table class="d"><tr><th>' + esc(spaltenname) + '</th>' +
+          '<th class="zahl">Konten</th><th class="zahl">Ansichten</th><th class="zahl">Klick-outs</th>' +
+          '<th class="zahl">Ersparnis belegt</th><th class="zahl">Ersparnis hochgerechnet</th>' +
+          '<th class="zahl">Klick-outs ohne Rückkanal</th><th>Belegstatus</th></tr>';
+  schluessel.forEach(function(k){
+    const g = gruppen[k];
+    const name = formatierer ? formatierer(k) : esc(k);
+    if (g.n < schwelle){
+      unterdrückt++;
+      h += '<tr class="unterdrückt"><td>' + name + '</td>' +
+           '<td colspan="7">unterdrückt, n unter Schwelle</td></tr>';
+      return;
+    }
+    let bs = "gemessen";
+    if (g.ersparnisGemessen === 0 && g.ersparnisGeschaetzt > 0) bs = "geschätzt";
+    if (g.ersparnisGemessen === 0 && g.ersparnisGeschaetzt === 0) bs = "nicht erfasst";
+    h += "<tr><td>" + name + '</td><td class="zahl">' + g.n + '</td>' +
+         '<td class="zahl">' + zahl(g.ansichten) + '</td><td class="zahl">' + zahl(g.klickouts) + '</td>' +
+         '<td class="zahl">' + euro(g.ersparnisGemessen) + '</td>' +
+         '<td class="zahl">' + euro(g.ersparnisGeschaetzt) + '</td>' +
+         '<td class="zahl">' + zahl(g.klickoutsNichtErfasst) + '</td>' +
+         "<td>" + belegPill(bs) + "</td></tr>";
+  });
+  h += "</table></div>";
+  h += '<p class="leise">' + schluessel.length + " Zellen, davon " + unterdrückt +
+       " unterdrückt. Eine unterdrückte Zelle wird gekennzeichnet und nicht weggelassen, " +
+       "damit im Report zu sehen ist, dass an dieser Stelle etwas steht.</p>";
+  return h;
+}
+</script>
+<script>
+"use strict";
+
+/* =====================================================================
+   17. Messplan-Ansicht und die Prüfung Markup gegen Plan
+   ===================================================================== */
+
+function messplanZeichnen(){
+  let h = '<tr><th>Messpunkt</th><th>Auslöser</th><th>Herkunft</th><th>im Markup erwartet</th>' +
+          '<th>Parameter</th><th>Zweck</th></tr>';
+  MESSPLAN.forEach(function(m){
+    h += "<tr><td class=\"mono\">" + esc(m.name) + "</td><td>" + esc(m.ausloeser) + "</td>" +
+         "<td>" + esc(m.art) + "</td><td>" + (m.pflicht ? "ja, immer" : "nein, nur je nach Ansicht") + "</td>" +
+         "<td>" + esc(m.parameter) + "</td><td>" + esc(m.zweck) + "</td></tr>";
+  });
+  document.getElementById("tab-messplan").innerHTML = h;
+
+  const tax = [
+    ["Startseite", "web.start.uebersicht.PN00000", "web", "start", "uebersicht", "PN00000"],
+    ["Suchergebnis", "web.suche.ergebnis.PN00000", "web", "suche", "ergebnis", "PN00000"],
+    ["Datenschutz", "web.intern.datenschutz.PN00000", "web", "intern", "datenschutz", "PN00000"],
+    ["Angebotsseite", "web.<kategorie>.<unterkategorie>.<PNangebot>", "web", "Kategorie", "Unterkategorie", "Angebotsnummer"],
+    ["Anbieterseite", "web.weiterleitung.<kategorie>.<PNangebot>", "web", "weiterleitung", "Kategorie", "Angebotsnummer"],
+    ["Auswertung", "web.report.arbeitgeber.PN00000", "web", "report", "arbeitgeber", "PN00000"],
+    ["Messplan", "web.intern.messplan.PN00000", "web", "intern", "messplan", "PN00000"]
+  ];
+  let t = "<tr><th>Ansicht</th><th>pageName</th><th>pageGroup1</th><th>pageGroup2</th><th>pageGroup3</th><th>pageGroup4</th></tr>";
+  tax.forEach(function(z){
+    t += "<tr><td>" + esc(z[0]) + "</td><td class=\"mono\">" + esc(z[1]) + "</td>" +
+         "<td>" + esc(z[2]) + "</td><td>" + esc(z[3]) + "</td><td>" + esc(z[4]) + "</td><td>" + esc(z[5]) + "</td></tr>";
+  });
+  document.getElementById("tab-taxonomie").innerHTML = t;
+
+  let p = "<tr><th>Parameter</th><th>wann</th><th>Bedeutung</th></tr>";
+  PARAMETER_DOKU.forEach(function(z){
+    p += "<tr><td class=\"mono\">" + esc(z[0]) + "</td><td>" + esc(z[1]) + "</td><td>" + esc(z[2]) + "</td></tr>";
+  });
+  document.getElementById("tab-parameter").innerHTML = p;
+
+  let mh = "<tr><th>Wert</th><th>Bereich</th><th>Bedeutung</th></tr>";
+  Object.keys(UTM_MEDIUM).forEach(function(k){
+    mh += "<tr><td class=\"mono\">" + esc(k) + "</td><td>" + UTM_MEDIUM[k].bereich + "</td><td>" +
+          esc(UTM_MEDIUM[k].bedeutung) + "</td></tr>";
+  });
+  document.getElementById("tab-medium").innerHTML = mh;
+
+  pruefungZeichnen();
+}
+
+/* Die Prüfung liest die Attribute aus dem Markup dieser Seite und
+   vergleicht sie mit dem Messplan, in beide Richtungen. */
+function pruefungZeichnen(){
+  const imMarkup = {};
+  Array.prototype.slice.call(document.querySelectorAll("[data-mw-event]")).forEach(function(el){
+    const n = el.getAttribute("data-mw-event");
+    imMarkup[n] = (imMarkup[n] || 0) + 1;
+  });
+  const imPlan = {};      // alle Messpunkte des Plans, gleich welcher Herkunft
+  const pflichtImMarkup = {};   // die, die in jedem Zustand der Seite dastehen müssen
+  MESSPLAN.forEach(function(m){
+    imPlan[m.name] = true;
+    if (m.art === "Markup" && m.pflicht) pflichtImMarkup[m.name] = true;
+  });
+
+  const nurMarkup = Object.keys(imMarkup).filter(function(n){ return !imPlan[n]; });
+  const nurPlan   = Object.keys(pflichtImMarkup).filter(function(n){ return !imMarkup[n]; });
+
+  // Zweite Prüfung: Vollständigkeit der Teaser-Attribute.
+  const teaserFehler = [];
+  const teaser = Array.prototype.slice.call(document.querySelectorAll("[data-mw-teaser]"));
+  teaser.forEach(function(el){
+    let o;
+    try { o = JSON.parse(el.getAttribute("data-mw-teaser")); }
+    catch(e){ teaserFehler.push("ein Teaser-Attribut ist kein gültiges JSON"); return; }
+    const ck = o && o.ck ? o.ck : {};
+    ["520","521","526","527","528"].forEach(function(f){
+      if (!ck[f]) teaserFehler.push("Teaser " + (el.getAttribute("data-belegung") || "ohne Belegung") + ": Feld " + f + " fehlt");
+    });
+    if (!el.getAttribute("data-belegung")) teaserFehler.push("ein Teaser trägt keine Belegung");
+  });
+  const belegungenImMarkup = teaser.map(function(el){ return el.getAttribute("data-belegung"); });
+  const fehlendeBelegungen = belegungenFuerMandant()
+    .filter(function(b){ return belegungenImMarkup.indexOf(b.id) === -1; })
+    .map(function(b){ return b.id; });
+
+  // Dritte Prüfung: die Suchpunkte im Markup. Jeder braucht data-mw-such als
+  // Schritt und data-mw-eigen, weil ihn eigener Code feuert; ohne das zweite
+  // Attribut würde der allgemeine Klick-Empfänger denselben Punkt ein
+  // zweites Mal senden, mit anderen Parametern.
+  const suchFehler = [];
+  Array.prototype.slice.call(document.querySelectorAll('[data-mw-event^="search."]')).forEach(function(el){
+    const n = el.getAttribute("data-mw-event");
+    if (!el.getAttribute("data-mw-such"))
+      suchFehler.push("Suchpunkt " + n + ": Attribut data-mw-such fehlt");
+    if (!el.getAttribute("data-mw-eigen"))
+      suchFehler.push("Suchpunkt " + n + ": Attribut data-mw-eigen fehlt, der Punkt würde doppelt feuern");
+  });
+
+  const fehler = nurMarkup.length + nurPlan.length + teaserFehler.length +
+                 fehlendeBelegungen.length + suchFehler.length;
+  let h = "";
+  if (fehler === 0){
+    h += '<div class="kasten gut"><p style="margin:0">Keine Abweichung. Alle Messpunkte aus dem Markup stehen im Plan, ' +
+         'alle Markup-Messpunkte des Plans kommen im Markup vor, und jeder Teaser trägt die fünf Pflichtfelder.</p></div>';
+  } else {
+    h += '<div class="kasten warn"><p style="margin-top:0"><strong>' + fehler +
+         ' Abweichung' + (fehler === 1 ? '' : 'en') + ' gefunden.</strong></p><ul class="fehlerliste">';
+    nurMarkup.forEach(function(n){
+      h += "<li><code>" + esc(n) + "</code> steht im Markup (" + imMarkup[n] + " mal), aber nicht im Messplan. " +
+           "Ein solcher Name entsteht meist durch einen Tippfehler beim Einbau und läuft danach still ins Leere.</li>";
+    });
+    nurPlan.forEach(function(n){
+      h += "<li><code>" + esc(n) + "</code> steht im Messplan, kommt aber im Markup nicht vor. " +
+           "Der Messpunkt ist geplant und nicht gebaut, die Kennzahl dahinter bleibt leer.</li>";
+    });
+    teaserFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
+    suchFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
+    fehlendeBelegungen.forEach(function(b){
+      h += "<li>Belegung <code>" + esc(b) + "</code> steht im Belegungsplan, aber in keinem Teaser dieser Seite.</li>";
+    });
+    h += "</ul></div>";
+  }
+  h += '<p class="leise">Geprüfte Elemente: ' + Object.keys(imMarkup).length + ' verschiedene Eventnamen im Markup, ' +
+       teaser.length + ' Teaser mit Attribut, ' + Object.keys(pflichtImMarkup).length +
+       ' Messpunkte, die in jedem Zustand der Seite im Markup stehen müssen, und ' +
+       belegungenFuerMandant().length + ' Belegungen im Plan des Mandanten. ' +
+       'Die Prüfung liest den Zustand des Dokuments, nicht eine gepflegte Liste.</p>';
+  document.getElementById("pruefergebnis").innerHTML = h;
+}
+
+/* =====================================================================
+   18. Ansichten
+   ===================================================================== */
+
+function ansichtWechseln(name, klickId){
+  // Eine offene Suchstrecke endet, sobald der Nutzer die Suche verlässt.
+  // Das ist der ehrliche Auslöser für search.abandon: beforeunload feuert
+  // auf Mobilgeräten oft gar nicht, visibilitychange dagegen zu früh.
+  if (S.such.strecke && name !== "suche") suchStreckeSchliessen("abbruch");
+  S.ansicht = name;
+  Array.prototype.slice.call(document.querySelectorAll("section.ansicht")).forEach(function(s){
+    s.classList.remove("sichtbar");
+  });
+  const el = document.getElementById("v-" + name);
+  if (el) el.classList.add("sichtbar");
+  Array.prototype.slice.call(document.querySelectorAll("#reiter a")).forEach(function(a){
+    a.classList.toggle("aktiv", a.getAttribute("data-ansicht") === name);
+  });
+
+  if (name === "anbieter" && klickId) location.hash = "anbieter/klick=" + klickId;
+  else if (location.hash.replace("#","").split("/")[0] !== name) location.hash = name;
+
+  dataLayer.page = seitenBlock();
+  konsoleDatenlayerZeichnen();
+
+  S.seitenaufrufe++;
+  mwTrack("page.view", { ansicht:name }, "Skript");
+
+  if (name === "start"){ teaserMessungStarten(); }
+  if (name === "suche"){
+    suchergebnisBauen();
+    mwTrack("search.results.view", {
+      begriff: begriffFuerRequest(S.suchbegriffRoh), treffer: S.suchtreffer.length, seite: 1,
+      strecke: S.such.strecke ? S.such.strecke.id : ""
+    }, "Skript");
+  }
+  if (name === "angebot"){ angebotsseiteBauen(); mwTrack("offer.detail.open",
+      { angebot:S.angebotOffen, anbieter:anbieterNrVon(S.angebotOffen),
+        kategorie:angebot(S.angebotOffen).kategorie }, "Markup"); }
+  if (name === "anbieter"){ anbieterseiteBauen(klickId); }
+  if (name === "auswertung"){ auswertungZeichnen(); }
+  if (name === "messplan"){ messplanZeichnen(); }
+
+  window.scrollTo(0,0);
+}
+
+function hashLesen(){
+  const roh = location.hash.replace(/^#/, "");
+  if (!roh) return { name:"start", klickId:null };
+  const teile = roh.split("/");
+  const name = teile[0];
+  let klickId = null;
+  if (teile[1] && teile[1].indexOf("klick=") === 0) klickId = teile[1].slice(6);
+  return { name: ["start","suche","angebot","anbieter","auswertung","messplan","datenschutz"].indexOf(name) === -1 ? "start" : name,
+           klickId: klickId };
+}
+
+/* =====================================================================
+   19. Bedienung
+   ===================================================================== */
+
+document.addEventListener("click", function(ev){
+  const ziel = ev.target;
+
+  // Teaser-Klick
+  const tk = ziel.closest ? ziel.closest("[data-teaserklick]") : null;
+  if (tk){
+    const b = belegung(tk.getAttribute("data-teaserklick"));
+    S.klicks[b.id] = (S.klicks[b.id] || 0) + 1;
+    mwTrack("teaser.click", { belegung:b.id, slot:b.slot, position:b.position,
+                              angebot:b.angebot, anbieter:anbieterNrVon(b.angebot) }, "Teaser");
+    S.angebotOffen = b.angebot;
+    ansichtWechseln("angebot");
+    ev.preventDefault();
+    return;
+  }
+
+  // Klick-out
+  const ko = ziel.closest ? ziel.closest("[data-klickout]") : null;
+  if (ko){
+    klickOut(ko.getAttribute("data-klickout"));
+    ev.preventDefault();
+    return;
+  }
+
+  // Zurück
+  const zb = ziel.closest ? ziel.closest("[data-start]") : null;
+  if (zb){ ansichtWechseln("start"); ev.preventDefault(); return; }
+
+  // Suchergebnis
+  const tr = ziel.closest ? ziel.closest("[data-suchtreffer]") : null;
+  if (tr){
+    suchErgebnisKlick(parseInt(tr.getAttribute("data-suchtreffer"), 10));
+    ev.preventDefault();
+    return;
+  }
+
+  // Deklarative Messpunkte aus dem Markup. Wer data-mw-eigen trägt, wird von
+  // eigenem Code gefeuert und hier übergangen, sonst feuerte er zweimal.
+  const me = ziel.closest ? ziel.closest("[data-mw-event]") : null;
+  if (me && me.getAttribute("data-mw-eigen")) return;
+  if (me){
+    const extra = { label: me.getAttribute("data-mw-label") || "" };
+    if (me.getAttribute("data-angebot")){
+      extra.angebot = me.getAttribute("data-angebot");
+      extra.anbieter = anbieterNrVon(me.getAttribute("data-angebot"));
+    }
+    mwTrack(me.getAttribute("data-mw-event"), extra, "Markup");
+  }
+});
+
+// Navigation
+Array.prototype.slice.call(document.querySelectorAll("#reiter a")).forEach(function(a){
+  a.addEventListener("click", function(ev){
+    ev.preventDefault();
+    ansichtWechseln(a.getAttribute("data-ansicht"));
+  });
+});
+
+// Mandant und Anmeldung
+document.getElementById("sel-mandant").addEventListener("change", function(){
+  S.mandant = this.value;
+  dataLayerAufbauen();
+  konsoleDatenlayerZeichnen();
+  startseiteBauen();
+  const stufe = document.getElementById("sel-stufe");
+  ansichtWechseln(S.ansicht === "anbieter" ? "start" : S.ansicht);
+  if (S.ansicht === "auswertung") auswertungZeichnen();
+  if (stufe) stufe.value = S.stufe;
+});
+
+document.getElementById("chk-login").addEventListener("change", function(){
+  S.angemeldet = this.checked;
+  document.getElementById("lbl-login").textContent = this.checked ? "angemeldet" : "abgemeldet";
+  dataLayerAufbauen();
+  konsoleDatenlayerZeichnen();
+  mwTrack(this.checked ? "user.login" : "user.logout", { angemeldet: this.checked ? "ja" : "nein" }, "Skript");
+});
+
+// Report-Bedienung
+document.getElementById("regler").addEventListener("input", function(){
+  S.schwelle = parseInt(this.value, 10);
+  document.getElementById("regler-wert").textContent = S.schwelle;
+  reportZeichnen();
+});
+document.getElementById("regler").addEventListener("change", function(){
+  mwTrack("report.threshold.change", { schwelle:S.schwelle, stufe:S.stufe }, "Markup");
+});
+document.getElementById("sel-stufe").addEventListener("change", function(){
+  S.stufe = this.value;
+  reportZeichnen();
+});
+
+// Suche
+(function sucheVerdrahten(){
+  const feld = document.getElementById("suchfeld");
+  feld.addEventListener("focus", function(){ suchStreckeOeffnen("kopf"); });
+  feld.addEventListener("input", sucheTippen);
+  feld.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter"){ ev.preventDefault(); sucheAbsenden("tastatur"); }
+    if (ev.key === "Escape"){ suchStreckeSchliessen("abbruch"); }
+  });
+  document.getElementById("btn-suche").addEventListener("click", function(){ sucheAbsenden("knopf"); });
+  document.getElementById("btn-suche-zu").addEventListener("click", function(){
+    feld.value = "";
+    S.suchbegriffRoh = "";
+    suchStreckeSchliessen("abbruch");
+  });
+  document.getElementById("vorschlaege").addEventListener("click", function(ev){
+    const li = ev.target.closest ? ev.target.closest("[data-vorschlag]") : null;
+    if (li) vorschlagWaehlen(parseInt(li.getAttribute("data-vorschlag"), 10));
+  });
+})();
+
+// Live-Modus
+document.getElementById("chk-live").addEventListener("change", function(){
+  if (this.checked && !S.live.moeglich){
+    this.checked = false;
+    document.getElementById("k-live-grund").textContent = S.live.grund;
+    return;
+  }
+  S.live.an = this.checked;
+  document.getElementById("lbl-live").textContent = this.checked ? "an" : "aus";
+  liveZeichnen();
+  mwTrack(this.checked ? "live.an" : "live.aus", { sitzung: S.sitzung }, "Skript");
+});
+document.getElementById("btn-live-pruefen").addEventListener("click", liveVerbindungPruefen);
+
+// Konsole
+document.getElementById("btn-speicher").addEventListener("click", function(){
+  document.getElementById("speicherausgabe").textContent = speicherLesen();
+});
+document.getElementById("btn-teasermarkup").addEventListener("click", function(){
+  const el = document.querySelector("[data-mw-teaser]");
+  document.getElementById("speicherausgabe").textContent = el
+    ? 'data-mw-teaser=\n' + el.getAttribute("data-mw-teaser") + '\n\ndata-belegung = ' + el.getAttribute("data-belegung")
+    : "kein Teaser im Dokument";
+});
+document.getElementById("btn-req-leeren").addEventListener("click", function(){
+  S.requests = [];
+  document.getElementById("reqliste").innerHTML = "";
+  zaehlerZeichnen();
+});
+document.getElementById("btn-req-alle").addEventListener("click", function(){
+  Array.prototype.slice.call(document.querySelectorAll("#reqliste .req")).forEach(function(r){
+    r.classList.add("offen");
+  });
+});
+Array.prototype.slice.call(document.querySelectorAll("#konsole [data-klapp]")).forEach(function(h3){
+  h3.addEventListener("click", function(){
+    const z = document.getElementById(h3.getAttribute("data-klapp"));
+    const zu = z.style.display === "none";
+    z.style.display = zu ? "" : "none";
+    h3.querySelector(".pfeil").innerHTML = zu ? "&#9660;" : "&#9654;";
+  });
+});
+
+window.addEventListener("hashchange", function(){
+  const h = hashLesen();
+  if (h.name !== S.ansicht || h.klickId) ansichtWechseln(h.name, h.klickId);
+});
+
+/* =====================================================================
+   20. Start
+   ===================================================================== */
+
+(function start(){
+  const sel = document.getElementById("sel-mandant");
+  sel.innerHTML = Object.keys(MANDANTEN).map(function(k){
+    return '<option value="' + k + '">' + esc(MANDANTEN[k].name) + " (" + k + ")</option>";
+  }).join("");
+  sel.value = S.mandant;
+
+  mediacodeBilden();
+  varianteBestimmen();
+  varianteZeichnen();
+  liveMoeglichPruefen();
+  if (!S.live.moeglich){
+    const c = document.getElementById("chk-live");
+    c.disabled = true;
+    document.getElementById("lbl-live").textContent = "unter file:// nicht möglich";
+  }
+  liveZeichnen();
+  dataLayerAufbauen();
+  konsoleDatenlayerZeichnen();
+  startseiteBauen();
+
+  const h = hashLesen();
+  ansichtWechseln(h.name, h.klickId);
+  zaehlerZeichnen();
+})();
+</script>
+</body>
+</html>
