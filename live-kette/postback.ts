@@ -1,6 +1,7 @@
 // =====================================================================
 // postback: der Rueckkanal-Endpunkt des Portals
-// Supabase Edge Function, Deno. Stand 10.09.2026, Arbeitspaket 4.
+// Supabase Edge Function, Deno. Stand 10.09.2026, Arbeitspaket 4; Signatur
+// am Server-Eingang ergaenzt am 10.09.2026 abends (Arbeitspaket 5, Nachtrag).
 //
 // Zwei Rollen in einer Funktion, getrennt ueber den Pfad:
 //
@@ -26,6 +27,19 @@
 // Eine Meldung mit unbekannter Klick-ID wird geschrieben und markiert
 // (klick_bekannt = false). Verwerfen waere bequemer und wuerde genau den
 // Beleg vernichten, dass der Weiterleitungs-Endpunkt eine Zeile nicht hatte.
+//
+// Seit dem Nachtrag vom 10.09.2026 abends hat der Partner einen eigenen
+// Server, die Edge Function partnershop. Sie meldet an denselben Pfad
+// /postback/partnershop, von Server zu Server, und signiert jede Meldung mit
+// HMAC-SHA256 ueber Zeitstempel und Rumpf (Kopf x-partnershop-signatur,
+// t=<Sekunden>,v1=<hex>), wenn das Secret PARTNERSHOP_SCHLUESSEL gesetzt ist.
+// Dieser Pfad prueft die Signatur und schreibt das Ergebnis in
+// parameter.signatur: geprueft, fehlt, falsch, veraltet, unlesbar, oder
+// keine, wenn das Portal selbst kein Secret hat. Eine Meldung ohne gueltige
+// Signatur wird trotzdem geschrieben, mit dem Grund in qualitaet; im Betrieb
+// gehoerte sie in eine Quarantaene statt in den Bestand. Der alte Weg aus dem
+// Browser der Partnerseite bleibt als Schalterstellung erhalten und ist an der
+// fehlenden Signatur zu erkennen.
 // =====================================================================
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -34,6 +48,11 @@ const DIENSTSCHLUESSEL = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const ERLAUBTE_HERKUNFT = [
   "https://mamfredkaiser.github.io",
 ];
+
+// Das gemeinsame Geheimnis mit dem Server des Partners. Supabase setzt es als
+// Secret der Edge Functions; im Vault und im Repo steht es nicht.
+const PARTNERSHOP_SCHLUESSEL = Deno.env.get("PARTNERSHOP_SCHLUESSEL") || "";
+const SIGNATUR_TOLERANZ_S = 300;   // aeltere Signaturen gelten als wiederholt eingespielt
 
 const ARTEN = new Set(["landung", "bestellung", "storno", "code_einloesung"]);
 const PARTNER = new Set(["deeplink", "gutschein", "ohne"]);
@@ -88,6 +107,58 @@ async function parameterLesen(req: Request): Promise<Record<string, string>> {
   return p;
 }
 
+// Wie parameterLesen, aber aus einem schon gelesenen Rumpf. Der Server-Eingang
+// braucht den Rumpf als Text, weil die Signatur ueber genau diese Bytes geht.
+function parameterAusRumpf(req: Request, rumpf: string): Record<string, string> {
+  const p: Record<string, string> = {};
+  for (const [k, v] of new URL(req.url).searchParams) p[k] = v;
+  const typ = req.headers.get("content-type") || "";
+  try {
+    if (typ.includes("application/json")) {
+      const o = rumpf ? JSON.parse(rumpf) : {};
+      for (const k of Object.keys(o ?? {})) if (o[k] !== null && o[k] !== undefined) p[k] = String(o[k]);
+    } else {
+      for (const [k, v] of new URLSearchParams(rumpf)) p[k] = v;
+    }
+  } catch (_) {
+    p["__rumpf"] = "nicht lesbar";
+  }
+  return p;
+}
+
+function hexZuBytes(hex: string) {
+  const b = new Uint8Array(new ArrayBuffer(hex.length / 2));
+  for (let i = 0; i < b.length; i++) b[i] = parseInt(hex.slice(2 * i, 2 * i + 2), 16);
+  return b;
+}
+
+// crypto.subtle.verify vergleicht in konstanter Zeit; ein Vergleich der
+// Zeichenketten mit === wuerde verraten, wie viele Stellen schon stimmen.
+async function signaturPruefen(kopf: string | null, rumpf: string): Promise<string> {
+  if (!PARTNERSHOP_SCHLUESSEL) return "keine";
+  if (!kopf) return "fehlt";
+  const teile: Record<string, string> = {};
+  for (const stueck of kopf.split(",")) {
+    const i = stueck.indexOf("=");
+    if (i > 0) teile[stueck.slice(0, i).trim()] = stueck.slice(i + 1).trim();
+  }
+  const t = parseInt(teile.t || "", 10);
+  if (!Number.isFinite(t) || !/^[0-9a-f]{64}$/.test(teile.v1 || "")) return "unlesbar";
+  if (Math.abs(Date.now() / 1000 - t) > SIGNATUR_TOLERANZ_S) return "veraltet";
+  const k = new TextEncoder();
+  const schluessel = await crypto.subtle.importKey("raw", k.encode(PARTNERSHOP_SCHLUESSEL),
+    { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
+  const ok = await crypto.subtle.verify("HMAC", schluessel, hexZuBytes(teile.v1), k.encode(t + "." + rumpf));
+  return ok ? "geprueft" : "falsch";
+}
+
+const SIGNATUR_GRUND: Record<string, string> = {
+  fehlt: "Server-Meldung ohne Signatur",
+  falsch: "Signatur falsch",
+  veraltet: "Signatur aelter als fuenf Minuten",
+  unlesbar: "Signatur unlesbar",
+};
+
 async function rest(pfad: string, init: RequestInit = {}): Promise<Response> {
   const h: Record<string, string> = {
     apikey: DIENSTSCHLUESSEL,
@@ -106,8 +177,10 @@ function zeitLesen(wert: string | undefined, gruende: string[], name: string): s
 }
 
 // Die eigentliche Verbuchung, fuer beide Wege gleich.
-async function verbuchen(p: Record<string, string>, weg: "pixel" | "s2s", req: Request, origin: string | null) {
+async function verbuchen(p: Record<string, string>, weg: "pixel" | "s2s", req: Request, origin: string | null,
+                         signatur?: string) {
   const gruende: string[] = [];
+  if (signatur && SIGNATUR_GRUND[signatur]) gruende.push(SIGNATUR_GRUND[signatur]);
   const art = ARTEN.has(p.art) ? p.art : "unbekannt";
   if (art === "unbekannt") gruende.push("Art unbekannt oder fehlt");
   const partner = PARTNER.has(p.partner) ? p.partner : (p.partner ? p.partner : null);
@@ -153,6 +226,7 @@ async function verbuchen(p: Record<string, string>, weg: "pixel" | "s2s", req: R
   const restParameter: Record<string, string> = {};
   for (const k of Object.keys(p)) if (!bekannteFelder.has(k)) restParameter[k] = p[k];
   if (p.t) restParameter.t_client = p.t;
+  if (signatur) restParameter.signatur = signatur;
 
   const zeile = {
     gemeldet_am: zeitLesen(p.gemeldet_am, gruende, "gemeldet_am") || new Date().toISOString(),
@@ -168,7 +242,9 @@ async function verbuchen(p: Record<string, string>, weg: "pixel" | "s2s", req: R
     waehrung: p.waehrung || "EUR",
     status: p.status || statusVorgabe[art],
     klick_bekannt: bekannt,
-    geraeteklasse: geraeteklasse(req.headers.get("user-agent")),
+    // Eine Meldung mit gepruefter Signatur kommt von einem Server und hat keine
+    // Geraeteklasse, wie die Server-Zeilen im synthetischen Grundbestand.
+    geraeteklasse: signatur === "geprueft" ? null : geraeteklasse(req.headers.get("user-agent")),
     parameter: restParameter,
     qualitaet: gruende.length ? gruende.join("; ") : "ok",
   };
@@ -192,12 +268,14 @@ Deno.serve(async (req: Request) => {
   try {
     // Rolle Partner-Server
     if (pfad === "partnershop" && req.method === "POST") {
-      const p = await parameterLesen(req);
-      const e = await verbuchen(p, "s2s", req, origin);
+      const rumpf = await req.text();
+      const p = parameterAusRumpf(req, rumpf);
+      const signatur = await signaturPruefen(req.headers.get("x-partnershop-signatur"), rumpf);
+      const e = await verbuchen(p, "s2s", req, origin, signatur);
       return new Response(JSON.stringify({
         angenommen: e.ok, id: e.id, art: e.zeile.art, klick_id: e.zeile.klick_id, code: e.zeile.code,
         klick_bekannt: e.zeile.klick_bekannt, status: e.zeile.status, qualitaet: e.zeile.qualitaet,
-        weg: "s2s", gemeldet_am: e.zeile.gemeldet_am,
+        weg: "s2s", gemeldet_am: e.zeile.gemeldet_am, signatur,
       }), { status: e.ok ? 200 : 502, headers: kopfzeilen(origin, "json") });
     }
 
