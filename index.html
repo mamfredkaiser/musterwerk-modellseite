@@ -339,6 +339,11 @@ input[type=range]{width:260px}
         <div id="k-mediacode-grund" style="color:#8fa3b0;font-size:11px"></div>
       </div>
       <div style="margin-top:8px">
+        <div style="color:#8fa3b0">Übergabe aus der App</div>
+        <div class="mono" id="k-uebergabe" style="color:#9fd0a3;word-break:break-all">keine</div>
+        <div id="k-uebergabe-grund" style="color:#8fa3b0;font-size:11px">Einstieg über ?von=app&amp;uebergabe=…&amp;login=ja oder nein</div>
+      </div>
+      <div style="margin-top:8px">
         <div style="color:#8fa3b0">Sitzungskennung dieser Seitenladung</div>
         <div class="mono" id="k-sitzung" style="color:#9fd0a3">-</div>
         <div style="color:#8fa3b0;font-size:11px">lebt in einer Variablen, stirbt beim Neuladen</div>
@@ -457,7 +462,7 @@ input[type=range]{width:260px}
   </div>
 
   <h2>Kampagneneinstieg ausprobieren</h2>
-  <p class="leise">Die Links laden dieselbe Datei mit Kampagnenparametern neu. Der Mediacode entsteht beim Laden aus <code>utm_medium</code>, <code>utm_source</code>, <code>utm_campaign</code> und <code>utm_content</code>, gegen die geschlossene Werteliste und die Prüfausdrücke des UTM-Konzepts geprüft.</p>
+  <p class="leise">Die Links laden dieselbe Datei mit Kampagnenparametern neu. Der Mediacode entsteht beim Laden aus <code>utm_medium</code>, <code>utm_source</code>, <code>utm_campaign</code> und <code>utm_content</code>, gegen die geschlossene Werteliste und die Prüfausdrücke des UTM-Konzepts geprüft. Die beiden letzten Links spielen den Sprung aus der App in die Webansicht nach, einmal mit und einmal ohne Anmeldung; jeder Klick bekommt eine eigene Übergabe-Kennung. Ist „Live senden“ an, bleibt es nach dem Neuladen an.</p>
   <div class="knopfreihe" id="kampagnenlinks"></div>
 
   <h2>Fußbereich der Startseite</h2>
@@ -795,7 +800,13 @@ const BEISPIELLINKS = [
   { text:"Anbieter-Newsletter",
     q:"utm_medium=partner-email&utm_source=an12345&utm_campaign=2026-09-herbstaktion&utm_content=header" },
   { text:"Link mit ungültigen Werten",
-    q:"utm_medium=Newsletter&utm_source=Rundmail%202026&utm_campaign=september&utm_content=" }
+    q:"utm_medium=Newsletter&utm_source=Rundmail%202026&utm_campaign=september&utm_content=" },
+  /* App-Übergabe (Nachtrag zu Arbeitspaket 5, Ergebnis 6). UB-NEU wird beim
+     Klick durch eine frische Kennung ersetzt, wie sie die App je Sprung vergäbe. */
+  { text:"Aus der App, Anmeldung kommt mit",
+    q:"von=app&uebergabe=UB-NEU&login=ja" },
+  { text:"Aus der App, Anmeldung geht verloren",
+    q:"von=app&uebergabe=UB-NEU&login=nein" }
 ];
 
 /* ---------------------------------------------------------------------
@@ -878,6 +889,10 @@ const MESSPLAN = [
   { name:"user.logout", ausloeser:"Umschalter Anmeldung auf abgemeldet", art:"Skript", pflicht:false,
     parameter:"keine",
     zweck:"Ende der zuordenbaren Strecke" },
+  /* App-Übergabe, Nachtrag zu Arbeitspaket 5 (Ergebnis 6): Teil C, Entität Übergabe. */
+  { name:"app.uebergabe", ausloeser:"Einstieg über index.html?von=app mit Übergabe-Kennung, einmal je Seitenladung", art:"Skript", pflicht:false,
+    parameter:"von, uebergabe, login_mitgenommen (ja, nein, unbekannt), uebergabe_kennung (nur wenn sie fehlt oder ungültig ist)",
+    zweck:"Sprung aus der App in die Webansicht; Anteil der Übergaben, die den Zusammenhang verlieren" },
   { name:"nav.category.select", ausloeser:"Klick in der Kategorienavigation", art:"Markup", pflicht:true,
     parameter:"kategorie",
     zweck:"Navigationsnutzung" },
@@ -945,7 +960,9 @@ const PARAMETER_DOKU = [
   ["begriff",   "bei submit und results", "normalisiert, gefiltert, auf 40 Zeichen gekürzt"],
   ["treffer",   "bei results", "Zahl der Suchergebnisse, null steht für Nulltreffer"],
   ["position",  "bei Vorschlag und Ergebnis", "Rang in der Liste, ab eins"],
-  ["sid",       "immer", "Sitzungskennung der Live-Kette, je Seitenladung gewürfelt, ohne Speicher"]
+  ["sid",       "immer", "Sitzungskennung der Live-Kette, je Seitenladung gewürfelt, ohne Speicher"],
+  ["uebergabe", "bei app.uebergabe", "Kennung des Sprungs aus der App, dieselbe wie im App-Ereignis; nach dem Lesen aus der Adresse genommen"],
+  ["login_mitgenommen", "bei app.uebergabe", "ja, nein oder unbekannt: ob die Anmeldung aus der App mitkam"]
 ];
 
 /* Felder des Nutzerblocks: was in den Request geht und was nicht. */
@@ -1132,6 +1149,7 @@ const S = {
   klickouts: [],         // Zuordnungstabelle dieser Sitzung; der Stand aus der Datenbank kommt per klickout/status dazu
   transaktionen: [],     // Rückmeldungen, seit Arbeitspaket 4 aus der Tabelle postbacks geholt
   fall: "keiner",        // vorgefuehrter Fehlerfall der Zwischenseite: keiner, langsam, fehler, abbruch
+  uebergabe: null,       // Übergabe aus der App, siehe 11b; null heißt: diese Seitenladung kam nicht aus der App
   seitenaufrufe: 0,
   schwelle: 20,
   stufe: "2",
@@ -1548,7 +1566,7 @@ function liveVerbindungPruefen(){
 const WT_TRACK_ID = "100000000000001";                              // erfunden, 15 Stellen wie im Original
 const WT_TRACKDOMAIN = "https://text.musterwerk-vorteile.example";    // erfunden, wird nie angesprochen
 const WTPIXEL_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/wtpixel";
-const MESSPLAN_VERSION = "2026-09-10.5";
+const MESSPLAN_VERSION = "2026-09-10.6";
 
 /* Jede Zeile: wt = Parameter oder Position in p; mw = Quelle im Tracker
    (Schluessel aus mwTrack, "browser" fuer Geraetewerte, "fest" fuer Konstanten);
@@ -1904,6 +1922,14 @@ function zaehlerZeichnen(){
     "<div>davon bestätigt</div><b>" + best + "</b>";
   document.getElementById("k-mediacode").textContent = S.mediacode;
   document.getElementById("k-mediacode-grund").textContent = S.mediacodeGrund;
+  const ku = document.getElementById("k-uebergabe");
+  if (ku){
+    const u = S.uebergabe;
+    ku.textContent = u ? (u.kennung || "(ohne Kennung)") + ", Anmeldung " + (u.login === "ja" ? "mitgenommen" : (u.login === "nein" ? "verloren" : "unbekannt")) : "keine";
+    document.getElementById("k-uebergabe-grund").textContent = !u ? "Einstieg über ?von=app&uebergabe=…&login=ja oder nein"
+      : (u.login === "ja" ? "Der Besuch ist angemeldet und bleibt dem Konto zuzuordnen; die Kennung ist aus der Adresse genommen."
+                          : "Ein neuer anonymer Besuch: für die Messung ist der Zusammenhang zur App verloren. Die Kennung ist aus der Adresse genommen.");
+  }
 }
 
 /* =====================================================================
@@ -1959,9 +1985,70 @@ function startseiteBauen(){
 
   // Kampagnenlinks: relative Links auf dieselbe Datei, damit sie unter file:// laufen.
   document.getElementById("kampagnenlinks").innerHTML = BEISPIELLINKS.map(function(l){
-    return '<a class="pill" style="padding:8px 14px;text-decoration:none" href="index.html?' + l.q + '">' +
+    return '<a class="pill" style="padding:8px 14px;text-decoration:none" href="index.html?' + l.q + '" data-beispiellink="1">' +
            esc(l.text) + '</a>';
   }).join("");
+}
+
+/* Beim Klick auf einen Beispiellink: eine frische Übergabe-Kennung statt UB-NEU,
+   und live=1, wenn der Schalter gerade an ist. Ohne Speicher ist die Adresse
+   der einzige Weg, auf dem der Schalter das Neuladen überlebt. */
+document.getElementById("kampagnenlinks").addEventListener("click", function(ev){
+  const a = ev.target.closest ? ev.target.closest("a[data-beispiellink]") : null;
+  if (!a) return;
+  let href = a.getAttribute("href").replace(/UB-NEU|UB-[0-9A-F]{6}/, "UB-" + Array.from(crypto.getRandomValues(new Uint8Array(3)))
+    .map(function(b){ return b.toString(16).padStart(2, "0"); }).join("").toUpperCase());
+  href = href.replace(/&live=1$/, "");
+  if (S.live.an) href += "&live=1";
+  a.setAttribute("href", href);
+});
+
+/* =====================================================================
+   11b. Übergabe aus der App (Nachtrag zu Arbeitspaket 5, Ergebnis 6)
+   Die App öffnet die Webansicht mit index.html?von=app&uebergabe=<Kennung>
+   &login=ja|nein. Die Kennung vergibt die App je Sprung, dieselbe steht im
+   App-Ereignis auf der anderen Seite; login sagt, ob die Anmeldung per
+   Token mitkam. Mit login=ja ist diese Seitenladung angemeldet wie nach dem
+   Umschalter, mit login=nein ist sie ein neuer anonymer Besuch, und genau
+   da verliert die Messung den Zusammenhang zur App. Einen App-Simulator gibt
+   es nicht, nur diesen Einstieg.
+   Die drei Parameter werden nach dem Lesen aus der Adresse genommen, wie ein
+   Token: ein Neuladen oder ein geteilter Link soll keine zweite Übergabe
+   erzeugen, und die Kennung soll nicht als Referrer weiterreisen.
+   ===================================================================== */
+
+const UEBERGABE_KENNUNG = /^[A-Za-z0-9_-]{1,40}$/;
+
+function uebergabeLesen(){
+  const q = new URLSearchParams(location.search);
+  if (q.get("von") !== "app"){ S.uebergabe = null; return; }
+  const roh = q.get("uebergabe") || "";
+  const login = q.get("login");
+  S.uebergabe = {
+    kennung: UEBERGABE_KENNUNG.test(roh) ? roh : "",
+    kennungGrund: !roh ? "fehlt" : (UEBERGABE_KENNUNG.test(roh) ? "ok" : "ungueltig"),
+    login: login === "ja" ? "ja" : (login === "nein" ? "nein" : "unbekannt"),
+    gemeldet: 0
+  };
+  if (S.uebergabe.login === "ja"){
+    S.angemeldet = true;
+    document.getElementById("chk-login").checked = true;
+    document.getElementById("lbl-login").textContent = "angemeldet";
+  }
+  ["von", "uebergabe", "login"].forEach(function(k){ q.delete(k); });
+  const rest = q.toString();
+  try { history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash); } catch (e) { /* file:// */ }
+}
+
+function uebergabeMelden(){
+  if (!S.uebergabe || S.uebergabe.gemeldet) return;
+  mwTrack("app.uebergabe", {
+    von: "app",
+    uebergabe: S.uebergabe.kennung,
+    uebergabe_kennung: S.uebergabe.kennungGrund === "ok" ? "" : S.uebergabe.kennungGrund,
+    login_mitgenommen: S.uebergabe.login
+  }, "Skript");
+  S.uebergabe.gemeldet++;
 }
 
 /* Die sechs Angebote, die die aktuelle Rangfolge oben sieht. Sie stehen
@@ -3425,13 +3512,27 @@ function pruefungZeichnen(){
     });
   }
 
+  // Fünfte Prüfung: die Übergabe aus der App. Der Einstieg ist verdrahtet, und
+  // war diese Seitenladung eine Übergabe, ist genau ein app.uebergabe gemeldet
+  // und die Kennung steht nicht mehr in der Adresse.
+  const uebergabeFehler = [];
+  if (typeof uebergabeLesen !== "function" || typeof uebergabeMelden !== "function")
+    uebergabeFehler.push("App-Übergabe: der Einstieg über von=app ist nicht verdrahtet");
+  if (S.uebergabe){
+    if (S.uebergabe.gemeldet !== 1)
+      uebergabeFehler.push("App-Übergabe: " + S.uebergabe.gemeldet + " Ereignisse app.uebergabe statt genau einem");
+    if (/[?&](von|uebergabe|login)=/.test(location.search))
+      uebergabeFehler.push("App-Übergabe: die Übergabe-Parameter stehen noch in der Adresse");
+  }
+
   const fehler = nurMarkup.length + nurPlan.length + teaserFehler.length +
-                 fehlendeBelegungen.length + suchFehler.length + reportFehler.length;
+                 fehlendeBelegungen.length + suchFehler.length + reportFehler.length + uebergabeFehler.length;
   let h = "";
   if (fehler === 0){
     h += '<div class="kasten gut"><p style="margin:0">Keine Abweichung. Alle Messpunkte aus dem Markup stehen im Plan, ' +
          'alle Markup-Messpunkte des Plans kommen im Markup vor, jeder Teaser trägt die fünf Pflichtfelder, und der Arbeitgeber-Report hat Quellenangabe und Datenbankweg' +
-         (S_REPORT.daten ? ' und keine Zelle unter der Mindestfallzahl.' : '.') + '</p></div>';
+         (S_REPORT.daten ? ' und keine Zelle unter der Mindestfallzahl' : '') +
+         (S.uebergabe ? ', und die Übergabe aus der App ist genau einmal gemeldet.' : '.') + '</p></div>';
   } else {
     h += '<div class="kasten warn"><p style="margin-top:0"><strong>' + fehler +
          ' Abweichung' + (fehler === 1 ? '' : 'en') + ' gefunden.</strong></p><ul class="fehlerliste">';
@@ -3446,6 +3547,7 @@ function pruefungZeichnen(){
     teaserFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
     suchFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
     reportFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
+    uebergabeFehler.forEach(function(t){ h += "<li>" + esc(t) + "</li>"; });
     fehlendeBelegungen.forEach(function(b){
       h += "<li>Belegung <code>" + esc(b) + "</code> steht im Belegungsplan, aber in keinem Teaser dieser Seite.</li>";
     });
@@ -4259,6 +4361,7 @@ window.addEventListener("hashchange", function(){
     document.getElementById("lbl-live").textContent = "an";
     S.live.an = true;
   }
+  uebergabeLesen();
   liveZeichnen();
   dataLayerAufbauen();
   konsoleDatenlayerZeichnen();
@@ -4270,6 +4373,9 @@ window.addEventListener("hashchange", function(){
   const h = hashLesen();
   if (h.angebot) S.angebotOffen = h.angebot;
   ansichtWechseln(h.name);
+  // Nach der ersten Ansicht, damit das Ereignis den Seitennamen trägt, auf dem
+  // die App gelandet ist (zum Beispiel #angebot/PN10001).
+  uebergabeMelden();
   zaehlerZeichnen();
 })();
 </script>
