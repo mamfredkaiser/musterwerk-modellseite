@@ -22,6 +22,7 @@
   --gut:#1f5d34;
   --gut-hell:#e9f3ec;
   --konsole-breite:430px;
+  --rand:32px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -34,8 +35,8 @@ body{
 }
 #haupt{
   margin-right:var(--konsole-breite);
-  padding:0 32px 80px 32px;
-  max-width:1100px;
+  padding:0 var(--rand) 90px var(--rand);
+  max-width:1180px;
 }
 h1{font-size:30px;margin:0 0 4px 0;letter-spacing:-0.01em}
 h2{font-size:24px;margin:36px 0 10px 0;border-bottom:2px solid var(--linie);padding-bottom:6px}
@@ -49,8 +50,8 @@ code,kbd,samp,.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menl
 header#kopf{
   background:var(--flaeche);
   border-bottom:2px solid var(--linie);
-  padding:18px 32px 0 32px;
-  margin:0 -32px 0 -32px;
+  padding:14px var(--rand) 0 var(--rand);
+  margin:0 calc(-1 * var(--rand)) 0 calc(-1 * var(--rand));
   position:sticky;top:0;z-index:20;
 }
 .kopf-zeile{display:flex;flex-wrap:wrap;align-items:flex-end;gap:24px;justify-content:space-between}
@@ -61,13 +62,23 @@ select,input[type=text],input[type=number]{
   font:inherit;font-size:15px;padding:5px 8px;border:1px solid var(--linie);
   background:var(--flaeche);border-radius:3px;color:var(--text);
 }
-nav#reiter{display:flex;gap:2px;margin-top:14px}
+nav#reiter{display:flex;gap:2px;margin-top:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+nav#reiter::-webkit-scrollbar{height:4px}
+nav#reiter a{flex:none;white-space:nowrap}
 nav#reiter a{
   display:block;padding:9px 16px;text-decoration:none;color:var(--text);
   border:1px solid var(--linie);border-bottom:none;border-radius:4px 4px 0 0;
   background:var(--grund);font-size:15px;
 }
 nav#reiter a.aktiv{background:var(--flaeche);font-weight:700;border-color:var(--linie);position:relative;top:2px;color:var(--akzent)}
+
+/* Umschalter der Konsole, nur auf schmalen Schirmen sichtbar */
+#konsole-auf{
+  display:none;position:fixed;right:14px;bottom:14px;z-index:40;
+  background:#1c2126;color:#dfe4e8;border:1px solid #4a5a66;border-radius:24px;
+  padding:11px 17px;font-size:14px;box-shadow:0 3px 14px rgba(0,0,0,0.3);
+}
+#konsole-zu{display:none}
 
 /* Ansichten */
 section.ansicht{display:none;padding-top:22px}
@@ -160,6 +171,54 @@ table.d tr.unterdrückt td{background:#f2f2ef;color:var(--text-leise);font-style
 .zaehler b{font-variant-numeric:tabular-nums}
 .kfuss{padding:10px 14px;color:#7b8b96;font-size:11px}
 
+/* Kategorieuebersicht */
+.kat-kacheln{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:14px 0}
+.kat-kachel{
+  display:block;text-decoration:none;color:inherit;background:var(--flaeche);
+  border:1px solid var(--linie);border-radius:5px;padding:13px 15px;
+}
+.kat-kachel:hover{border-color:var(--akzent);background:var(--akzent-hell)}
+.kat-kachel .kname{font-weight:700;font-size:17px;color:var(--akzent);display:block}
+.kat-kachel .ktext{color:var(--text-leise);font-size:14px;display:block;margin-top:2px}
+.kat-kachel .kzahl{color:var(--text-leise);font-size:13px;display:block;margin-top:6px;font-variant-numeric:tabular-nums}
+
+/* Angebotsraster */
+.raster{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:12px 0}
+.karte{
+  background:var(--flaeche);border:1px solid var(--linie);border-radius:5px;
+  padding:13px 15px;display:flex;flex-direction:column;gap:5px;position:relative;
+}
+.karte .rang{
+  position:absolute;top:-8px;left:12px;background:var(--akzent);color:#fff;
+  font-size:11px;padding:1px 8px;border-radius:9px;font-variant-numeric:tabular-nums;
+}
+.karte h4{margin:2px 0 0 0;font-size:17px;line-height:1.3}
+.karte .anb{color:var(--text-leise);font-size:14px}
+.karte .vorteil{font-weight:700;font-size:16px;color:var(--gut)}
+.karte .marken{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.karte .fuss{margin-top:auto;padding-top:9px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.karte .score{font-size:12px;color:var(--text-leise);font-variant-numeric:tabular-nums;
+  border-top:1px dashed var(--linie-hell);margin-top:8px;padding-top:6px;width:100%}
+.karte .score b{color:var(--text)}
+
+/* Filter- und Sortierleiste */
+.filterleiste{
+  background:var(--flaeche);border:1px solid var(--linie);border-radius:5px;
+  padding:11px 14px;margin:14px 0;display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;
+}
+.filterleiste .feld{display:flex;flex-direction:column;gap:2px;min-width:0}
+.filterleiste .feld label{font-size:12px;color:var(--text-leise);font-weight:600}
+.filterleiste select,.filterleiste input{min-width:150px;max-width:100%}
+.filterleiste .zahlzeile{margin-left:auto;font-size:14px;color:var(--text-leise);align-self:center}
+
+/* Rangfolge im Vergleich */
+.rangvergleich{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.rangspalte{background:var(--flaeche);border:1px solid var(--linie);border-radius:5px;padding:10px 12px}
+.rangspalte h4{margin:0 0 6px 0;font-size:15px}
+.rangspalte ol{margin:0;padding-left:22px;font-size:14px}
+.rangspalte li{margin-bottom:3px}
+.rangspalte .weg{color:var(--warn)}
+
 /* Kleinigkeiten */
 .pill{display:inline-block;font-size:12px;padding:1px 7px;border:1px solid var(--linie);border-radius:9px;background:var(--flaeche);color:var(--text-leise)}
 .abstand{height:520px;border-top:1px dashed var(--linie-hell);margin-top:24px;padding-top:10px;color:var(--text-leise);font-size:14px}
@@ -180,12 +239,74 @@ input[type=range]{width:260px}
 .treffer:hover{background:var(--akzent-hell)}
 .treffer h4{margin:0 0 3px 0}
 .variantenzeile{font-size:14px;color:var(--text-leise);margin-top:8px}
-@media print{#konsole{position:static;width:auto;height:auto}#haupt{margin-right:0}}
+/* ---------------------------------------------------------------------
+   Schmale Schirme. Die Konsole wird zur Schublade, die ueber die Seite
+   faehrt, statt ihr die halbe Breite wegzunehmen. Ohne diese Abfrage
+   bleiben auf einem Telefon rund 160 Pixel Inhalt uebrig, und das ist
+   keine Vorfuehrung, das ist ein Fehler.
+   ------------------------------------------------------------------ */
+@media (max-width:1080px){
+  :root{--rand:16px}
+  body{font-size:16px}
+  #haupt{margin-right:0;max-width:none}
+  #konsole{
+    width:min(430px,94vw);
+    transform:translateX(101%);
+    transition:transform 0.22s ease-out;
+    box-shadow:-4px 0 22px rgba(0,0,0,0.28);
+  }
+  #konsole.offen{transform:none}
+  #konsole-auf{display:block}
+  #konsole-zu{display:inline-block;position:absolute;top:9px;right:12px;z-index:3}
+  /* Der Kopf klebt auf einem Telefon nicht mehr fest. Titel und Schalter
+     duerfen wegscrollen, nur die Reiterleiste bleibt oben, weil sie das
+     einzige ist, was man dort dauernd braucht. */
+  header#kopf{position:static;padding-top:12px}
+  nav#reiter{
+    position:sticky;top:0;z-index:21;background:var(--flaeche);
+    margin:12px calc(-1 * var(--rand)) 0 calc(-1 * var(--rand));
+    padding:8px var(--rand) 0 var(--rand);
+    border-bottom:2px solid var(--linie);
+  }
+  .kopf-zeile{gap:12px}
+  .kopf-schalter{gap:14px}
+  h1{font-size:24px}
+  h2{font-size:21px;margin-top:28px}
+  h3{font-size:18px}
+  .suchzeile{gap:7px}
+  #suchfeld{flex:1 1 100%;font-size:17px}
+  .suchzeile button{flex:1 1 auto}
+  .teaser-liste{grid-template-columns:1fr}
+  .katnav{grid-template-columns:1fr}
+  .hero .teaser{padding:16px 17px}
+  .hero .teaser h4{font-size:20px}
+  .kat-kacheln{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px}
+  .kat-kachel{padding:10px 12px}
+  .raster{grid-template-columns:1fr}
+  .filterleiste{gap:10px}
+  .filterleiste .feld{flex:1 1 46%}
+  .filterleiste select,.filterleiste input{min-width:0;width:100%}
+  .filterleiste .zahlzeile{margin-left:0;flex-basis:100%}
+  #suchfeld{min-width:0;font-size:16px}
+  .abstand{height:260px}
+  .knopfreihe button{flex:1 1 auto}
+}
+@media (max-width:700px){
+  .kopf-titel .unter{display:none}
+  h1{font-size:22px}
+}
+@media (max-width:560px){
+  .kat-kacheln{grid-template-columns:1fr 1fr}
+  .kat-kachel .ktext{display:none}
+  .rangvergleich{grid-template-columns:1fr}
+}
+@media print{#konsole{position:static;width:auto;height:auto;transform:none}#haupt{margin-right:0}#konsole-auf{display:none}}
 </style>
 </head>
 <body>
 <!-- ================= Tracking-Konsole (rechts, in jeder Ansicht sichtbar) ================= -->
 <aside id="konsole" aria-label="Tracking-Konsole">
+  <button type="button" id="konsole-zu" class="klein" aria-label="Konsole schließen">Schließen</button>
   <h2>Tracking-Konsole</h2>
 
   <div class="kbereich">
@@ -249,6 +370,8 @@ input[type=range]{width:260px}
   </div>
 </aside>
 
+<button type="button" id="konsole-auf" aria-controls="konsole" aria-expanded="false">Konsole</button>
+
 <!-- ================= Hauptbereich ================= -->
 <div id="haupt">
 
@@ -275,7 +398,9 @@ input[type=range]{width:260px}
   </div>
   <nav id="reiter">
     <a href="#start" data-ansicht="start">Startseite</a>
+    <a href="#kategorie" data-ansicht="kategorie">Kategorien</a>
     <a href="#suche" data-ansicht="suche">Suche</a>
+    <a href="#ranking" data-ansicht="ranking">Rangfolge</a>
     <a href="#angebot" data-ansicht="angebot">Angebot</a>
     <a href="#anbieter" data-ansicht="anbieter">Anbieterseite</a>
     <a href="#auswertung" data-ansicht="auswertung">Auswertung</a>
@@ -289,7 +414,7 @@ input[type=range]{width:260px}
 <!-- ---------- Startseite ---------- -->
 <section class="ansicht" id="v-start">
   <div class="kasten hinweis">
-    <p style="margin:0">Rechts steht die Tracking-Konsole. Jeder Messpunkt erscheint dort in dem Moment, in dem er entsteht, und kein Request verlässt die Seite.</p>
+    <p style="margin:0">Die Tracking-Konsole zeigt jeden Messpunkt in dem Moment, in dem er entsteht. Auf einem breiten Schirm steht sie rechts, auf einem schmalen öffnet sie der Knopf unten rechts.</p>
   </div>
 
 
@@ -307,6 +432,14 @@ input[type=range]{width:260px}
     <ul class="vorschlaege" id="vorschlaege" hidden></ul>
     <p class="variantenzeile" id="variantenzeile"></p>
   </div>
+
+  <h2>Kategorien</h2>
+  <p class="leise">Zwölf Kategorien, <b id="kat-gesamtzahl">200</b> Angebote. Jede Kachel führt auf eine Liste, deren Reihenfolge nicht feststeht, sondern gerechnet wird. Welche Rechnung gilt, steht dort zur Wahl.</p>
+  <div class="kat-kacheln" id="kat-kacheln"></div>
+
+  <h2>Empfohlen für Sie</h2>
+  <p class="leise" id="empfehlungszeile">Die sechs Angebote, die die aktuelle Rangfolge oben sieht. Die Rangfolge und ihre Begründung stehen unter <a href="#ranking" data-ansicht="ranking">Rangfolge</a>.</p>
+  <div class="raster" id="empfehlungen"></div>
 
   <div class="slot hero" data-slot="Hero">
     <div class="slot-kopf">Slot Hero</div>
@@ -327,8 +460,7 @@ input[type=range]{width:260px}
   <p class="leise">Die Links laden dieselbe Datei mit Kampagnenparametern neu. Der Mediacode entsteht beim Laden aus <code>utm_medium</code>, <code>utm_source</code>, <code>utm_campaign</code> und <code>utm_content</code>, gegen die geschlossene Werteliste und die Prüfausdrücke des UTM-Konzepts geprüft.</p>
   <div class="knopfreihe" id="kampagnenlinks"></div>
 
-  <h2>Kategorien</h2>
-  <div class="knopfreihe" id="katnavigation"></div>
+  <h2>Fußbereich der Startseite</h2>
 
   <div class="abstand">
     <p>Ab hier beginnt der Bereich, der beim Laden nicht im Blick liegt. Die Liste darunter zählt erst als sichtbar, wenn sie zur Hälfte im Fenster war. Weiterscrollen.</p>
@@ -345,6 +477,56 @@ input[type=range]{width:260px}
     <button type="button" class="sekundaer" data-mw-event="footer.link.datenschutz" data-mw-label="Datenschutz">Datenschutz</button>
     <button type="button" class="sekundaer" data-mw-event="footer.link.kontakt" data-mw-label="Kontakt">Kontakt</button>
   </div>
+</section>
+
+<!-- ---------- Kategorie ---------- -->
+<section class="ansicht" id="v-kategorie">
+  <h2 id="kat-titel">Kategorien</h2>
+  <p class="leise" id="kat-untertitel"></p>
+
+  <div class="filterleiste" id="kat-filter">
+    <div class="feld">
+      <label for="f-kategorie">Kategorie</label>
+      <select id="f-kategorie"></select>
+    </div>
+    <div class="feld">
+      <label for="f-unterkategorie">Unterkategorie</label>
+      <select id="f-unterkategorie"></select>
+    </div>
+    <div class="feld">
+      <label for="f-typ">Einlösung</label>
+      <select id="f-typ">
+        <option value="">alle</option>
+        <option value="Deeplink">Klick zum Anbieter</option>
+        <option value="Code">Gutscheincode</option>
+      </select>
+    </div>
+    <div class="feld">
+      <label for="f-mindestrabatt">Mindestersparnis in Euro</label>
+      <select id="f-mindestrabatt">
+        <option value="0">egal</option>
+        <option value="25">ab 25</option>
+        <option value="50">ab 50</option>
+        <option value="100">ab 100</option>
+        <option value="200">ab 200</option>
+      </select>
+    </div>
+    <div class="feld">
+      <label for="f-strategie">Reihenfolge</label>
+      <select id="f-strategie"></select>
+    </div>
+    <div class="zahlzeile" id="f-zahl"></div>
+  </div>
+
+  <div class="kasten" id="kat-erklaerung" style="padding:11px 14px"></div>
+
+  <div class="raster" id="kat-raster"></div>
+  <div class="knopfreihe" id="kat-mehr"></div>
+</section>
+
+<!-- ---------- Rangfolge ---------- -->
+<section class="ansicht" id="v-ranking">
+  <div id="ranking-inhalt"></div>
 </section>
 
 <!-- ---------- Suchergebnis ---------- -->
@@ -760,6 +942,87 @@ const SUCH_NULLTREFFER_BEISPIELE = [
   "tagesmutter", "zahnzusatzversicherung", "fitness-app", "brille"
 ];
 
+/* ---------------------------------------------------------------------
+   3b. Der Katalog
+   200 erfundene Angebote in zwoelf Kategorien, dazu die Merkmale, auf
+   denen die Rangfolge rechnet. Erzeugt von katalog/katalog_bauen.py mit
+   festem Startwert, damit Seite, CSV und Datenbank denselben Stand haben.
+
+   Die Merkmale sind nicht unabhaengig gewuerfelt. Ein hoher Rabatt zieht
+   Klicks und druekt die Provision; ein hoher Deckungsbeitrag steht meist
+   bei einem Angebot, das kaum jemand anklickt. Wer die Rangfolge auf das
+   eine oder das andere stellt, sieht zwei fast disjunkte Listen. Genau
+   das ist der Punkt, an dem eine Rangfolge zur Entscheidung wird.
+   ------------------------------------------------------------------ */
+
+/* Erzeugt von katalog/katalog_bauen.py, Stand 2026-09-10. Nicht von Hand aendern. */
+const KATALOG_FELDER = ["id", "titel", "kategorie", "unterkategorie", "anbieter", "typ", "rabatt", "ersparnis", "klicks", "auslieferungen", "klickrate", "provision_euro", "einloesungen", "bewertung", "bewertungen", "neu_tage", "saison", "mandanten"];
+const KATEGORIEN = [["mobilitaet", "Mobilitaet", "Auto, Reifen, Bahn und alles, was rollt", ["reifen", "leasing", "werkstatt", "bahn", "mietwagen"]], ["reisen", "Reisen", "Staedtereisen, Pauschal, Ferienwohnung", ["staedtereisen", "pauschal", "ferienwohnung", "kreuzfahrt", "camping"]], ["mode", "Mode", "Kleidung, Schuhe, Accessoires", ["damenmode", "herrenmode", "schuhe", "taschen", "uhren"]], ["elektronik", "Elektronik", "Haushalt, Computer, Telefon, Foto", ["grossgeraete", "computer", "telefon", "foto", "audio"]], ["wohnen", "Wohnen", "Kueche, Moebel, Garten, Textilien", ["kueche", "moebel", "garten", "heimtextil", "renovieren"]], ["sport", "Sport", "Fitness, Outdoor, Rad, Ausruestung", ["fitness", "schuhe", "outdoor", "rad", "wintersport"]], ["energie", "Energie", "Strom, Gas, Photovoltaik, Waerme", ["strom", "gas", "photovoltaik", "waermepumpe", "ladestrom"]], ["versicherung", "Versicherung", "Kfz, Haftpflicht, Reise, Zusatz", ["kfz", "haftpflicht", "reise", "zusatz", "hausrat"]], ["finanzen", "Finanzen", "Konto, Depot, Bausparen, Kredit", ["konto", "depot", "bausparen", "kredit", "kreditkarte"]], ["gesundheit", "Gesundheit", "Optik, Apotheke, Vorsorge, Zahn", ["optik", "apotheke", "vorsorge", "zahn", "hoergeraet"]], ["freizeit", "Freizeit", "Kino, Park, Konzert, Museum", ["kino", "freizeitpark", "konzert", "museum", "wellness"]], ["essen", "Essen und Trinken", "Lieferdienst, Restaurant, Kaffee, Wein", ["lieferdienst", "restaurant", "kaffee", "wein", "kochbox"]]];
+const ANBIETER_ALLE = {"AN10412": ["Norddeutsche Reifenwerke", "Netzwerk", "Partnernetz Nord"], "AN20873": ["Tellhorst Kuechen", "Direkt", ""], "AN31556": ["Vellbach Sport", "Code", ""], "AN44021": ["Kranzler Reisen", "Netzwerk", "Partnernetz Nord"], "AN52309": ["Bergmann Elektro", "Direkt", ""], "AN61140": ["Stadtwerke Mustertal", "keiner", ""], "AN70918": ["Lindquist Mode", "Netzwerk", "Partnernetz Ost"], "AN11360": ["Roeder Automobile", "Netzwerk", "Partnernetz Nord"], "AN12194": ["Roeder Mobil", "Netzwerk", "Partnernetz Sued"], "AN12388": ["Weiland Automobile", "Netzwerk", "Partnernetz Nord"], "AN12896": ["Bruegge Reifenwerke", "Code", ""], "AN13370": ["Sielmann Werkstatt", "Direkt", ""], "AN13728": ["Kranzler Fernweh", "Direkt", ""], "AN13946": ["Lindquist Ferien", "Netzwerk", "Partnernetz Ost"], "AN14551": ["Reinke Touristik", "Code", ""], "AN15279": ["Nienstedt Fernweh", "Direkt", ""], "AN15834": ["Kolbe Touristik", "Code", ""], "AN16221": ["Nordmann Manufaktur", "Netzwerk", "Partnernetz Nord"], "AN17051": ["Tellhorst Konfektion", "Code", ""], "AN17593": ["Wentzel Bekleidung", "Netzwerk", "Partnernetz Nord"], "AN18208": ["Petersen Mode", "keiner", ""], "AN18846": ["Steenkamp Textil", "Direkt", ""], "AN19171": ["Nienstedt Elektronik", "Direkt", ""], "AN19957": ["Roeder Elektronik", "Netzwerk", "Partnernetz Nord"], "AN20854": ["Dallmann Digital", "keiner", ""], "AN21482": ["Nordmann Elektronik", "Direkt", ""], "AN22372": ["Nienstedt Technik", "keiner", ""], "AN22796": ["Sturmhoevel Kuechen", "Netzwerk", "Partnernetz Sued"], "AN23432": ["Nordmann Interieur", "keiner", ""], "AN23867": ["Marquardt Kuechen", "Netzwerk", "Partnernetz Nord"], "AN24109": ["Morgenstern Kuechen", "Code", ""], "AN24499": ["Lauterbach Einrichtung", "Netzwerk", "Partnernetz Nord"], "AN24841": ["Weiland Athletik", "Netzwerk", "Partnernetz Nord"], "AN25501": ["Sielmann Bewegung", "Code", ""], "AN26353": ["Wentzel Bewegung", "Netzwerk", "Partnernetz Ost"], "AN26514": ["Morgenstern Bewegung", "Direkt", ""], "AN27163": ["Marquardt Aktiv", "Code", ""], "AN27294": ["Marquardt Energie", "Code", ""], "AN28136": ["Ohlsen Energie", "Code", ""], "AN28464": ["Ohlsen Stadtwerke", "Netzwerk", "Partnernetz Sued"], "AN28676": ["Voigtlaender Stadtwerke", "Direkt", ""], "AN29415": ["Rasmussen Sonnenkraft", "Netzwerk", "Partnernetz Nord"], "AN29653": ["Kastrup Assekuranz", "Netzwerk", "Partnernetz Sued"], "AN30357": ["Nordmann Vorsorge", "Direkt", ""], "AN30849": ["Lindquist Police", "Netzwerk", "Partnernetz Nord"], "AN30961": ["Brockhoff Versicherung", "Netzwerk", "Partnernetz Ost"], "AN31549": ["Tellhorst Versicherung", "Netzwerk", "Partnernetz Nord"], "AN32228": ["Lauterbach Finanz", "Netzwerk", "Partnernetz Nord"], "AN32495": ["Roeder Sparkontor", "Netzwerk", "Partnernetz Nord"], "AN32906": ["Nordmann Kapital", "Netzwerk", "Partnernetz Ost"], "AN33318": ["Kastrup Anlage", "Direkt", ""], "AN33725": ["Kranzler Kapital", "Netzwerk", "Partnernetz Sued"], "AN34065": ["Roeder Gesundheit", "Netzwerk", "Partnernetz Nord"], "AN34350": ["Reinke Optik", "Direkt", ""], "AN34581": ["Nordmann Gesundheit", "Code", ""], "AN35151": ["Kranzler Praxisbund", "Direkt", ""], "AN35613": ["Brockhoff Gesundheit", "Code", ""], "AN35854": ["Marquardt Erlebnis", "Netzwerk", "Partnernetz Ost"], "AN36009": ["Roeder Kultur", "keiner", ""], "AN36188": ["Wentzel Buehne", "keiner", ""], "AN36714": ["Lauterbach Kino", "Code", ""], "AN36966": ["Sturmhoevel Kino", "Code", ""], "AN37443": ["Lindquist Roesterei", "Code", ""], "AN38241": ["Brockhoff Roesterei", "Direkt", ""], "AN38470": ["Ohlsen Feinkost", "Netzwerk", "Partnernetz Sued"], "AN38772": ["Steenkamp Weinhaus", "Netzwerk", "Partnernetz Nord"], "AN39623": ["Nienstedt Weinhaus", "keiner", ""]};
+const SEGMENT_KATEGORIEN = {"pendler": ["mobilitaet", "energie", "versicherung"], "familie": ["wohnen", "freizeit", "gesundheit"], "technik": ["elektronik", "energie", "finanzen"], "aktiv": ["sport", "reisen", "gesundheit"], "sparfuchs": ["finanzen", "versicherung", "essen"], "geniesser": ["essen", "reisen", "mode"]};
+const SEGMENT_NEIGUNG = {"pendler": {"mobilitaet": 1.99, "reisen": 0.56, "mode": 0.37, "elektronik": 0.78, "wohnen": 1.1, "sport": 0.93, "energie": 2.14, "versicherung": 2.2, "finanzen": 0.66, "gesundheit": 0.51, "freizeit": 1.13, "essen": 1.13}, "familie": {"mobilitaet": 1.14, "reisen": 0.98, "mode": 0.54, "elektronik": 1.11, "wohnen": 2.82, "sport": 0.64, "energie": 0.64, "versicherung": 0.61, "finanzen": 1.1, "gesundheit": 3.11, "freizeit": 2.26, "essen": 0.81}, "technik": {"mobilitaet": 0.46, "reisen": 0.8, "mode": 0.79, "elektronik": 2.3, "wohnen": 0.58, "sport": 1.02, "energie": 2.89, "versicherung": 0.92, "finanzen": 3.38, "gesundheit": 0.49, "freizeit": 0.83, "essen": 0.66}, "aktiv": {"mobilitaet": 0.98, "reisen": 2.89, "mode": 1.0, "elektronik": 1.13, "wohnen": 1.09, "sport": 2.22, "energie": 1.15, "versicherung": 0.99, "finanzen": 0.6, "gesundheit": 3.19, "freizeit": 0.66, "essen": 0.47}, "sparfuchs": {"mobilitaet": 1.07, "reisen": 1.01, "mode": 0.44, "elektronik": 0.88, "wohnen": 0.42, "sport": 1.05, "energie": 1.13, "versicherung": 2.38, "finanzen": 3.4, "gesundheit": 0.49, "freizeit": 0.9, "essen": 3.32}, "geniesser": {"mobilitaet": 0.55, "reisen": 2.17, "mode": 2.77, "elektronik": 0.39, "wohnen": 0.83, "sport": 0.66, "energie": 0.55, "versicherung": 0.46, "finanzen": 0.68, "gesundheit": 0.4, "freizeit": 0.91, "essen": 2.4}};
+const KATALOG_ROH = [["PN10001","Winterreifen mit Montage","mobilitaet","reifen","AN10412","Deeplink",18,38,263,8343,0.0315,6.05,36,3.5,39,180,1.0,""],["PN10002","Kuechenplanung mit Rabatt","wohnen","kueche","AN20873","Code",12,145,173,1787,0.0968,32.87,9,3.5,27,400,0.64,""],["PN10003","Laufschuhe der Vorsaison","sport","schuhe","AN31556","Code",25,27,395,10069,0.0392,4.26,21,4.2,32,21,0.83,""],["PN10004","Staedtereisen im Herbst","reisen","staedtereisen","AN44021","Deeplink",0,60,77,2531,0.0304,15.46,6,4.1,4,45,0.6,""],["PN10005","Hausgeraete zum Mitarbeitertarif","elektronik","grossgeraete","AN52309","Deeplink",22,96,219,5764,0.038,15.82,8,4.5,14,2,0.83,""],["PN10006","Oekostrom fuer Zuhause","energie","strom","AN61140","Deeplink",0,70,59,1312,0.045,13.56,null,3.5,4,45,1.0,""],["PN10007","Herbstmode mit Vorteil","mode","damenmode","AN70918","Deeplink",20,31,204,3540,0.0576,5.78,22,3.9,6,21,0.68,""],["PN10008","Fitnessstudio im Umkreis","sport","fitness","AN31556","Code",0,49,68,845,0.0805,14.66,3,3.1,9,30,0.54,"musterwerk"],["PN11016","Fernverkehr zum Firmentarif fuer Beschaeftigte","mobilitaet","bahn","AN12194","Deeplink",15,126,353,10866,0.0325,11.45,44,4.1,8,90,0.91,""],["PN11020","Transporter am Wochenende mit Vorteilscode","mobilitaet","mietwagen","AN13370","Deeplink",35,266,280,8368,0.0335,8.47,29,4.3,24,2,0.68,""],["PN11035","Fernverkehr zum Firmentarif fuer Beschaeftigte","mobilitaet","bahn","AN12388","Deeplink",0,150,83,2477,0.0335,29.75,7,3.8,12,5,1.0,""],["PN11049","Sommerreifen im Satz ohne Mindestlaufzeit","mobilitaet","reifen","AN12896","Code",28,72,173,4012,0.0431,15.66,4,3.8,6,180,0.95,""],["PN11059","Reifeneinlagerung zum Werkstarif","mobilitaet","reifen","AN12194","Deeplink",20,69,158,4677,0.0338,14.08,20,4.6,10,400,0.94,""],["PN11066","Transporter am Wochenende im Aktionszeitraum","mobilitaet","mietwagen","AN11360","Deeplink",0,15,74,2049,0.0361,3.71,10,3.0,6,21,0.97,""],["PN11074","Bahncard mit Zuschuss ohne Mindestlaufzeit","mobilitaet","bahn","AN10412","Deeplink",35,323,532,5664,0.0939,45.36,75,4.7,59,5,0.84,""],["PN11081","Inspektion zum Festpreis zum Werkstarif","mobilitaet","werkstatt","AN12194","Deeplink",5,43,66,719,0.0918,14.17,6,3.8,4,60,1.0,""],["PN11093","Bahncard mit Zuschuss im Aktionszeitraum","mobilitaet","bahn","AN12896","Code",0,100,149,4683,0.0318,23.03,7,3.7,12,2,0.84,""],["PN11098","Klimaanlagenservice fuer Beschaeftigte","mobilitaet","werkstatt","AN12896","Code",28,54,429,9763,0.0439,6.1,27,4.1,43,30,0.96,""],["PN11115","Bahncard mit Zuschuss","mobilitaet","bahn","AN10412","Deeplink",0,20,99,1447,0.0684,5.57,5,3.1,15,90,1.0,""],["PN11125","Bahncard mit Zuschuss mit Vorteilscode","mobilitaet","bahn","AN10412","Deeplink",35,164,335,9401,0.0356,17.75,45,4.8,21,120,0.77,""],["PN11133","Winterreifen mit Montage mit Vorteilscode","mobilitaet","reifen","AN12896","Code",20,154,247,3999,0.0618,25.0,13,4.4,13,240,0.95,""],["PN11139","Fernverkehr zum Firmentarif mit Vorteilscode","mobilitaet","bahn","AN11360","Deeplink",0,250,189,2325,0.0813,52.43,18,4.4,18,90,1.0,""],["PN11156","Fernverkehr zum Firmentarif im Aktionszeitraum","mobilitaet","bahn","AN12896","Code",30,167,538,12450,0.0432,18.9,13,4.4,72,14,0.97,""],["PN11164","Sommerreifen im Satz zum Werkstarif","mobilitaet","reifen","AN11360","Deeplink",25,82,403,7251,0.0556,7.6,44,3.8,8,45,0.71,""],["PN11175","Ferienwohnung an der Kueste fuer Beschaeftigte","reisen","ferienwohnung","AN15279","Deeplink",30,104,610,10696,0.057,7.07,25,3.8,78,60,0.51,""],["PN11186","Pauschalreise mit Kinderrabatt ohne Mindestlaufzeit","reisen","pauschal","AN13946","Deeplink",40,294,1026,19584,0.0524,39.18,62,5.0,90,14,0.54,""],["PN11190","Huette in den Bergen im Aktionszeitraum","reisen","ferienwohnung","AN44021","Deeplink",0,150,149,1588,0.0938,56.11,20,3.3,22,30,0.66,""],["PN11195","Flusskreuzfahrt im Fruehjahr","reisen","kreuzfahrt","AN15279","Deeplink",25,141,369,11933,0.0309,13.09,31,4.0,45,5,0.7,""],["PN11204","Flusskreuzfahrt im Fruehjahr zum Werkstarif","reisen","kreuzfahrt","AN15834","Code",15,101,160,3332,0.048,18.31,6,3.5,5,30,0.6,""],["PN11214","Pauschalreise mit Kinderrabatt mit Vorteilscode","reisen","pauschal","AN13946","Deeplink",35,147,649,11902,0.0545,11.35,75,4.0,33,9,0.47,""],["PN11224","Lastminute ans Mittelmeer","reisen","pauschal","AN15834","Code",25,50,225,5990,0.0376,5.14,12,3.8,29,320,0.42,""],["PN11239","Campingplatz mit Dauerrabatt im Aktionszeitraum","reisen","camping","AN13946","Deeplink",8,64,275,5573,0.0493,7.47,12,4.0,37,45,0.68,""],["PN11250","Wochenende in der Hauptstadt fuer Beschaeftigte","reisen","staedtereisen","AN15834","Code",22,196,532,11546,0.0461,34.69,30,4.2,30,30,0.77,"musterwerk"],["PN11264","Kreuzfahrt mit Bordguthaben zum Werkstarif","reisen","kreuzfahrt","AN44021","Deeplink",30,234,368,8449,0.0436,25.32,17,4.6,12,240,0.81,""],["PN11272","Kreuzfahrt mit Bordguthaben im Aktionszeitraum","reisen","kreuzfahrt","AN44021","Deeplink",28,246,527,10962,0.0481,14.98,49,4.6,54,9,0.61,""],["PN11281","Kreuzfahrt mit Bordguthaben im Aktionszeitraum","reisen","kreuzfahrt","AN13728","Deeplink",22,194,488,7542,0.0647,35.85,28,4.0,74,45,0.64,""],["PN11285","Lastminute ans Mittelmeer fuer Beschaeftigte","reisen","pauschal","AN44021","Deeplink",0,40,129,1634,0.0789,10.58,18,3.3,8,60,0.72,""],["PN11297","Campingplatz mit Dauerrabatt ohne Mindestlaufzeit","reisen","camping","AN15279","Deeplink",0,40,155,4793,0.0323,13.13,10,3.3,16,60,0.76,""],["PN11310","Flusskreuzfahrt im Fruehjahr im Aktionszeitraum","reisen","kreuzfahrt","AN14551","Code",15,111,260,5187,0.0501,18.03,6,4.3,19,14,0.67,""],["PN11314","Ferienwohnung an der Kueste mit Rueckgaberecht","reisen","ferienwohnung","AN13728","Deeplink",5,32,123,1213,0.1014,8.46,12,3.3,17,2,0.75,"musterwerk"],["PN11320","Armbanduhren mit Gravur zum Werkstarif","mode","uhren","AN17593","Deeplink",0,150,254,8313,0.0306,42.38,19,3.6,14,320,0.59,""],["PN11335","Ledertaschen aus der Manufaktur","mode","taschen","AN17593","Deeplink",0,15,134,2132,0.0629,4.55,18,3.3,11,120,0.79,""],["PN11344","Anzug nach Mass mit Rueckgaberecht","mode","herrenmode","AN17051","Code",18,133,218,2227,0.0979,36.67,5,4.2,12,5,0.71,""],["PN11355","Armbanduhren mit Gravur im Aktionszeitraum","mode","uhren","AN70918","Deeplink",0,250,209,4131,0.0506,85.04,20,3.8,16,240,0.96,"nordkontor"],["PN11359","Herbstmode mit Vorteil zum Werkstarif","mode","damenmode","AN18208","Deeplink",10,69,161,4764,0.0338,8.99,null,3.3,13,120,0.58,""],["PN11376","Rucksack fuer den Arbeitsweg ohne Mindestlaufzeit","mode","taschen","AN70918","Deeplink",0,15,135,2200,0.0614,3.93,7,3.4,7,14,0.58,""],["PN11381","Business-Kollektion Damen im Aktionszeitraum","mode","damenmode","AN16221","Deeplink",12,85,254,5734,0.0443,15.13,29,4.3,21,180,0.71,""],["PN11396","Herbstmode mit Vorteil mit Rueckgaberecht","mode","damenmode","AN17593","Deeplink",0,200,224,2545,0.088,39.7,30,3.3,32,400,0.92,""],["PN11407","Laufschuhe der Vorsaison im Aktionszeitraum","mode","schuhe","AN17051","Code",35,234,822,7754,0.106,34.17,22,4.4,123,5,1.0,""],["PN11410","Ledertaschen aus der Manufaktur ohne Mindestlaufzeit","mode","taschen","AN17051","Code",0,75,166,3631,0.0457,11.2,8,3.7,10,14,0.66,"musterwerk"],["PN11425","Smartwatch zum Mitarbeitertarif zum Werkstarif","mode","uhren","AN17051","Code",22,89,229,6764,0.0339,12.31,8,3.8,25,14,0.95,""],["PN11437","Laufschuhe der Vorsaison ohne Mindestlaufzeit","mode","schuhe","AN18846","Deeplink",10,77,145,2628,0.0552,21.15,10,4.0,4,90,0.65,""],["PN11450","Winterstiefel im Angebot","mode","schuhe","AN17593","Deeplink",25,218,667,10698,0.0623,25.6,37,4.7,24,30,0.88,"nordkontor"],["PN11453","Anzug nach Mass fuer Beschaeftigte","mode","herrenmode","AN17051","Code",35,277,563,8799,0.064,14.73,20,4.6,42,60,0.87,"nordkontor"],["PN11460","Winterstiefel im Angebot mit Rueckgaberecht","mode","schuhe","AN17593","Deeplink",0,20,128,3374,0.0379,4.32,10,4.0,12,240,0.6,""],["PN11469","Herbstmode mit Vorteil mit Vorteilscode","mode","damenmode","AN16221","Deeplink",22,178,564,17640,0.032,21.43,35,4.5,71,14,0.73,""],["PN11480","Monitor im Doppelpack im Aktionszeitraum","elektronik","computer","AN19171","Deeplink",0,120,108,3351,0.0322,27.42,9,3.8,15,90,0.63,""],["PN11493","Lautsprecher fuers Buero ohne Mindestlaufzeit","elektronik","audio","AN52309","Deeplink",0,25,57,1082,0.0527,7.33,3,3.5,6,400,0.45,"musterwerk"],["PN11503","Monitor im Doppelpack mit Rueckgaberecht","elektronik","computer","AN21482","Deeplink",28,254,559,12505,0.0447,15.41,36,4.4,48,400,0.37,""],["PN11512","Lautsprecher fuers Buero ohne Mindestlaufzeit","elektronik","audio","AN20854","Deeplink",12,19,299,4408,0.0678,2.6,null,4.1,30,21,0.54,""],["PN11519","Lautsprecher fuers Buero mit Rueckgaberecht","elektronik","audio","AN19171","Deeplink",30,89,613,16952,0.0362,6.67,61,4.2,27,2,0.64,""],["PN11536","Fotobuch zum Sonderpreis mit Rueckgaberecht","elektronik","foto","AN22372","Deeplink",40,101,576,11557,0.0498,10.15,null,4.6,35,90,0.8,""],["PN11539","Waschmaschine mit Anschluss mit Vorteilscode","elektronik","grossgeraete","AN19171","Deeplink",12,85,325,3164,0.1027,13.78,29,3.9,45,400,0.38,""],["PN11547","Kopfhoerer mit Geraeuschsperre mit Rueckgaberecht","elektronik","audio","AN19171","Deeplink",0,25,93,2247,0.0414,9.0,9,3.3,12,60,0.45,""],["PN11555","Monitor im Doppelpack mit Rueckgaberecht","elektronik","computer","AN19957","Deeplink",0,250,219,6554,0.0334,84.46,16,4.2,15,90,0.81,""],["PN11567","Hausgeraete zum Mitarbeitertarif","elektronik","grossgeraete","AN22372","Deeplink",8,26,200,3122,0.0641,5.86,null,3.9,11,14,0.67,""],["PN11576","Lautsprecher fuers Buero fuer Beschaeftigte","elektronik","audio","AN19957","Deeplink",0,20,118,3368,0.035,6.09,13,3.2,13,240,0.53,""],["PN11584","Mobilfunk mit Firmenrabatt mit Rueckgaberecht","elektronik","telefon","AN22372","Deeplink",30,139,284,5735,0.0495,11.85,null,4.2,36,14,0.83,""],["PN11598","Hausgeraete zum Mitarbeitertarif mit Rueckgaberecht","elektronik","grossgeraete","AN52309","Deeplink",15,90,272,6763,0.0402,15.03,21,4.2,20,240,0.45,""],["PN11608","Systemkamera im Set ohne Mindestlaufzeit","elektronik","foto","AN52309","Deeplink",25,149,506,6929,0.073,37.07,27,4.0,45,320,0.36,""],["PN11612","Mobilfunk mit Firmenrabatt zum Werkstarif","elektronik","telefon","AN20854","Deeplink",0,200,157,4428,0.0355,63.87,null,3.7,20,9,0.62,""],["PN11622","Mobilfunk mit Firmenrabatt im Aktionszeitraum","elektronik","telefon","AN20854","Deeplink",0,250,142,4371,0.0325,47.69,null,3.8,4,45,0.65,""],["PN11636","Vorhaenge nach Mass","wohnen","heimtextil","AN23867","Deeplink",28,100,190,3592,0.0529,6.29,14,4.4,20,240,0.8,""],["PN11647","Bodenbelag mit Verlegung mit Rueckgaberecht","wohnen","renovieren","AN24499","Deeplink",0,75,100,3212,0.0311,27.41,9,3.6,4,240,0.9,""],["PN11663","Vorhaenge nach Mass fuer Beschaeftigte","wohnen","heimtextil","AN24499","Deeplink",12,80,100,912,0.1096,15.04,10,3.8,8,240,0.79,""],["PN11676","Bodenbelag mit Verlegung mit Vorteilscode","wohnen","renovieren","AN23432","Deeplink",15,94,111,1347,0.0824,11.63,null,4.1,4,90,0.48,""],["PN11691","Matratzen mit Probeschlafen mit Vorteilscode","wohnen","heimtextil","AN24499","Deeplink",0,25,48,483,0.0994,8.9,4,3.4,4,240,0.78,""],["PN11700","Bodenbelag mit Verlegung mit Vorteilscode","wohnen","renovieren","AN22796","Deeplink",25,93,303,7103,0.0427,10.26,33,4.5,39,180,0.93,""],["PN11704","Bodenbelag mit Verlegung fuer Beschaeftigte","wohnen","renovieren","AN22796","Deeplink",25,46,163,5320,0.0306,4.47,10,3.7,8,2,0.84,""],["PN11710","Vorhaenge nach Mass mit Rueckgaberecht","wohnen","heimtextil","AN23867","Deeplink",40,112,192,3467,0.0554,10.25,9,4.3,29,14,0.61,""],["PN11723","Bodenbelag mit Verlegung im Aktionszeitraum","wohnen","renovieren","AN24109","Code",8,40,157,2067,0.076,6.12,6,4.3,24,5,0.65,""],["PN11737","Malerarbeiten zum Festpreis","wohnen","renovieren","AN23432","Deeplink",22,56,304,9440,0.0322,4.16,null,4.2,33,2,0.56,""],["PN11743","Gartengeraete im Fruehjahr im Aktionszeitraum","wohnen","garten","AN20873","Deeplink",5,28,119,2665,0.0447,5.1,9,3.2,17,2,0.46,"nordkontor"],["PN11749","Buerostuhl fuer Zuhause ohne Mindestlaufzeit","wohnen","moebel","AN23432","Deeplink",15,55,119,3030,0.0393,8.76,null,3.9,8,2,0.91,""],["PN11753","Kuechenplanung mit Rabatt mit Vorteilscode","wohnen","kueche","AN23432","Deeplink",0,250,200,2043,0.0979,73.97,null,3.7,7,90,0.68,""],["PN11756","Buerostuhl fuer Zuhause mit Vorteilscode","wohnen","moebel","AN23432","Deeplink",15,103,141,4148,0.034,27.75,null,4.3,12,120,0.8,"musterwerk"],["PN11765","Vorhaenge nach Mass mit Rueckgaberecht","wohnen","heimtextil","AN23432","Deeplink",0,20,70,2003,0.0349,4.53,null,3.1,9,30,0.49,"nordkontor"],["PN11770","Kuechenplanung mit Rabatt im Aktionszeitraum","wohnen","kueche","AN24499","Deeplink",0,40,32,337,0.095,7.46,3,3.3,4,400,0.64,""],["PN11777","Wanderausruestung im Set zum Werkstarif","sport","outdoor","AN26353","Deeplink",28,226,372,8612,0.0432,36.73,44,4.2,53,400,0.42,""],["PN11789","Winterstiefel im Angebot","sport","schuhe","AN26514","Deeplink",0,90,82,2229,0.0368,28.05,7,3.9,7,400,0.49,""],["PN11795","Wanderausruestung im Set","sport","outdoor","AN24841","Deeplink",15,116,262,7010,0.0374,27.12,16,4.2,35,30,0.58,""],["PN11798","Dienstrad per Gehaltsumwandlung mit Rueckgaberecht","sport","rad","AN27163","Code",0,200,112,1790,0.0626,49.56,4,3.7,14,21,0.48,""],["PN11814","Laufschuhe der Vorsaison mit Vorteilscode","sport","schuhe","AN25501","Code",0,30,47,455,0.1033,4.86,2,4.0,5,9,0.75,""],["PN11830","Winterstiefel im Angebot fuer Beschaeftigte","sport","schuhe","AN31556","Code",8,11,143,2556,0.0559,1.95,3,3.7,14,180,0.74,"musterwerk"],["PN11837","E-Bike mit Inspektion mit Vorteilscode","sport","rad","AN31556","Code",0,75,70,1844,0.038,23.34,3,3.3,4,90,0.49,""],["PN11845","Laufschuhe der Vorsaison mit Rueckgaberecht","sport","schuhe","AN25501","Code",22,79,416,6624,0.0628,6.11,25,3.6,50,2,0.52,""],["PN11854","Onlinekurse fuer Zuhause mit Rueckgaberecht","sport","fitness","AN27163","Code",0,20,53,1107,0.0479,5.91,2,3.4,7,320,0.47,""],["PN11862","Skiservice vor der Saison fuer Beschaeftigte","sport","wintersport","AN26514","Deeplink",30,254,539,9728,0.0554,25.62,54,4.2,77,120,0.82,""],["PN11873","Fitnessstudio im Umkreis zum Werkstarif","sport","fitness","AN31556","Code",0,75,58,699,0.083,21.41,3,3.9,5,45,0.87,""],["PN11879","Zelt fuer zwei Personen fuer Beschaeftigte","sport","outdoor","AN31556","Code",10,37,227,5784,0.0392,7.15,12,4.0,5,90,0.49,""],["PN11886","Onlinekurse fuer Zuhause mit Rueckgaberecht","sport","fitness","AN25501","Code",0,30,64,1210,0.0529,8.75,4,3.9,9,320,0.65,""],["PN11894","Skipass mit Firmenrabatt fuer Beschaeftigte","sport","wintersport","AN24841","Deeplink",0,150,225,3366,0.0668,41.63,11,4.1,20,14,0.41,""],["PN11899","Laufschuhe der Vorsaison zum Werkstarif","sport","schuhe","AN27163","Code",0,60,105,3336,0.0315,12.71,2,3.1,7,21,0.43,""],["PN11907","Onlinekurse fuer Zuhause mit Rueckgaberecht","sport","fitness","AN31556","Code",40,320,859,23803,0.0361,29.97,46,4.7,99,9,0.52,""],["PN11913","Ladestrom unterwegs","energie","ladestrom","AN27294","Code",22,127,89,2858,0.0311,16.94,1,4.0,4,60,1.0,""],["PN11927","Wallbox mit Installation zum Werkstarif","energie","ladestrom","AN28676","Deeplink",40,250,162,4420,0.0367,4.45,14,4.9,17,320,0.65,""],["PN11941","Heizungscheck vor dem Winter zum Werkstarif","energie","waermepumpe","AN61140","Deeplink",0,20,40,731,0.0547,2.68,null,4.1,4,120,0.79,""],["PN11958","Stromtarif mit Preisgarantie mit Rueckgaberecht","energie","strom","AN28464","Deeplink",25,176,155,4806,0.0323,24.1,13,4.7,20,60,0.67,"musterwerk"],["PN11964","Oekostrom fuer Zuhause mit Vorteilscode","energie","strom","AN28136","Code",18,46,82,958,0.0856,6.09,3,4.0,11,120,0.77,""],["PN11972","Photovoltaik mit Speicher im Aktionszeitraum","energie","photovoltaik","AN61140","Deeplink",30,269,130,3631,0.0358,23.72,null,4.4,6,400,0.7,""],["PN11982","Gasthermenwartung","energie","gas","AN28464","Deeplink",12,22,51,1500,0.034,4.1,7,4.0,6,30,0.61,""],["PN11995","Stromtarif mit Preisgarantie zum Werkstarif","energie","strom","AN27294","Code",12,113,148,4450,0.0333,33.68,7,4.3,21,9,0.73,""],["PN11998","Wallbox mit Installation ohne Mindestlaufzeit","energie","ladestrom","AN61140","Deeplink",25,224,304,7234,0.042,32.7,null,4.8,43,400,0.91,""],["PN12013","Photovoltaik mit Speicher mit Vorteilscode","energie","photovoltaik","AN29415","Deeplink",15,23,76,1016,0.0748,3.5,4,3.7,4,30,0.94,""],["PN12016","Heizungscheck vor dem Winter fuer Beschaeftigte","energie","waermepumpe","AN28136","Code",10,80,86,1683,0.0511,13.58,4,4.3,6,120,1.0,""],["PN12030","Balkonkraftwerk im Set zum Werkstarif","energie","photovoltaik","AN28136","Code",8,55,59,717,0.0823,10.33,3,3.8,5,60,1.0,""],["PN12042","Waermepumpe mit Foerderberatung im Aktionszeitraum","energie","waermepumpe","AN28464","Deeplink",5,25,90,2434,0.037,6.82,5,3.4,6,14,0.7,"musterwerk"],["PN12054","Stromtarif mit Preisgarantie fuer Beschaeftigte","energie","strom","AN28464","Deeplink",0,40,33,792,0.0417,6.34,4,4.1,4,14,0.67,""],["PN12060","Photovoltaik mit Speicher zum Werkstarif","energie","photovoltaik","AN28676","Deeplink",0,20,35,382,0.0916,4.24,2,3.2,4,320,0.82,""],["PN12066","Gastarif mit Wechselpraemie mit Rueckgaberecht","energie","gas","AN28136","Code",30,167,242,2309,0.1048,14.06,5,4.0,16,320,0.66,""],["PN12080","Krankentagegeld zum Werkstarif","versicherung","zusatz","AN30961","Deeplink",0,50,55,762,0.0722,17.97,7,3.1,4,240,0.35,""],["PN12084","Kaskoschutz fuer Jahreswagen fuer Beschaeftigte","versicherung","kfz","AN30849","Deeplink",18,113,103,3083,0.0334,18.64,10,3.7,11,90,0.68,""],["PN12087","Kfz-Versicherung mit Werksrabatt fuer Beschaeftigte","versicherung","kfz","AN29653","Deeplink",18,90,73,1073,0.068,12.49,9,4.5,7,90,0.73,""],["PN12095","Krankentagegeld fuer Beschaeftigte","versicherung","zusatz","AN31549","Deeplink",25,181,211,3080,0.0685,25.69,19,4.7,14,9,0.68,""],["PN12099","Kaskoschutz fuer Jahreswagen ohne Mindestlaufzeit","versicherung","kfz","AN30849","Deeplink",8,65,53,651,0.0814,13.51,4,4.0,7,5,0.32,""],["PN12115","Reiseruecktritt fuer ein Jahr im Aktionszeitraum","versicherung","reise","AN31549","Deeplink",25,189,208,2034,0.1023,19.24,25,3.9,15,180,0.57,""],["PN12124","Zahnzusatz ohne Wartezeit","versicherung","zusatz","AN31549","Deeplink",12,63,49,806,0.0608,13.93,5,3.5,7,45,0.62,""],["PN12132","Privathaftpflicht fuer Familien ohne Mindestlaufzeit","versicherung","haftpflicht","AN31549","Deeplink",18,122,106,3135,0.0338,26.91,4,4.3,6,90,0.57,"musterwerk"],["PN12149","Elementarschaden im Paket fuer Beschaeftigte","versicherung","hausrat","AN31549","Deeplink",20,92,89,2078,0.0428,12.98,10,4.4,10,320,0.48,""],["PN12155","Privathaftpflicht fuer Familien zum Werkstarif","versicherung","haftpflicht","AN29653","Deeplink",25,35,99,1604,0.0617,2.2,4,4.1,8,400,0.36,"musterwerk"],["PN12164","Kaskoschutz fuer Jahreswagen fuer Beschaeftigte","versicherung","kfz","AN30849","Deeplink",0,30,33,948,0.0348,5.43,2,3.8,4,60,0.7,""],["PN12171","Auslandskrankenschutz im Aktionszeitraum","versicherung","reise","AN29653","Deeplink",0,150,71,1087,0.0653,53.94,6,3.7,11,90,0.73,""],["PN12184","Zahnzusatz ohne Wartezeit fuer Beschaeftigte","versicherung","zusatz","AN30357","Deeplink",30,89,228,4587,0.0497,9.74,12,4.4,15,2,0.49,""],["PN12199","Krankentagegeld im Aktionszeitraum","versicherung","zusatz","AN31549","Deeplink",0,15,31,846,0.0366,3.39,1,4.0,4,400,0.39,""],["PN12213","Auslandskrankenschutz fuer Beschaeftigte","versicherung","reise","AN29653","Deeplink",22,104,122,3144,0.0388,12.78,6,4.0,7,60,0.6,""],["PN12229","Kfz-Versicherung mit Werksrabatt im Aktionszeitraum","versicherung","kfz","AN30849","Deeplink",0,100,59,609,0.0969,26.19,5,3.6,6,240,0.72,""],["PN12242","Depot ohne Fuehrungsentgelt im Aktionszeitraum","finanzen","depot","AN32228","Deeplink",0,30,36,545,0.0661,11.46,3,3.1,4,9,0.52,""],["PN12250","Umschuldung mit Beratung","finanzen","kredit","AN33725","Deeplink",0,150,62,801,0.0774,49.02,2,4.2,5,180,0.57,""],["PN12257","Sparplan ohne Ordergebuehr im Aktionszeitraum","finanzen","depot","AN32228","Deeplink",30,88,92,1918,0.048,10.63,11,4.5,13,400,0.39,""],["PN12262","Ratenkredit zum Sonderzins fuer Beschaeftigte","finanzen","kredit","AN32906","Deeplink",0,250,96,2348,0.0409,43.8,5,4.4,7,30,0.44,""],["PN12276","Reisekarte ohne Fremdgebuehr fuer Beschaeftigte","finanzen","kreditkarte","AN33725","Deeplink",0,15,14,254,0.0551,3.04,1,3.5,4,45,0.28,""],["PN12288","Kreditkarte ohne Jahresgebuehr mit Vorteilscode","finanzen","kreditkarte","AN33725","Deeplink",0,40,27,639,0.0423,14.17,1,3.8,4,400,0.19,""],["PN12299","Ratenkredit zum Sonderzins im Aktionszeitraum","finanzen","kredit","AN32228","Deeplink",0,100,40,588,0.068,15.74,2,4.0,4,45,0.16,""],["PN12304","Bausparvertrag mit Praemie","finanzen","bausparen","AN32495","Deeplink",0,250,98,1342,0.073,56.44,4,4.1,4,90,0.21,""],["PN12307","Reisekarte ohne Fremdgebuehr mit Rueckgaberecht","finanzen","kreditkarte","AN33725","Deeplink",22,44,65,948,0.0686,3.89,5,3.7,4,320,0.63,""],["PN12317","Kreditkarte ohne Jahresgebuehr im Aktionszeitraum","finanzen","kreditkarte","AN33318","Deeplink",0,100,34,589,0.0577,36.91,1,4.1,4,30,0.23,""],["PN12323","Umschuldung mit Beratung mit Vorteilscode","finanzen","kredit","AN32906","Deeplink",0,100,62,1477,0.042,19.53,7,3.4,9,14,0.44,""],["PN12328","Kreditkarte ohne Jahresgebuehr ohne Mindestlaufzeit","finanzen","kreditkarte","AN33725","Deeplink",35,232,259,5799,0.0447,25.28,27,5.0,18,5,0.38,""],["PN12334","Kreditkarte ohne Jahresgebuehr fuer Beschaeftigte","finanzen","kreditkarte","AN33318","Deeplink",10,24,56,780,0.0718,2.96,4,4.2,4,400,0.27,""],["PN12340","Bausparvertrag mit Praemie im Aktionszeitraum","finanzen","bausparen","AN33318","Deeplink",0,40,29,600,0.0483,6.22,2,3.9,4,400,0.57,""],["PN12345","Kreditkarte ohne Jahresgebuehr fuer Beschaeftigte","finanzen","kreditkarte","AN33318","Deeplink",0,30,35,1050,0.0333,7.38,3,3.5,5,30,0.48,""],["PN12360","Kreditkarte ohne Jahresgebuehr mit Rueckgaberecht","finanzen","kreditkarte","AN32228","Deeplink",0,200,44,895,0.0492,69.99,5,3.5,6,400,0.35,""],["PN12375","Vitaminpaket im Abo ohne Mindestlaufzeit","gesundheit","apotheke","AN34581","Code",12,60,140,2418,0.0579,10.81,5,4.0,6,9,0.75,""],["PN12390","Vitaminpaket im Abo im Aktionszeitraum","gesundheit","apotheke","AN35613","Code",22,182,116,2410,0.0481,32.49,7,4.0,4,45,0.63,""],["PN12405","Brillen mit Sehtest mit Vorteilscode","gesundheit","optik","AN35151","Deeplink",8,41,135,1942,0.0695,7.49,11,3.2,21,14,0.84,""],["PN12413","Kontaktlinsen im Jahresabo ohne Mindestlaufzeit","gesundheit","optik","AN35613","Code",0,15,49,1058,0.0463,3.19,2,3.0,7,240,0.61,""],["PN12423","Zahnschiene bei Knirschen mit Vorteilscode","gesundheit","zahn","AN35151","Deeplink",12,42,140,1667,0.084,10.18,4,3.9,16,320,0.43,""],["PN12437","Brillen mit Sehtest fuer Beschaeftigte","gesundheit","optik","AN34350","Deeplink",22,62,202,3264,0.0619,13.43,10,4.5,29,14,0.79,"musterwerk"],["PN12444","Vitaminpaket im Abo ohne Mindestlaufzeit","gesundheit","apotheke","AN34581","Code",20,48,112,1889,0.0593,5.83,3,3.8,13,9,0.65,""],["PN12451","Brillen mit Sehtest zum Werkstarif","gesundheit","optik","AN34065","Deeplink",40,148,230,7701,0.0299,9.46,33,4.8,21,2,0.81,"musterwerk"],["PN12464","Hoergeraete mit Anpassung ohne Mindestlaufzeit","gesundheit","hoergeraet","AN34350","Deeplink",22,107,219,3190,0.0687,11.07,16,4.4,13,21,0.74,""],["PN12467","Vitaminpaket im Abo mit Vorteilscode","gesundheit","apotheke","AN34065","Deeplink",0,20,60,718,0.0836,6.84,8,4.0,4,320,0.49,""],["PN12474","Zahnschiene bei Knirschen mit Rueckgaberecht","gesundheit","zahn","AN34065","Deeplink",0,15,43,1434,0.03,2.84,2,3.6,4,2,0.69,""],["PN12485","Kontaktlinsen im Jahresabo zum Werkstarif","gesundheit","optik","AN34581","Code",12,23,135,2269,0.0595,3.21,7,3.8,8,45,0.81,""],["PN12497","Versandapotheke mit Bonus","gesundheit","apotheke","AN35151","Deeplink",30,242,195,6227,0.0313,17.95,8,4.7,23,400,0.74,""],["PN12504","Hoergeraete mit Anpassung mit Rueckgaberecht","gesundheit","hoergeraet","AN35151","Deeplink",25,117,311,5044,0.0617,12.04,9,4.5,20,400,0.49,""],["PN12519","Versandapotheke mit Bonus","gesundheit","apotheke","AN35613","Code",12,40,93,2321,0.0401,9.74,5,3.8,4,45,0.51,""],["PN12527","Impfberatung fuer Reisende ohne Mindestlaufzeit","gesundheit","vorsorge","AN35613","Code",28,111,289,6873,0.042,6.88,18,4.7,13,90,0.73,""],["PN12532","Premierentickets","freizeit","kino","AN36009","Deeplink",35,56,291,6731,0.0432,9.24,null,4.1,6,180,0.46,""],["PN12542","Freizeitpark mit Tagesticket mit Vorteilscode","freizeit","freizeitpark","AN36009","Deeplink",0,40,63,642,0.0981,7.3,null,3.6,6,90,0.46,""],["PN12551","Wellnesswochenende mit Vorteilscode","freizeit","wellness","AN36009","Deeplink",10,78,265,4707,0.0563,17.68,null,4.0,28,400,0.43,""],["PN12562","Kinokarten im Zehnerpack im Aktionszeitraum","freizeit","kino","AN36009","Deeplink",35,116,579,8562,0.0676,15.94,null,4.2,16,2,0.5,""],["PN12568","Premierentickets mit Rueckgaberecht","freizeit","kino","AN36966","Code",8,62,207,5960,0.0347,17.38,7,3.4,21,320,0.44,""],["PN12574","Fuehrungen am Wochenende im Aktionszeitraum","freizeit","museum","AN36009","Deeplink",35,112,555,17425,0.0319,11.25,null,4.9,30,180,0.55,""],["PN12591","Wellnesswochenende mit Rueckgaberecht","freizeit","wellness","AN36188","Deeplink",25,234,447,9680,0.0462,33.84,null,4.1,41,9,0.67,"nordkontor"],["PN12600","Kinokarten im Zehnerpack zum Werkstarif","freizeit","kino","AN36966","Code",5,42,105,2453,0.0428,5.51,3,4.1,15,9,0.6,""],["PN12609","Freizeitpark mit Tagesticket","freizeit","freizeitpark","AN36188","Deeplink",15,138,322,7353,0.0438,12.29,null,3.8,22,90,0.38,""],["PN12621","Wellnesswochenende mit Vorteilscode","freizeit","wellness","AN36188","Deeplink",0,200,238,5797,0.0411,57.32,null,4.1,31,45,0.73,""],["PN12637","Wellnesswochenende ohne Mindestlaufzeit","freizeit","wellness","AN36009","Deeplink",10,52,217,6395,0.0339,7.49,null,4.2,11,5,0.41,""],["PN12644","Abo fuer die Spielzeit im Aktionszeitraum","freizeit","konzert","AN36188","Deeplink",0,15,104,2166,0.048,2.68,null,3.5,9,120,0.28,""],["PN12661","Wellnesswochenende ohne Mindestlaufzeit","freizeit","wellness","AN35854","Deeplink",0,150,205,5466,0.0375,46.99,28,3.7,7,45,0.32,""],["PN12672","Premierentickets mit Rueckgaberecht","freizeit","kino","AN36966","Code",0,75,138,3201,0.0431,14.31,3,3.5,4,9,0.67,""],["PN12689","Abo fuer die Spielzeit","freizeit","konzert","AN36966","Code",0,25,128,1616,0.0792,7.26,4,3.4,17,320,0.72,""],["PN12694","Konzertkarten im Vorverkauf fuer Beschaeftigte","freizeit","konzert","AN36009","Deeplink",25,126,382,4957,0.0771,6.88,null,3.9,10,180,0.74,""],["PN12705","Restaurantgutschein mit Vorteilscode","essen","restaurant","AN39623","Deeplink",12,107,406,6856,0.0592,18.34,null,4.1,55,90,0.52,""],["PN12712","Kaffeevollautomat mit Service fuer Beschaeftigte","essen","kaffee","AN37443","Code",0,90,78,2408,0.0324,22.09,2,4.1,12,5,0.47,""],["PN12720","Menue fuer zwei Personen","essen","restaurant","AN39623","Deeplink",8,31,148,1336,0.1108,5.25,null,4.0,5,21,0.59,""],["PN12728","Lieferdienst mit Startguthaben mit Vorteilscode","essen","lieferdienst","AN39623","Deeplink",0,25,95,3129,0.0304,7.84,null,3.8,15,14,0.54,""],["PN12733","Winzersekt im Sechserpack mit Rueckgaberecht","essen","wein","AN39623","Deeplink",5,34,236,5969,0.0395,6.65,null,3.8,26,90,0.82,""],["PN12736","Winzersekt im Sechserpack","essen","wein","AN38772","Deeplink",15,140,267,2571,0.1039,21.65,25,3.6,36,2,0.39,""],["PN12745","Kaffeevollautomat mit Service fuer Beschaeftigte","essen","kaffee","AN38772","Deeplink",0,250,247,8378,0.0295,48.04,25,3.4,13,2,0.55,""],["PN12750","Kochbox fuer die Woche mit Rueckgaberecht","essen","kochbox","AN38772","Deeplink",0,75,84,2378,0.0353,12.43,4,3.1,8,14,0.83,""],["PN12765","Kochbox fuer die Woche mit Vorteilscode","essen","kochbox","AN38772","Deeplink",18,141,268,4350,0.0616,31.33,27,4.5,32,9,0.75,""],["PN12780","Mittagstisch im Abo ohne Mindestlaufzeit","essen","lieferdienst","AN39623","Deeplink",12,104,435,10271,0.0424,26.49,null,4.0,21,2,0.53,""],["PN12784","Lieferdienst mit Startguthaben im Aktionszeitraum","essen","lieferdienst","AN38772","Deeplink",0,60,97,3042,0.0319,11.3,7,3.8,4,320,0.71,"musterwerk"],["PN12790","Mittagstisch im Abo mit Vorteilscode","essen","lieferdienst","AN38470","Deeplink",25,199,699,18811,0.0372,28.39,67,4.6,34,5,0.74,""],["PN12806","Mittagstisch im Abo fuer Beschaeftigte","essen","lieferdienst","AN39623","Deeplink",0,120,162,4621,0.0351,41.37,null,3.8,11,14,0.82,""],["PN12813","Mittagstisch im Abo fuer Beschaeftigte","essen","lieferdienst","AN38470","Deeplink",28,144,348,10901,0.0319,13.83,38,4.6,11,120,0.61,"musterwerk"],["PN12818","Kaffeebohnen aus der Roesterei mit Vorteilscode","essen","kaffee","AN37443","Code",0,75,154,2457,0.0627,25.19,5,3.8,10,60,0.6,""],["PN12827","Kaffeevollautomat mit Service mit Rueckgaberecht","essen","kaffee","AN38470","Deeplink",0,120,126,2188,0.0576,29.07,8,4.1,16,9,0.55,""]];
+
+/* Aus den Rohzeilen Objekte machen und in die bestehenden Stammdaten
+   einhaengen. Die acht Angebote des Erstlaufs behalten ihre von Hand
+   geschriebene Vorteilszeile, weil die Vorfuehrung sie woertlich zeigt. */
+(function katalogEinhaengen(){
+  const idx = {};
+  KATALOG_FELDER.forEach(function(f, i){ idx[f] = i; });
+
+  Object.keys(ANBIETER_ALLE).forEach(function(nr){
+    if (!ANBIETER[nr]){
+      ANBIETER[nr] = { name: ANBIETER_ALLE[nr][0], rueckkanal: ANBIETER_ALLE[nr][1],
+                       netzwerk: ANBIETER_ALLE[nr][2] };
+    }
+  });
+
+  const vorhanden = {};
+  ANGEBOTE.forEach(function(a){ vorhanden[a.id] = a; });
+
+  KATALOG_ROH.forEach(function(z){
+    const hole = function(f){ return z[idx[f]]; };
+    const merkmale = {
+      rabatt: hole("rabatt"),
+      ersparnis: hole("ersparnis"),
+      klicks: hole("klicks"),
+      auslieferungen: hole("auslieferungen"),
+      klickrate: hole("klickrate"),
+      provisionEuro: hole("provision_euro"),
+      einloesungen: hole("einloesungen"),
+      bewertung: hole("bewertung"),
+      bewertungen: hole("bewertungen"),
+      alterTage: hole("neu_tage"),
+      saison: hole("saison")
+    };
+    const da = vorhanden[hole("id")];
+    if (da){
+      Object.keys(merkmale).forEach(function(k){ da[k] = merkmale[k]; });
+      return;
+    }
+    const rabatt = hole("rabatt");
+    const ersparnis = hole("ersparnis");
+    const mand = hole("mandanten");
+    const eintrag = {
+      id: hole("id"), titel: hole("titel"),
+      kategorie: hole("kategorie"), unterkategorie: hole("unterkategorie"),
+      anbieter: hole("anbieter"), typ: hole("typ"),
+      vorteil: rabatt > 0 ? (rabatt + " Prozent, im Schnitt " + ersparnis + " Euro")
+                          : (ersparnis + " Euro Vorteil"),
+      wert: ersparnis,
+      mandanten: mand ? [mand] : []
+    };
+    Object.keys(merkmale).forEach(function(k){ eintrag[k] = merkmale[k]; });
+    ANGEBOTE.push(eintrag);
+  });
+})();
+
+/* Nachschlagewerk Kategorie zu Anzeigename und Unterkategorien. */
+const KATEGORIE_INFO = {};
+KATEGORIEN.forEach(function(k){
+  KATEGORIE_INFO[k[0]] = { name:k[1], text:k[2], unterkategorien:k[3] };
+});
+
 /* Der Index: Angebote, Kategorien und Anbieter. Jeder Eintrag trägt seinen
    Typ, weil die Auswahl eines Angebots direkt auf die Angebotsseite fuehrt
    und die Auswahl einer Kategorie auf die Ergebnisliste. */
@@ -1035,6 +1298,10 @@ function seitenBlock(){
     pn = ["web", "start", "uebersicht", "PN00000"];
   } else if (S.ansicht === "suche"){
     pn = ["web", "suche", "ergebnis", "PN00000"];
+  } else if (S.ansicht === "kategorie"){
+    pn = ["web", "liste", F.kategorie || "alle", "PN00000"];
+  } else if (S.ansicht === "ranking"){
+    pn = ["web", "intern", "rangfolge", "PN00000"];
   } else if (S.ansicht === "datenschutz"){
     pn = ["web", "intern", "datenschutz", "PN00000"];
   } else if (S.ansicht === "anbieter"){
@@ -1415,22 +1682,37 @@ function startseiteBauen(){
   document.querySelector('[data-slotinhalt="Liste"]').innerHTML =
     nach("Liste").map(teaserMarkup).join("");
 
-  // Kategorienavigation: deklarative Messpunkte im Markup, ohne eigene Ansicht.
-  const kats = [];
-  belegungenFuerMandant().forEach(function(b){
-    const k = angebot(b.angebot).kategorie;
-    if (kats.indexOf(k) === -1) kats.push(k);
-  });
-  document.getElementById("katnavigation").innerHTML = kats.map(function(k){
-    return '<button type="button" class="sekundaer" data-mw-event="nav.category.select" ' +
-           'data-mw-label="' + esc(k) + '">' + esc(k) + '</button>';
-  }).join("");
+  // Kategorieuebersicht und die sechs Angebote, die die Rangfolge oben sieht.
+  kachelnZeichnen();
+  empfehlungenZeichnen();
 
   // Kampagnenlinks: relative Links auf dieselbe Datei, damit sie unter file:// laufen.
   document.getElementById("kampagnenlinks").innerHTML = BEISPIELLINKS.map(function(l){
     return '<a class="pill" style="padding:8px 14px;text-decoration:none" href="index.html?' + l.q + '">' +
            esc(l.text) + '</a>';
   }).join("");
+}
+
+/* Die sechs Angebote, die die aktuelle Rangfolge oben sieht. Sie stehen
+   bewusst neben den gebuchten Slots: das eine ist verkaufte Flaeche, das
+   andere ein Rechenergebnis, und beides gehoert im Request unterscheidbar. */
+function empfehlungenZeichnen(){
+  const ziel = document.getElementById("empfehlungen");
+  if (!ziel) return;
+  const oben = rangfolgeLokal(angeboteFuerMandant(), F.strategie, F.segment).slice(0, 6);
+  ziel.innerHTML = oben.map(function(e, i){ return karteMarkup(e, i + 1, false); }).join("");
+  const zeile = document.getElementById("empfehlungszeile");
+  if (zeile){
+    const st = strategieVon(F.strategie);
+    zeile.innerHTML = 'Reihenfolge <b>' + esc(st.name) + '</b>, gerechnet auf dieser Seite. ' +
+      'Welche Merkmale dahinterstehen und wie stark sich die Strategien unterscheiden, steht unter ' +
+      '<a href="#ranking" data-ansicht="ranking">Rangfolge</a>.';
+  }
+  mwTrack("list.view", {
+    kategorie: "empfehlung", strategie: F.strategie, rangquelle: "lokal",
+    treffer: oben.length, gezeigt: oben.length,
+    erste: oben.slice(0, 3).map(function(e){ return e.angebot.id; }).join("|")
+  }, "Skript");
 }
 
 /* Auslieferung zählen und Sichtbarkeit beobachten. */
@@ -2437,6 +2719,410 @@ function pruefungZeichnen(){
 }
 
 /* =====================================================================
+   17b. Die Rangfolge
+
+   Eine Liste im Portal hat keine natuerliche Reihenfolge. Was oben steht,
+   ist eine Entscheidung, und die faellt in einer Formel. Diese Seite legt
+   die Formel offen: jede Karte zeigt, aus welchen Merkmalen ihr Wert kam.
+
+   Gerechnet wird an zwei Orten. Der eine ist die Datenbank: eine Tabelle
+   im Feature-Store-Format (Entitaet, Merkmal, Wert, Stand) und eine
+   Funktion, die daraus einen Rang macht. Der andere ist diese Seite, mit
+   denselben Formeln auf denselben Zahlen. Der zweite Ort ist der
+   Rueckfall, damit die Vorfuehrung nicht an einer Leitung haengt; die
+   Konsole sagt jederzeit, welcher von beiden geantwortet hat.
+   ===================================================================== */
+
+const RANGLISTE_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/rangliste";
+
+const STRATEGIEN = [
+  { id:"gemischt",    name:"Gemischt",              kurz:"Beliebtheit, Ersparnis, Bewertung und Frische zu gleichen Teilen",
+    gewichte:{ beliebtheit:0.30, ersparnis:0.30, bewertung:0.20, frische:0.20 } },
+  { id:"beliebtheit", name:"Beliebteste zuerst",    kurz:"Klicks der letzten 30 Tage",
+    gewichte:{ beliebtheit:1 } },
+  { id:"ersparnis",   name:"Groesste Ersparnis",    kurz:"Vorteil in Euro je Einloesung",
+    gewichte:{ ersparnis:1 } },
+  { id:"bewertung",   name:"Beste Bewertung",       kurz:"Bewertung, gewichtet mit der Zahl der Bewertungen",
+    gewichte:{ bewertung:1 } },
+  { id:"neu",         name:"Neu im Portal",         kurz:"je juenger die Aufnahme, desto weiter oben",
+    gewichte:{ frische:1 } },
+  { id:"ertrag",      name:"Ertrag des Portals",    kurz:"erwarteter Deckungsbeitrag je tausend Auslieferungen",
+    gewichte:{ ertrag:1 } },
+  { id:"segment",     name:"Passend zum Segment",   kurz:"gemischter Wert, gewichtet mit der Neigung des Segments",
+    gewichte:{ beliebtheit:0.25, ersparnis:0.25, bewertung:0.15, frische:0.15, segment:0.20 } }
+];
+
+const SEGMENTE = Object.keys(SEGMENT_KATEGORIEN);
+
+/* Merkmalswerte je Angebot, roh. Die Normierung passiert erst auf der
+   Menge, die tatsaechlich sortiert wird, weil ein Wert nur im Vergleich
+   zu seinen Nachbarn etwas heisst. */
+function merkmaleRoh(a, segment){
+  const tabelle = (segment && SEGMENT_NEIGUNG[segment]) || null;
+  const neigung = tabelle ? (tabelle[a.kategorie] || 0) : 0;
+  return {
+    beliebtheit: a.klicks || 0,
+    ersparnis:   a.ersparnis || 0,
+    bewertung:   (a.bewertung || 0) * Math.log(1 + (a.bewertungen || 0)),
+    frische:     1 / (1 + (a.alterTage || 999)),
+    ertrag:      (a.provisionEuro || 0) * (a.klickrate || 0) * 1000,
+    segment:     neigung
+  };
+}
+
+/* Rangfolge auf dieser Seite. Gibt je Angebot den Wert und seine Teile
+   zurueck, damit die Karte begruenden kann, warum sie da steht, wo sie
+   steht. Eine Rangfolge ohne Begruendung ist im Gespraech wertlos. */
+function rangfolgeLokal(liste, strategieId, segment){
+  const st = STRATEGIEN.filter(function(x){ return x.id === strategieId; })[0] || STRATEGIEN[0];
+  const roh = liste.map(function(a){ return merkmaleRoh(a, segment); });
+  const grenzen = {};
+  Object.keys(st.gewichte).forEach(function(m){
+    let min = Infinity, max = -Infinity;
+    roh.forEach(function(r){ if (r[m] < min) min = r[m]; if (r[m] > max) max = r[m]; });
+    grenzen[m] = { min:min, max:max };
+  });
+  const ergebnis = liste.map(function(a, i){
+    let wert = 0;
+    const teile = {};
+    Object.keys(st.gewichte).forEach(function(m){
+      const g = grenzen[m];
+      const spanne = g.max - g.min;
+      const norm = spanne > 0 ? (roh[i][m] - g.min) / spanne : 0;
+      const anteil = norm * st.gewichte[m];
+      teile[m] = Math.round(anteil * 1000) / 1000;
+      wert += anteil;
+    });
+    return { angebot:a, wert:Math.round(wert * 1000) / 1000, teile:teile };
+  });
+  ergebnis.sort(function(x, y){
+    if (y.wert !== x.wert) return y.wert - x.wert;
+    return x.angebot.id < y.angebot.id ? -1 : 1;   // stabile Reihenfolge bei Gleichstand
+  });
+  return ergebnis;
+}
+
+/* Die Rangfolge aus der Datenbank. Sie rechnet dieselbe Formel, aber auf
+   der Feature-Tabelle, und sie ist der Weg, den ein Portal im Betrieb
+   ginge. Antwortet sie nicht, rechnet die Seite selbst weiter und sagt es. */
+const S_RANG = { quelle:"lokal", grund:"noch nicht abgefragt", dauer:0, laeuft:false };
+
+async function rangfolgeAusDatenbank(strategieId, segment, kategorie, mandant){
+  const q = "?strategie=" + encodeURIComponent(strategieId) +
+            "&segment=" + encodeURIComponent(segment || "") +
+            "&kategorie=" + encodeURIComponent(kategorie || "") +
+            "&mandant=" + encodeURIComponent(mandant || "") +
+            "&grenze=120";
+  const t0 = Date.now();
+  const antwort = await fetch(RANGLISTE_URL + q, { method:"GET", cache:"no-store" });
+  if (!antwort.ok) throw new Error("Status " + antwort.status);
+  const daten = await antwort.json();
+  S_RANG.dauer = Date.now() - t0;
+  return daten;
+}
+
+/* =====================================================================
+   17c. Kategorieansicht
+
+   Filter, Reihenfolge, Raster. Jede Bedienung ist ein Messpunkt, und
+   jede Karte kennt ihre Position, ihre Strategie und die Quelle ihres
+   Rangs. Ohne diese drei Angaben laesst sich spaeter nicht sagen, ob ein
+   Klick dem Angebot galt oder nur dem ersten Platz.
+   ===================================================================== */
+
+const F = {
+  kategorie: "",
+  unterkategorie: "",
+  typ: "",
+  mindestrabatt: 0,
+  strategie: "gemischt",
+  segment: "pendler",
+  zeigen: 24
+};
+
+function angeboteFuerMandant(){
+  const m = S.mandant;
+  return ANGEBOTE.filter(function(a){
+    return !a.mandanten || a.mandanten.length === 0 || a.mandanten.indexOf(m) !== -1;
+  });
+}
+
+function gefilterteAngebote(){
+  return angeboteFuerMandant().filter(function(a){
+    if (F.kategorie && a.kategorie !== F.kategorie) return false;
+    if (F.unterkategorie && a.unterkategorie !== F.unterkategorie) return false;
+    if (F.typ && a.typ !== F.typ) return false;
+    if (F.mindestrabatt && (a.ersparnis || 0) < F.mindestrabatt) return false;
+    return true;
+  });
+}
+
+function strategieVon(id){
+  return STRATEGIEN.filter(function(x){ return x.id === id; })[0] || STRATEGIEN[0];
+}
+
+function kategoriewaehlerFuellen(){
+  const kat = document.getElementById("f-kategorie");
+  if (!kat || kat.dataset.gefuellt === "ja") return;
+  const zaehler = {};
+  angeboteFuerMandant().forEach(function(a){ zaehler[a.kategorie] = (zaehler[a.kategorie] || 0) + 1; });
+  let html = '<option value="">alle Kategorien</option>';
+  KATEGORIEN.forEach(function(k){
+    html += '<option value="' + k[0] + '">' + esc(k[1]) + ' (' + (zaehler[k[0]] || 0) + ')</option>';
+  });
+  kat.innerHTML = html;
+  kat.dataset.gefuellt = "ja";
+
+  const strat = document.getElementById("f-strategie");
+  strat.innerHTML = STRATEGIEN.map(function(x){
+    return '<option value="' + x.id + '">' + esc(x.name) + '</option>';
+  }).join("");
+  strat.value = F.strategie;
+}
+
+function unterkategoriewaehlerFuellen(){
+  const feld = document.getElementById("f-unterkategorie");
+  if (!feld) return;
+  let unter = [];
+  if (F.kategorie && KATEGORIE_INFO[F.kategorie]) unter = KATEGORIE_INFO[F.kategorie].unterkategorien;
+  feld.innerHTML = '<option value="">alle</option>' + unter.map(function(u){
+    return '<option value="' + u + '">' + esc(u) + '</option>';
+  }).join("");
+  feld.disabled = unter.length === 0;
+  feld.value = F.unterkategorie;
+}
+
+function kachelnZeichnen(){
+  const ziel = document.getElementById("kat-kacheln");
+  if (!ziel) return;
+  const zaehler = {};
+  angeboteFuerMandant().forEach(function(a){ zaehler[a.kategorie] = (zaehler[a.kategorie] || 0) + 1; });
+  ziel.innerHTML = KATEGORIEN.map(function(k){
+    return '<a class="kat-kachel" href="#kategorie" data-kategorie="' + k[0] + '" ' +
+           'data-mw-event="nav.category.select" data-mw-eigen="ja" data-mw-label="' + esc(k[1]) + '">' +
+           '<span class="kname">' + esc(k[1]) + '</span>' +
+           '<span class="ktext">' + esc(k[2]) + '</span>' +
+           '<span class="kzahl">' + (zaehler[k[0]] || 0) + ' Angebote</span></a>';
+  }).join("");
+  const z = document.getElementById("kat-gesamtzahl");
+  if (z) z.textContent = angeboteFuerMandant().length;
+}
+
+function karteMarkup(eintrag, position, mitScore){
+  const a = eintrag.angebot;
+  const anb = ANBIETER[a.anbieter];
+  const teile = eintrag.teile || {};
+  let scorezeile = "";
+  if (mitScore){
+    const namen = { beliebtheit:"Beliebtheit", ersparnis:"Ersparnis", bewertung:"Bewertung",
+                    frische:"Frische", ertrag:"Ertrag", segment:"Segment" };
+    const stuecke = Object.keys(teile).map(function(m){
+      return esc(namen[m] || m) + " <b>" + teile[m].toFixed(2) + "</b>";
+    });
+    scorezeile = '<div class="score">Wert <b>' + eintrag.wert.toFixed(3) + '</b> aus ' +
+                 stuecke.join(", ") + '</div>';
+  }
+  return '<article class="karte" data-angebotkarte="' + a.id + '" data-position="' + position + '">' +
+    '<span class="rang">Platz ' + position + '</span>' +
+    '<h4>' + esc(a.titel) + '</h4>' +
+    '<div class="anb">' + esc(anb ? anb.name : a.anbieter) + '</div>' +
+    '<div class="vorteil">' + esc(a.vorteil) + '</div>' +
+    '<div class="marken">' +
+      '<span class="pill">' + esc(KATEGORIE_INFO[a.kategorie] ? KATEGORIE_INFO[a.kategorie].name : a.kategorie) + '</span>' +
+      '<span class="pill">' + esc(a.unterkategorie) + '</span>' +
+      '<span class="pill">' + (a.typ === "Code" ? "Gutscheincode" : "Klick zum Anbieter") + '</span>' +
+      '<span class="pill">' + (a.bewertung || 0).toFixed(1) + ' aus ' + (a.bewertungen || 0) + '</span>' +
+      (a.alterTage <= 30 ? '<span class="pill" style="border-color:#b6d3bf;background:var(--gut-hell)">neu</span>' : '') +
+    '</div>' +
+    '<div class="fuss">' +
+      '<button type="button" class="klein" data-angebotklick="' + a.id + '">Angebot ansehen</button>' +
+      '<span class="leise" style="font-size:13px">' + (a.klicks || 0) + ' Klicks in 30 Tagen</span>' +
+    '</div>' + scorezeile + '</article>';
+}
+
+/* Die Liste bauen: erst filtern, dann ordnen, dann zeichnen. Die
+   Reihenfolge kommt aus der Datenbank, wenn sie erreichbar ist. */
+async function kategorieZeichnen(){
+  kategoriewaehlerFuellen();
+  unterkategoriewaehlerFuellen();
+
+  const liste = gefilterteAngebote();
+  const st = strategieVon(F.strategie);
+
+  let geordnet = rangfolgeLokal(liste, F.strategie, F.segment);
+  let quelle = "lokal";
+  let grund = "";
+
+  if (S.live.an && S.live.moeglich){
+    try {
+      const daten = await rangfolgeAusDatenbank(F.strategie, F.segment, F.kategorie, S.mandant);
+      const nachId = {};
+      liste.forEach(function(a){ nachId[a.id] = a; });
+      const ausDb = [];
+      (daten.zeilen || []).forEach(function(z){
+        const a = nachId[z.angebot_id];
+        if (a) ausDb.push({ angebot:a, wert:z.wert, teile:z.teile || {} });
+      });
+      if (ausDb.length){
+        geordnet = ausDb;
+        quelle = "datenbank";
+      } else {
+        grund = "Antwort ohne verwendbare Zeilen";
+      }
+    } catch (fehler){
+      grund = String(fehler.message || fehler);
+    }
+  } else {
+    grund = "Schalter „Live senden“ ist aus";
+  }
+  S_RANG.quelle = quelle;
+  S_RANG.grund = grund;
+
+  const titel = document.getElementById("kat-titel");
+  const unter = document.getElementById("kat-untertitel");
+  if (F.kategorie && KATEGORIE_INFO[F.kategorie]){
+    titel.textContent = KATEGORIE_INFO[F.kategorie].name;
+    unter.textContent = KATEGORIE_INFO[F.kategorie].text;
+  } else {
+    titel.textContent = "Alle Kategorien";
+    unter.textContent = "Zwoelf Kategorien, " + angeboteFuerMandant().length + " Angebote fuer diesen Mandanten.";
+  }
+
+  document.getElementById("f-zahl").innerHTML =
+    "<b>" + geordnet.length + "</b> von " + angeboteFuerMandant().length + " Angeboten";
+
+  document.getElementById("kat-erklaerung").innerHTML =
+    '<b>' + esc(st.name) + '.</b> ' + esc(st.kurz) + '. ' +
+    'Gerechnet ' + (quelle === "datenbank"
+        ? 'in der Datenbank auf der Feature-Tabelle, Antwort nach ' + S_RANG.dauer + ' ms.'
+        : 'auf dieser Seite' + (grund ? ' (' + esc(grund) + ')' : '') + '.') +
+    ' Jede Karte zeigt unten, aus welchen Merkmalen ihr Wert entstand.';
+
+  const sichtbar = geordnet.slice(0, F.zeigen);
+  document.getElementById("kat-raster").innerHTML =
+    sichtbar.map(function(e, i){ return karteMarkup(e, i + 1, true); }).join("") ||
+    '<div class="kasten warn" style="grid-column:1/-1"><p style="margin:0">Kein Angebot passt zu dieser Auswahl. Das ist der Fall, den ein Portal messen muss: eine Liste ohne Treffer ist eine Sortimentsfrage, kein Bedienfehler.</p></div>';
+
+  document.getElementById("kat-mehr").innerHTML =
+    geordnet.length > F.zeigen
+      ? '<button type="button" class="sekundaer" id="btn-mehr">Weitere ' +
+        Math.min(24, geordnet.length - F.zeigen) + ' anzeigen</button>'
+      : "";
+
+  // Auslieferung der Liste messen: je Karte eine Zeile waere zu viel, die
+  // Liste als Ganzes mit ihren ersten Positionen ist die brauchbare Einheit.
+  mwTrack("list.view", {
+    kategorie: F.kategorie || "alle",
+    unterkategorie: F.unterkategorie || "alle",
+    strategie: F.strategie,
+    rangquelle: quelle,
+    treffer: geordnet.length,
+    gezeigt: sichtbar.length,
+    erste: sichtbar.slice(0, 3).map(function(e){ return e.angebot.id; }).join("|")
+  }, "Skript");
+
+  rangZeichnen();
+}
+
+/* Die Ansicht „Rangfolge“: dieselbe Menge, mehrere Strategien
+   nebeneinander. Das ist die Stelle, an der sichtbar wird, dass die
+   Reihenfolge eine Entscheidung ist und keine Eigenschaft der Angebote. */
+function rangZeichnen(){
+  const ziel = document.getElementById("ranking-inhalt");
+  if (!ziel) return;
+  const liste = gefilterteAngebote();
+  const vergleich = ["beliebtheit", "ersparnis", "ertrag", "neu"];
+
+  const spalten = vergleich.map(function(id){
+    const st = strategieVon(id);
+    const oben = rangfolgeLokal(liste, id, F.segment).slice(0, 8);
+    return '<div class="rangspalte"><h4>' + esc(st.name) + '</h4>' +
+      '<p class="leise" style="font-size:13px;margin:0 0 6px 0">' + esc(st.kurz) + '</p><ol>' +
+      oben.map(function(e){
+        return '<li>' + esc(e.angebot.titel) + '<br><span class="leise" style="font-size:12px">' +
+               esc(ANBIETER[e.angebot.anbieter] ? ANBIETER[e.angebot.anbieter].name : "") +
+               ', ' + (e.angebot.ersparnis || 0) + ' Euro, ' + (e.angebot.klicks || 0) + ' Klicks</span></li>';
+      }).join("") + '</ol></div>';
+  }).join("");
+
+  // Wie stark unterscheiden sich zwei Ranglisten? Der Anteil, der in
+  // beiden ersten Zehn steht, ist die einfachste brauchbare Zahl.
+  const zehn = function(id){
+    return rangfolgeLokal(liste, id, F.segment).slice(0, 10)
+             .map(function(e){ return e.angebot.id; });
+  };
+  const a = zehn("beliebtheit"), b = zehn("ertrag");
+  const gemeinsam = a.filter(function(x){ return b.indexOf(x) !== -1; }).length;
+
+  ziel.innerHTML =
+    '<h2>Wie die Reihenfolge entsteht</h2>' +
+    '<p class="leise">Grundmenge: ' + liste.length + ' Angebote' +
+      (F.kategorie ? ' der Kategorie ' + esc(KATEGORIE_INFO[F.kategorie].name) : '') + '.</p>' +
+
+    '<div class="kasten hinweis"><p style="margin:0 0 6px 0"><b>Die Rangfolge ist eine Entscheidung, keine Eigenschaft.</b></p>' +
+    '<p style="margin:0">Von den ersten zehn Plaetzen der Beliebtheit stehen <b>' + gemeinsam + ' von 10</b> auch in den ersten zehn des Ertrags. Wer die Reihenfolge umstellt, verteilt Aufmerksamkeit um, und Aufmerksamkeit ist hier das Produkt, das der Vertrieb verkauft. Deshalb gehoert die Strategie in den Request: ohne sie ist ein Klick auf Platz eins nicht von einem Klick auf ein gutes Angebot zu unterscheiden.</p></div>' +
+
+    '<h3>Vier Strategien auf derselben Menge</h3>' +
+    '<div class="rangvergleich">' + spalten + '</div>' +
+
+    '<h3>Woher die Merkmale kommen</h3>' +
+    '<p>Die Merkmale liegen in einer Tabelle im Feature-Store-Format: eine Zeile je Entitaet, Merkmal, Wert und Stand. Zwei Entitaeten kommen vor, das Angebot und das Segment. Ein neues Merkmal braucht keine neue Spalte, nur neue Zeilen, und ein Stand je Zeile macht nachvollziehbar, mit welchem Wert eine Rangfolge von gestern gerechnet hat.</p>' +
+    '<div class="tabellenrahmen"><table class="d">' +
+    '<tr><th>Merkmal</th><th>Entitaet</th><th>Woher im Betrieb</th><th>Frische</th></tr>' +
+    '<tr><td>klicks_30t</td><td>Angebot</td><td>Rohereignisse, Messpunkt offer.clickout</td><td>stuendlich</td></tr>' +
+    '<tr><td>auslieferungen_30t</td><td>Angebot</td><td>Rohereignisse, Messpunkt list.view und teaser.render</td><td>stuendlich</td></tr>' +
+    '<tr><td>klickrate_30t</td><td>Angebot</td><td>gerechnet aus den beiden darueber</td><td>stuendlich</td></tr>' +
+    '<tr><td>provision_euro</td><td>Angebot</td><td>Vertragsdaten des Anbieters</td><td>taeglich</td></tr>' +
+    '<tr><td>ersparnis_euro</td><td>Angebot</td><td>Angebotsstammdaten</td><td>taeglich</td></tr>' +
+    '<tr><td>bewertung</td><td>Angebot</td><td>Bewertungen der Beschaeftigten</td><td>taeglich</td></tr>' +
+    '<tr><td>alter_tage</td><td>Angebot</td><td>Aufnahmedatum</td><td>taeglich</td></tr>' +
+    '<tr><td>neigung_kategorie</td><td>Segment</td><td>Verhalten der letzten 90 Tage, aggregiert</td><td>woechentlich</td></tr>' +
+    '</table></div>' +
+
+    '<h3>Was hier fehlt und im Betrieb dazugehoert</h3>' +
+    '<ul>' +
+    '<li>Ein Zeitreisezugriff auf die Merkmale, damit ein Modell auf dem Stand trainiert, den es zur Vorhersagezeit gehabt haette. Ohne ihn lernt es aus der Zukunft, und die Guete im Test ist geschenkt.</li>' +
+    '<li>Eine Bremse gegen die Rueckkopplung: was oben steht, wird geklickt, und wird dadurch weiter oben stehen. Ohne einen Anteil zufaelliger Auslieferung friert die Liste ein.</li>' +
+    '<li>Eine Trennung von Rangfolge und Belegung. Ein gebuchter Slot ist verkaufte Flaeche, kein Ergebnis einer Formel; beides in einer Liste zu mischen, ohne es zu kennzeichnen, ist die Stelle, an der Werbung und Empfehlung ununterscheidbar werden.</li>' +
+    '</ul>' +
+
+    '<div class="knopfreihe">' +
+    '<button type="button" class="sekundaer" data-strategie-test="ertrag">Liste auf Ertrag stellen und ansehen</button>' +
+    '<button type="button" class="sekundaer" data-strategie-test="beliebtheit">Liste auf Beliebtheit stellen und ansehen</button>' +
+    '</div>';
+}
+
+/* =====================================================================
+   17d. Die Konsole als Schublade
+
+   Auf einem Telefon nimmt eine feste Seitenspalte die halbe Seite weg.
+   Sie faehrt deshalb erst auf Knopfdruck herein. Auf breiten Schirmen
+   aendert sich nichts.
+   ===================================================================== */
+function konsoleUmschalten(auf){
+  const k = document.getElementById("konsole");
+  const knopf = document.getElementById("konsole-auf");
+  const offen = (auf === undefined) ? !k.classList.contains("offen") : auf;
+  k.classList.toggle("offen", offen);
+  knopf.setAttribute("aria-expanded", offen ? "true" : "false");
+  knopf.textContent = offen ? "Konsole zu" : "Konsole";
+}
+
+/* Breite Tabellen bekommen einen eigenen Rahmen mit waagerechtem Lauf,
+   damit sie auf schmalen Schirmen die Seite nicht auseinanderziehen. */
+function tabellenEinfassen(wurzel){
+  const tabellen = (wurzel || document).querySelectorAll("table.d");
+  Array.prototype.slice.call(tabellen).forEach(function(t){
+    if (t.parentNode && t.parentNode.classList &&
+        t.parentNode.classList.contains("tabellenrahmen")) return;
+    const rahmen = document.createElement("div");
+    rahmen.className = "tabellenrahmen";
+    t.parentNode.insertBefore(rahmen, t);
+    rahmen.appendChild(t);
+  });
+}
+
+/* =====================================================================
    18. Ansichten
    ===================================================================== */
 
@@ -2478,7 +3164,10 @@ function ansichtWechseln(name, klickId){
   if (name === "anbieter"){ anbieterseiteBauen(klickId); }
   if (name === "auswertung"){ auswertungZeichnen(); }
   if (name === "messplan"){ messplanZeichnen(); }
+  if (name === "kategorie"){ kategorieZeichnen(); }
+  if (name === "ranking"){ rangZeichnen(); }
 
+  tabellenEinfassen(document.getElementById("v-" + name));
   window.scrollTo(0,0);
 }
 
@@ -2489,7 +3178,7 @@ function hashLesen(){
   const name = teile[0];
   let klickId = null;
   if (teile[1] && teile[1].indexOf("klick=") === 0) klickId = teile[1].slice(6);
-  return { name: ["start","suche","angebot","anbieter","auswertung","messplan","datenschutz"].indexOf(name) === -1 ? "start" : name,
+  return { name: ["start","kategorie","suche","ranking","angebot","anbieter","auswertung","messplan","datenschutz"].indexOf(name) === -1 ? "start" : name,
            klickId: klickId };
 }
 
@@ -2499,6 +3188,62 @@ function hashLesen(){
 
 document.addEventListener("click", function(ev){
   const ziel = ev.target;
+
+  // Konsole auf schmalen Schirmen
+  if (ziel.closest && ziel.closest("#konsole-auf")){ konsoleUmschalten(); ev.preventDefault(); return; }
+  if (ziel.closest && ziel.closest("#konsole-zu")){ konsoleUmschalten(false); ev.preventDefault(); return; }
+
+  // Kategoriekachel: fuehrt auf die Liste und setzt den Filter
+  const kk = ziel.closest ? ziel.closest("[data-kategorie]") : null;
+  if (kk){
+    const k = kk.getAttribute("data-kategorie");
+    F.kategorie = k;
+    F.unterkategorie = "";
+    F.zeigen = 24;
+    mwTrack("nav.category.select", { kategorie:k, herkunft:"kachel",
+      angebote: angeboteFuerMandant().filter(function(a){ return a.kategorie === k; }).length }, "Markup");
+    const w = document.getElementById("f-kategorie");
+    if (w) { kategoriewaehlerFuellen(); w.value = k; }
+    ansichtWechseln("kategorie");
+    ev.preventDefault();
+    return;
+  }
+
+  // Klick auf eine Angebotskarte der Liste
+  const ak = ziel.closest ? ziel.closest("[data-angebotklick]") : null;
+  if (ak){
+    const karte = ak.closest("[data-angebotkarte]");
+    const id = ak.getAttribute("data-angebotklick");
+    const pos = karte ? parseInt(karte.getAttribute("data-position"), 10) : 0;
+    mwTrack("list.click", { angebot:id, anbieter:anbieterNrVon(id), position:pos,
+      kategorie:F.kategorie || "alle", strategie:F.strategie, rangquelle:S_RANG.quelle }, "Markup");
+    S.angebotOffen = id;
+    ansichtWechseln("angebot");
+    ev.preventDefault();
+    return;
+  }
+
+  // Weitere Treffer nachladen
+  if (ziel.closest && ziel.closest("#btn-mehr")){
+    F.zeigen += 24;
+    mwTrack("list.more", { kategorie:F.kategorie || "alle", strategie:F.strategie, gezeigt:F.zeigen }, "Markup");
+    kategorieZeichnen();
+    ev.preventDefault();
+    return;
+  }
+
+  // Strategieknopf aus der Rangfolge-Ansicht
+  const sk = ziel.closest ? ziel.closest("[data-strategie-test]") : null;
+  if (sk){
+    F.strategie = sk.getAttribute("data-strategie-test");
+    F.zeigen = 24;
+    const w = document.getElementById("f-strategie");
+    if (w) w.value = F.strategie;
+    mwTrack("list.sort.change", { strategie:F.strategie, herkunft:"rangfolge" }, "Markup");
+    ansichtWechseln("kategorie");
+    ev.preventDefault();
+    return;
+  }
 
   // Teaser-Klick
   const tk = ziel.closest ? ziel.closest("[data-teaserklick]") : null;
@@ -2556,11 +3301,55 @@ Array.prototype.slice.call(document.querySelectorAll("#reiter a")).forEach(funct
 });
 
 // Mandant und Anmeldung
+/* Filter und Reihenfolge. Jede Aenderung feuert einen eigenen Messpunkt mit
+   Feld und Wert; ohne beides laesst sich spaeter nicht sagen, welcher Filter
+   die Trefferzahl auf null gedrueckt hat. */
+(function filterVerdrahten(){
+  const felder = [
+    ["f-kategorie",     "kategorie"],
+    ["f-unterkategorie","unterkategorie"],
+    ["f-typ",           "typ"],
+    ["f-mindestrabatt", "mindestrabatt"]
+  ];
+  felder.forEach(function(paar){
+    const el = document.getElementById(paar[0]);
+    if (!el) return;
+    el.addEventListener("change", function(){
+      const wert = paar[1] === "mindestrabatt" ? parseInt(this.value, 10) : this.value;
+      F[paar[1]] = wert;
+      if (paar[1] === "kategorie") F.unterkategorie = "";
+      F.zeigen = 24;
+      mwTrack("list.filter.change", {
+        feld: paar[1], wert: String(this.value || "alle"),
+        kategorie: F.kategorie || "alle", strategie: F.strategie
+      }, "Skript");
+      kategorieZeichnen();
+    });
+  });
+
+  const strat = document.getElementById("f-strategie");
+  if (strat){
+    strat.addEventListener("change", function(){
+      const vorher = F.strategie;
+      F.strategie = this.value;
+      F.zeigen = 24;
+      mwTrack("list.sort.change", {
+        strategie: F.strategie, vorher: vorher,
+        kategorie: F.kategorie || "alle", herkunft: "waehler"
+      }, "Skript");
+      kategorieZeichnen();
+      empfehlungenZeichnen();
+    });
+  }
+})();
+
 document.getElementById("sel-mandant").addEventListener("change", function(){
   S.mandant = this.value;
   dataLayerAufbauen();
   konsoleDatenlayerZeichnen();
   startseiteBauen();
+  const kw = document.getElementById("f-kategorie");
+  if (kw) kw.dataset.gefuellt = "";      // Anzahl je Kategorie haengt am Mandanten
   const stufe = document.getElementById("sel-stufe");
   ansichtWechseln(S.ansicht === "anbieter" ? "start" : S.ansicht);
   if (S.ansicht === "auswertung") auswertungZeichnen();
@@ -2682,6 +3471,9 @@ window.addEventListener("hashchange", function(){
   dataLayerAufbauen();
   konsoleDatenlayerZeichnen();
   startseiteBauen();
+
+  tabellenEinfassen(document);
+  konsoleUmschalten(false);
 
   const h = hashLesen();
   ansichtWechseln(h.name, h.klickId);
