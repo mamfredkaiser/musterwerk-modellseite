@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="origin">
+<title>Weiterleitung zum Anbieter - Musterwerk Vorteilsportal</title>
+<style>
+/* Dieselben Farben wie die Modellseite: die Zwischenseite gehoert dem Portal.
+   Keine externen Ressourcen. */
+:root{
+  --grund:#f7f7f6; --flaeche:#ffffff; --linie:#c9c9c4; --linie-hell:#e4e4e0;
+  --text:#1b1b1a; --text-leise:#5a5a55; --akzent:#1d4e79; --akzent-hell:#e8f0f7;
+  --warn:#8a3b12; --warn-hell:#fbeee6; --gut:#1f5d34; --gut-hell:#e9f3ec;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--grund);color:var(--text);font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:17px;line-height:1.55}
+header{background:var(--flaeche);border-bottom:2px solid var(--linie);padding:14px 24px}
+header .marke{font-weight:700;font-size:18px}
+header .unter{color:var(--text-leise);font-size:14px}
+main{max-width:900px;margin:0 auto;padding:18px 16px 60px 16px}
+h1{font-size:26px;margin:14px 0 6px 0;letter-spacing:-0.01em}
+h2{font-size:19px;margin:26px 0 8px 0}
+p{margin:8px 0}
+.leise{color:var(--text-leise);font-size:15px}
+.mono{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13.5px;word-break:break-all}
+.kasten{background:var(--flaeche);border:1px solid var(--linie);border-radius:8px;padding:14px 16px;margin:12px 0}
+.kasten.gut{border-color:#b6d3bf;background:var(--gut-hell)}
+.kasten.warn{border-color:#e2b9a3;background:var(--warn-hell)}
+.kasten.hinweis{border-color:#b9cde0;background:var(--akzent-hell)}
+.stationen{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.station{border:2px solid var(--linie-hell);border-radius:8px;padding:10px 12px;background:var(--flaeche);font-size:14px}
+.station b{display:block;font-size:15px;margin-bottom:2px}
+.station.aktiv{border-color:var(--akzent);background:var(--akzent-hell)}
+.station.fertig{border-color:#b6d3bf;background:var(--gut-hell)}
+.station.tot{border-color:#e2b9a3;background:var(--warn-hell)}
+.status{font-size:22px;font-weight:600;margin:10px 0 4px 0}
+.zeit{font-variant-numeric:tabular-nums}
+.knopfreihe{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+button,a.knopf{font:inherit;font-size:16px;padding:9px 16px;border-radius:7px;border:1px solid var(--akzent);background:var(--akzent);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+button.sekundaer,a.knopf.sekundaer{background:var(--flaeche);color:var(--akzent)}
+button.warnend{background:var(--warn);border-color:var(--warn)}
+button:disabled{opacity:.45;cursor:default}
+select{font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--linie);border-radius:6px;background:#fff;max-width:100%}
+.knopfreihe > *{max-width:100%}
+h1,h2,p,td{overflow-wrap:anywhere}
+pre{background:#1e2429;color:#d8e0e6;border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.45;overflow:auto;margin:8px 0;white-space:pre-wrap;word-break:break-all}
+table{border-collapse:collapse;width:100%;font-size:14.5px;background:var(--flaeche)}
+th,td{border:1px solid var(--linie-hell);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f0f0ee;font-weight:600}
+#protokoll td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--text-leise)}
+.balken{height:8px;background:var(--linie-hell);border-radius:4px;overflow:hidden;margin:8px 0}
+.balken > div{height:100%;background:var(--akzent);width:0;transition:width .2s linear}
+@media (max-width:640px){ .stationen{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <div class="marke">Musterwerk Vorteilsportal</div>
+  <div class="unter">Fiktives Vorteilsportal zur Vorfuehrung einer Messarchitektur. Diese Seite ist die Zwischenstation vor dem Anbieter.</div>
+</header>
+<main>
+
+<h1 id="titel">Sie werden zum Anbieter weitergeleitet</h1>
+<p class="leise" id="untertitel">Einen Moment. Das Portal schreibt zuerst die Klick-ID in seine Zuordnungstabelle, dann geht es weiter.</p>
+
+<div class="stationen" aria-label="Stationen der Klick-out-Strecke">
+  <div class="station fertig" id="st-detail"><b>1. Angebotsseite</b>Klick-ID im Browser erzeugt, Messpunkt gesendet</div>
+  <div class="station aktiv" id="st-weiter"><b>2. Zwischenstation</b>Endpunkt <span class="mono">klickout</span> schreibt die Zeile</div>
+  <div class="station" id="st-partner"><b>3. Anbieterseite</b>Klick-ID in der Adresse, Rueckkanal ab hier Sache des Partners</div>
+</div>
+
+<div class="kasten" id="statuskasten">
+  <div class="status" id="status">Bereit</div>
+  <div class="balken"><div id="balken"></div></div>
+  <p class="leise" id="statustext">Noch nichts gesendet.</p>
+  <div class="knopfreihe" id="knoepfe"></div>
+</div>
+
+<div class="kasten hinweis">
+  <p style="margin:0 0 6px 0"><b>Fehlerfall vorfuehren.</b> Der Wert steht in der Adresse als <span class="mono">fall=</span> und geht mit an den Endpunkt. Aendern und neu starten:</p>
+  <div class="knopfreihe" style="margin:0">
+    <select id="sel-fall" aria-label="Fehlerfall">
+      <option value="keiner">keiner: schreiben, bestaetigen, weiterleiten</option>
+      <option value="langsam">langsam: der Server braucht sieben Sekunden</option>
+      <option value="fehler">Serverfehler: 500, nichts geschrieben</option>
+      <option value="abbruch">Abbruch: der Browser bricht nach 250 ms ab</option>
+    </select>
+    <button type="button" class="sekundaer" id="btn-neu">Noch einmal starten</button>
+  </div>
+  <p class="leise" style="margin:8px 0 0 0" id="fall-erklaerung"></p>
+</div>
+
+<h2>Was gerade passiert</h2>
+<table id="protokoll"><tr><th style="width:90px">Zeit</th><th>Ereignis</th></tr></table>
+
+<h2>Request an den Endpunkt</h2>
+<p class="leise">Das schickt diese Seite per <span class="mono">fetch</span> an <span class="mono" id="endpunkt-anzeige"></span>. Kein Cookie, kein Speicher, keine IP wird abgelegt; die Klick-ID kommt aus <span class="mono">crypto.randomUUID()</span> der Angebotsseite.</p>
+<pre id="request-anzeige">wird gebaut ...</pre>
+
+<h2>Antwort des Endpunkts</h2>
+<p class="leise">Das Ziel steht in der Antwort, nicht in der Adresse dieser Seite. Wer das Ziel vom Browser entgegennimmt, baut eine offene Weiterleitung.</p>
+<pre id="antwort-anzeige">noch keine Antwort</pre>
+
+<div class="kasten">
+  <p style="margin:0"><b>Warum diese Seite sichtbar ist.</b> Im Betrieb waere sie ein Endpunkt, der die Zeile schreibt und mit 302 weiterleitet, in unter 100 Millisekunden und ohne dass jemand sie sieht. Hier steht sie offen, weil sie die Verlustquelle der ganzen Messkette ist: Zwischen dem Klick im Browser und der Zeile in der Tabelle liegen ein Netzwerk, ein Server und ein Nutzer, der jederzeit die Rueckwaertstaste drueckt. Die Klick-ID existiert danach auf beiden Seiten, auf einer oder auf keiner. Welcher Fall eingetreten ist, sagt die Sicht <span class="mono">klickout_wahrheiten</span> in der Datenbank.</p>
+</div>
+
+<p class="leise" id="fusszeile"></p>
+</main>
+
+<script>
+"use strict";
+/* =====================================================================
+   Zwischenseite der Klick-out-Strecke
+   Liest die Parameter der Angebotsseite, ruft den Endpunkt klickout,
+   zeigt jeden Schritt an und leitet erst nach der Antwort weiter.
+   Drei Fehlerfaelle sind schaltbar. Unter file:// laeuft ein Trockenlauf
+   ohne Netz, mit denselben Zustaenden.
+   ===================================================================== */
+
+const KLICKOUT_URL = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/klickout";
+const SAMMLER_URL  = "https://zdiivmckxenneeyvtldg.supabase.co/functions/v1/sammler";
+const ZEITLIMIT_MS = 5000;        // danach gibt der Browser auf
+const ABBRUCH_NACH_MS = 250;      // Fehlerfall abbruch: so lange laeuft der Request
+const NACHLAUF_S = 3;             // Sekunden bis zur Weiterleitung nach Antwort oder Aufgabe
+
+const q = new URLSearchParams(location.search);
+const P = {
+  klick:     q.get("klick") || "",
+  angebot:   q.get("angebot") || "",
+  anbieter:  q.get("anbieter") || "",
+  mandant:   q.get("mandant") || "",
+  kategorie: q.get("kategorie") || "",
+  belegung:  q.get("belegung") || "",
+  code:      q.get("code") || "",
+  mediacode: q.get("mediacode") || "",
+  strecke:   q.get("strecke") || "",
+  sid:       q.get("sid") || "",
+  userKey:   q.get("userKey") || "",
+  variante:  q.get("variante") || "",
+  typ:       q.get("typ") || "",
+  partner:   q.get("partner") || "",      // Hinweis der Seite fuer den Trockenlauf; live entscheidet der Server
+  titel:     q.get("titel") || "",
+  anbieterName: q.get("anbieterName") || "",
+  fall:      q.get("fall") || "keiner",
+  zurueck:   q.get("zurueck") || ""
+};
+if (["keiner","langsam","fehler","abbruch"].indexOf(P.fall) === -1) P.fall = "keiner";
+
+const TROCKEN = location.protocol === "file:" || q.get("trocken") === "1";
+const t0 = performance.now();
+let laufender = null;     // AbortController des laufenden Requests
+let zeitgeber = [];       // alle Timer, damit Abbrechen sie stoppt
+let ziel = "";
+let ergebnisGesendet = false;
+
+const el = function(id){ return document.getElementById(id); };
+function esc(t){ return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function ms(){ return Math.round(performance.now() - t0); }
+
+function protokoll(text, klasse){
+  const tr = document.createElement("tr");
+  tr.innerHTML = '<td class="zeit">' + ms() + ' ms</td><td' + (klasse ? ' style="color:var(--' + klasse + ')"' : '') + '>' + esc(text) + '</td>';
+  el("protokoll").appendChild(tr);
+}
+function status(text, klasse){
+  el("status").textContent = text;
+  const k = el("statuskasten");
+  k.className = "kasten" + (klasse ? " " + klasse : "");
+}
+function knoepfe(liste){
+  el("knoepfe").innerHTML = liste.map(function(k){
+    return '<button type="button" id="' + k.id + '"' + (k.klasse ? ' class="' + k.klasse + '"' : '') + '>' + esc(k.text) + '</button>';
+  }).join("");
+  liste.forEach(function(k){ el(k.id).addEventListener("click", k.tun); });
+}
+function station(id, klasse){ el(id).className = "station" + (klasse ? " " + klasse : ""); }
+function timerSpaeter(f, d){ const t = setTimeout(f, d); zeitgeber.push(t); return t; }
+function timerAlleStoppen(){ zeitgeber.forEach(clearTimeout); zeitgeber = []; }
+
+/* Messpunkte dieser Seite an den Sammler. Dieselben Parameter wie mwTrack
+   auf der Modellseite, dieselbe Sitzungskennung, per Adresse uebergeben:
+   ohne Speicher auf dem Geraet ist die Adresse der einzige Weg, zwei
+   Seiten eines Besuchs zu verbinden. */
+function senden(ev, extra){
+  const p = { nc:"1", ev:ev, pn:"web.weiterleitung." + (P.kategorie || "unbekannt") + "." + (P.angebot || "PN00000"),
+              pg1:"web", pg2:"weiterleitung", pg3:P.kategorie || "unbekannt", pg4:P.angebot || "PN00000",
+              mandant:P.mandant, plattform:"web", mediacode:P.mediacode, variante:P.variante, sid:P.sid,
+              klickId:P.klick, angebot:P.angebot, anbieter:P.anbieter, strecke:P.strecke, fall:P.fall };
+  if (P.userKey) p.userKey = P.userKey;
+  Object.keys(extra || {}).forEach(function(k){ if (extra[k] !== undefined && extra[k] !== null && extra[k] !== "") p[k] = String(extra[k]); });
+  p.ts = new Date().toISOString();
+  const qs = Object.keys(p).filter(function(k){ return p[k] !== ""; })
+    .map(function(k){ return encodeURIComponent(k) + "=" + encodeURIComponent(p[k]); }).join("&");
+  if (TROCKEN){ protokoll("Messpunkt " + ev + " (Trockenlauf, nicht gesendet): " + qs.slice(0, 80) + " ..."); return; }
+  let ok = false;
+  try { if (navigator.sendBeacon) ok = navigator.sendBeacon(SAMMLER_URL + "?" + qs); } catch (e) { ok = false; }
+  if (!ok){ try { fetch(SAMMLER_URL + "?" + qs, { method:"POST", keepalive:true, mode:"cors", cache:"no-store" }).catch(function(){}); } catch (e) {} }
+  protokoll("Messpunkt " + ev + " an den Sammler (" + (ok ? "sendBeacon" : "fetch") + ")");
+}
+
+/* Das Ziel, wenn der Server es nicht gesagt hat: aus dem Hinweis der
+   Angebotsseite geraten. Im Betrieb kaeme es aus einem lokalen Abbild der
+   Stammdaten; hier reicht der Hinweis, weil die Seite nur drei Partner kennt. */
+function zielRaten(){
+  const partner = P.partner || "deeplink";
+  const s = new URLSearchParams({ cbk:P.klick, utm_source:"musterwerk-vorteilsportal", utm_medium:"affiliate", utm_campaign:P.angebot || "unbekannt" });
+  if (partner === "gutschein" && P.code) s.set("code", P.code);
+  if (TROCKEN) s.set("trocken", "1");
+  return "partner/" + partner + ".html?" + s.toString();
+}
+const zielTrocken = zielRaten;
+
+function requestBauen(){
+  const body = { klick:P.klick, angebot:P.angebot, anbieter:P.anbieter, mandant:P.mandant, belegung:P.belegung,
+                 code:P.code, mediacode:P.mediacode, strecke:P.strecke, sid:P.sid, plattform:"web",
+                 ts:new Date().toISOString(), fall:P.fall };
+  if (P.userKey) body.userKey = P.userKey;
+  return body;
+}
+
+/* Der Trockenlauf spielt den Endpunkt nach, mit denselben Zeiten. */
+function endpunktTrocken(body, signal){
+  return new Promise(function(aufl, abl){
+    const dauer = P.fall === "langsam" ? 7000 : (P.fall === "abbruch" ? 600 : 180);
+    const t = setTimeout(function(){
+      if (P.fall === "fehler"){
+        aufl({ status:500, json:{ fehler:"vorgefuehrter Serverfehler", geschrieben:false, fall:P.fall,
+               hinweis:"Trockenlauf. Die Klick-ID steht in keiner Tabelle." } });
+        return;
+      }
+      aufl({ status:200, json:{ klick_id:body.klick, ziel:zielTrocken(), partner:P.partner || "deeplink", typ:P.typ,
+             geschrieben:true, geschrieben_am:new Date().toISOString(), fall:P.fall, antwort_ms:dauer,
+             qualitaet:"Trockenlauf unter file://, nichts geschrieben" } });
+    }, dauer);
+    if (signal) signal.addEventListener("abort", function(){ clearTimeout(t); abl(Object.assign(new Error("abgebrochen"), { name:"AbortError" })); });
+  });
+}
+
+async function endpunktLive(body, signal){
+  const r = await fetch(KLICKOUT_URL, { method:"POST", mode:"cors", cache:"no-store", signal:signal,
+                                        headers:{ "Content-Type":"application/json" }, body:JSON.stringify(body) });
+  let json = null;
+  try { json = await r.json(); } catch (e) { json = { fehler:"Antwort nicht lesbar" }; }
+  return { status:r.status, json:json };
+}
+
+function weiterleiten(bestaetigt){
+  if (!ziel){ status("Kein Ziel bekannt", "warn"); return; }
+  senden("redirect.go", { bestaetigt: bestaetigt ? "ja" : "nein", partner: (P.partner || ""), ziel_host: (function(){ try { return new URL(ziel, location.href).host; } catch(e){ return ""; } })() });
+  station("st-weiter", "fertig"); station("st-partner", "aktiv");
+  protokoll("Weiterleitung nach " + ziel);
+  // location.replace: die Zwischenseite bleibt nicht im Verlauf, genau wie ein 302.
+  timerSpaeter(function(){ location.replace(ziel); }, 150);
+}
+
+function nachlauf(bestaetigt, text){
+  let rest = NACHLAUF_S;
+  const tick = function(){
+    status(text + " in " + rest + " s", bestaetigt ? "gut" : "warn");
+    el("balken").style.width = Math.round(100 * (NACHLAUF_S - rest) / NACHLAUF_S) + "%";
+    if (rest === 0){ weiterleiten(bestaetigt); return; }
+    rest--;
+    timerSpaeter(tick, 1000);
+  };
+  knoepfe([
+    { id:"btn-jetzt", text: bestaetigt ? "Jetzt weiter" : "Trotzdem weiter", tun:function(){ timerAlleStoppen(); weiterleiten(bestaetigt); } },
+    { id:"btn-abbrechen", text:"Abbrechen", klasse:"sekundaer", tun:function(){ abbrechen("vor der Weiterleitung"); } }
+  ]);
+  tick();
+}
+
+function abbrechen(wo){
+  timerAlleStoppen();
+  if (laufender){ laufender.abort(); }
+  status("Abgebrochen " + wo, "warn");
+  el("statustext").textContent = "Der Nutzer ist nicht beim Anbieter angekommen. Ob die Zeile in der Tabelle steht, weiss diese Seite nicht; nachsehen kann sie.";
+  station("st-weiter", "tot");
+  senden("redirect.cancel", { nach_ms: ms(), wo: wo });
+  protokoll("Abgebrochen " + wo, "warn");
+  knoepfe([
+    { id:"btn-nachsehen", text:"In der Tabelle nachsehen", tun:nachsehen },
+    { id:"btn-neu2", text:"Noch einmal starten", klasse:"sekundaer", tun:neuStarten },
+    { id:"btn-zurueck", text:"Zurueck zum Angebot", klasse:"sekundaer", tun:zurueck }
+  ]);
+}
+
+async function nachsehen(){
+  if (TROCKEN){
+    el("antwort-anzeige").textContent = JSON.stringify({ klick_id:P.klick, vorhanden:(P.fall !== "fehler"), hinweis:"Trockenlauf: so saehe die Antwort von klickout/status aus. Im Fall abbruch hat der Server den Request meist schon, die Zeile existiert." }, null, 2);
+    protokoll("Nachgesehen (Trockenlauf)");
+    return;
+  }
+  protokoll("Frage klickout/status nach der Klick-ID");
+  try {
+    const r = await fetch(KLICKOUT_URL + "/status?klick=" + encodeURIComponent(P.klick), { cache:"no-store", mode:"cors" });
+    const j = await r.json();
+    el("antwort-anzeige").textContent = JSON.stringify(j, null, 2);
+    protokoll(j.vorhanden ? "Die Zeile steht in der Tabelle: Klick-ID auf einer Seite, beim Partner nicht" : "Keine Zeile in der Tabelle: Klick-ID auf keiner Seite", j.vorhanden ? "gut" : "warn");
+    status(j.vorhanden ? "Zeile vorhanden, Nutzer nicht angekommen" : "Keine Zeile, Nutzer nicht angekommen", "warn");
+  } catch (e) {
+    protokoll("Status nicht abrufbar: " + e.name, "warn");
+  }
+}
+
+function zurueck(){
+  location.href = P.zurueck || ("index.html#angebot/" + encodeURIComponent(P.angebot));
+}
+
+function neuStarten(){
+  const fall = el("sel-fall").value;
+  q.set("fall", fall);
+  location.href = location.pathname + "?" + q.toString();
+}
+
+async function starten(){
+  timerAlleStoppen();
+  ergebnisGesendet = false;
+  const body = requestBauen();
+  el("request-anzeige").textContent = "POST " + (TROCKEN ? "(Trockenlauf, kein Netz) " : "") + KLICKOUT_URL + "\nContent-Type: application/json\n\n" + JSON.stringify(body, null, 2);
+  station("st-weiter", "aktiv"); station("st-partner", "");
+  status("Schreibe Klick-ID ...", "");
+  el("statustext").textContent = "Warte auf die Bestaetigung des Endpunkts. Zeitlimit " + (ZEITLIMIT_MS / 1000) + " Sekunden.";
+  knoepfe([{ id:"btn-abbrechen", text:"Abbrechen", klasse:"sekundaer", tun:function(){ abbrechen("waehrend des Schreibens"); } }]);
+  protokoll("Request an klickout gesendet, Fall " + P.fall);
+
+  laufender = new AbortController();
+  const signal = laufender.signal;
+  const start = performance.now();
+  let aufgegeben = false;
+
+  // Fortschrittsbalken bis zum Zeitlimit
+  const balken = setInterval(function(){
+    const anteil = Math.min(1, (performance.now() - start) / ZEITLIMIT_MS);
+    el("balken").style.width = Math.round(anteil * 100) + "%";
+    el("status").textContent = "Schreibe Klick-ID ... " + Math.round(performance.now() - start) + " ms";
+  }, 100);
+  zeitgeber.push(balken);
+
+  // Zeitlimit: aufgeben und weiterleiten ohne Bestaetigung, wie im Betrieb
+  timerSpaeter(function(){
+    if (ergebnisGesendet) return;
+    aufgegeben = true;
+    clearInterval(balken);
+    ergebnisGesendet = true;
+    ziel = zielTrocken();  // ohne Antwort kennt die Seite das Ziel nur aus ihrem eigenen Hinweis
+    senden("redirect.write", { ergebnis:"timeout", dauer_ms: Math.round(performance.now() - start), status:"" });
+    protokoll("Keine Antwort nach " + ZEITLIMIT_MS + " ms. Im Betrieb wuerde jetzt ohne Bestaetigung weitergeleitet.", "warn");
+    el("statustext").textContent = "Der Server hat nicht geantwortet. Vielleicht schreibt er noch, vielleicht nie: die Klick-ID kann auf beiden Seiten landen oder nur beim Partner.";
+    nachlauf(false, "Weiterleitung ohne Bestaetigung");
+  }, ZEITLIMIT_MS);
+
+  // Fehlerfall abbruch: der Browser gibt den Request nach 250 ms auf
+  if (P.fall === "abbruch"){
+    timerSpaeter(function(){
+      if (ergebnisGesendet) return;
+      ergebnisGesendet = true;
+      clearInterval(balken);
+      senden("redirect.write", { ergebnis:"abbruch", dauer_ms: Math.round(performance.now() - start), status:"" });
+      abbrechen("nach " + ABBRUCH_NACH_MS + " ms, Fall abbruch");
+    }, ABBRUCH_NACH_MS);
+  }
+
+  let antwort;
+  try {
+    antwort = await (TROCKEN ? endpunktTrocken(body, signal) : endpunktLive(body, signal));
+  } catch (e) {
+    clearInterval(balken);
+    if (e && e.name === "AbortError"){ protokoll("Request abgebrochen (" + Math.round(performance.now() - start) + " ms)"); return; }
+    if (ergebnisGesendet) return;
+    ergebnisGesendet = true;
+    timerAlleStoppen();
+    senden("redirect.write", { ergebnis:"fehler", dauer_ms: Math.round(performance.now() - start), status:"netz" });
+    status("Endpunkt nicht erreichbar", "warn");
+    el("antwort-anzeige").textContent = "Fehler: " + e.name + " " + (e.message || "");
+    protokoll("Netzfehler: " + e.name, "warn");
+    el("statustext").textContent = "Der Endpunkt war nicht erreichbar. Die Klick-ID steht in keiner Tabelle.";
+    ziel = zielTrocken();
+    nachlauf(false, "Weiterleitung ohne Bestaetigung");
+    return;
+  }
+  if (aufgegeben || (ergebnisGesendet && P.fall === "abbruch")) {
+    // Die Antwort kam noch, nachdem die Seite schon entschieden hatte. Anzeigen,
+    // das Ziel uebernehmen, sonst nichts mehr aendern: genau so sieht es aus,
+    // wenn der Server geschrieben hat und der Nutzer schon weg war.
+    el("antwort-anzeige").textContent = "Spaete Antwort nach " + Math.round(performance.now() - start) + " ms, Status " + antwort.status + ":\n" + JSON.stringify(antwort.json, null, 2);
+    protokoll("Spaete Antwort nach " + Math.round(performance.now() - start) + " ms, Status " + antwort.status + (antwort.json && antwort.json.geschrieben ? ": die Zeile ist jetzt da" : ""), antwort.status === 200 ? "gut" : "warn");
+    if (antwort.status === 200 && antwort.json && antwort.json.ziel) ziel = antwort.json.ziel;
+    return;
+  }
+  ergebnisGesendet = true;
+  timerAlleStoppen();
+  clearInterval(balken);
+  const dauer = Math.round(performance.now() - start);
+  el("antwort-anzeige").textContent = "Status " + antwort.status + " nach " + dauer + " ms\n" + JSON.stringify(antwort.json, null, 2);
+
+  if (antwort.status === 200 && antwort.json && antwort.json.ziel){
+    ziel = antwort.json.ziel;
+    P.partner = antwort.json.partner || P.partner;
+    senden("redirect.write", { ergebnis: antwort.json.doppelt ? "doppelt" : "ok", dauer_ms: dauer, status:"200", partner:P.partner });
+    protokoll((antwort.json.doppelt ? "Zeile stand schon in der Tabelle" : "Zeile geschrieben") + ", Antwort nach " + dauer + " ms", "gut");
+    status("Klick-ID geschrieben", "gut");
+    el("statustext").textContent = "Ziel: " + ziel + (antwort.json.anbieter_name ? " (" + antwort.json.anbieter_name + ")" : "");
+    el("balken").style.width = "0%";
+    nachlauf(true, "Weiterleitung");
+    return;
+  }
+
+  senden("redirect.write", { ergebnis:"fehler", dauer_ms: dauer, status:String(antwort.status) });
+  protokoll("Server antwortet " + antwort.status + ": nichts geschrieben", "warn");
+  status("Serverfehler " + antwort.status, "warn");
+  el("statustext").textContent = "Die Klick-ID steht in keiner Tabelle. Ein Portal leitet jetzt trotzdem weiter, sonst verliert es den Verkauf; der Partner meldet dann eine Klick-ID, die niemand kennt.";
+  ziel = zielTrocken();
+  nachlauf(false, "Weiterleitung ohne Bestaetigung");
+}
+
+(function start(){
+  el("sel-fall").value = P.fall;
+  el("endpunkt-anzeige").textContent = KLICKOUT_URL;
+  const erkl = {
+    keiner:  "Normalfall. Die Antwort kommt in wenigen hundert Millisekunden, dann laeuft der Nachlauf.",
+    langsam: "Der Server wartet sieben Sekunden, bevor er schreibt. Diese Seite gibt nach fuenf auf und leitet ohne Bestaetigung weiter; die Zeile entsteht trotzdem, zwei Sekunden spaeter. Wer vorher abbricht, hinterlaesst eine Zeile ohne Ankunft.",
+    fehler:  "Der Server antwortet 500 und schreibt nichts. Leitet die Seite trotzdem weiter, kennt nur der Partner die Klick-ID.",
+    abbruch: "Der Browser bricht den Request nach 250 Millisekunden ab, so wie ein Nutzer, der die Rueckwaertstaste drueckt. Der Server braucht in diesem Fall 600 Millisekunden und hat den Request da laengst: Zeile ja, Ankunft nein."
+  };
+  el("fall-erklaerung").textContent = erkl[P.fall];
+  el("sel-fall").addEventListener("change", function(){ el("fall-erklaerung").textContent = erkl[this.value]; });
+  el("btn-neu").addEventListener("click", neuStarten);
+
+  if (P.titel || P.anbieterName){
+    el("titel").textContent = "Weiter zu " + (P.anbieterName || "dem Anbieter") + (P.titel ? ": " + P.titel : "");
+  }
+  el("fusszeile").textContent = (TROCKEN
+      ? "Trockenlauf: die Seite laeuft unter file:// oder mit ?trocken=1, es geht kein Request hinaus, die Zeiten sind nachgespielt."
+      : "Live: der Endpunkt schreibt in public.klickouts im Supabase-Projekt in Irland, der Sammler in public.rohereignisse. Nichts davon landet auf Ihrem Geraet.")
+    + " Klick-ID " + (P.klick || "(fehlt)") + ", Sitzung " + (P.sid || "(fehlt)") + ".";
+
+  if (!P.klick){
+    status("Keine Klick-ID in der Adresse", "warn");
+    el("statustext").textContent = "Diese Seite wird von der Angebotsseite aus geoeffnet. Ohne Klick-ID gibt es nichts zu schreiben.";
+    knoepfe([{ id:"btn-zurueck0", text:"Zur Modellseite", klasse:"sekundaer", tun:function(){ location.href = "index.html"; } }]);
+    protokoll("Aufruf ohne Klick-ID, nichts gesendet", "warn");
+    return;
+  }
+  senden("page.view", { ansicht:"weiterleitung" });
+  starten();
+})();
+</script>
+</body>
+</html>
